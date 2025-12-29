@@ -1,0 +1,15 @@
+services:
+  postgres-db:
+    container_name: "postgres-db"
+    image: postgres
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    volumes:
+      - "./pgdata:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_DB=postgres-db"
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_PASSWORD=root"
+      - "PGDATA=/var/lib/postgresql/data/pgdata"
