@@ -1,0 +1,12 @@
+services:
+  postgres-db:
+    container_name: postgres-db
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    env_file:
+      - ../apps/api/.env
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
