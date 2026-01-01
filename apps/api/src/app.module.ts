@@ -7,7 +7,9 @@ import { typeOrmModuleOptions } from './configs/typeorm.config';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({
+      envFilePath: ['.env.local', '.env'],
+    }),
     TypeOrmModule.forRoot(typeOrmModuleOptions),
   ],
   controllers: [AppController],
