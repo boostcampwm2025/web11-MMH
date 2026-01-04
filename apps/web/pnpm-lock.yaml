@@ -54,6 +54,9 @@ importers:
       babel-plugin-react-compiler:
         specifier: 1.0.0
         version: 1.0.0
+      chromatic:
+        specifier: ^13.3.4
+        version: 13.3.4
       eslint:
         specifier: ^9
         version: 9.39.2(jiti@2.6.1)
