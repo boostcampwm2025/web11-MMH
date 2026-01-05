@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "check-types": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "chromatic": "npx chromatic --project-token=chpt_4cfbab0f11a8be9"
