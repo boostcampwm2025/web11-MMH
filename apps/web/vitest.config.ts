@@ -6,5 +6,6 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     include: ["**/*.test.{ts,tsx}", "**/*.spec.{ts,tsx}"],
+    exclude: ["e2e/**", "node_modules/**"],
   },
 });
