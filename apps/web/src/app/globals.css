@@ -120,4 +120,8 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  html,body {
+    font-synthesis: none;
+  }
 }
