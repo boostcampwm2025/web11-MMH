@@ -7,17 +7,23 @@ import createAudioStreamer, { AudioStreamerHandle } from "@/lib/audio-streamer";
 
 interface WaveFormProps {
   isRecording: boolean;
+  barWidthPx?: number;
+  barGapPx?: number;
+  barColor?: string;
+  updateIntervalMs?: number;
+  numberOfPaddingBars?: number;
   className?: string;
 }
 
-const BAR_WIDTH = 4;
-const BAR_GAP = 2;
-const BAR_COLOR = "#18181b"; // Zinc 900
-const RIGHT_PADDING = 12; // 오른쪽 패딩 (픽셀)
-const UPDATE_INTERVAL = 30; // 50ms마다 히스토리에 추가 (1초에 20번)
-const PADDING_BARS = Math.ceil(RIGHT_PADDING / (BAR_WIDTH + BAR_GAP)); // 패딩 구간의 바 개수
-
-function Waveform({ isRecording, className }: WaveFormProps) {
+function Waveform({
+  isRecording,
+  barWidthPx = 4,
+  barGapPx = 2,
+  barColor = "#18181b",
+  updateIntervalMs = 30,
+  numberOfPaddingBars = 8,
+  className,
+}: WaveFormProps) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const canvasWidthRef = React.useRef<number>(0);
   const canvasHeightRef = React.useRef<number>(0);
@@ -45,7 +51,7 @@ function Waveform({ isRecording, className }: WaveFormProps) {
         const now = Date.now();
 
         // 일정 간격이 지나지 않았으면 스킵
-        if (now - lastUpdateTimeRef.current < UPDATE_INTERVAL) {
+        if (now - lastUpdateTimeRef.current < updateIntervalMs) {
           return;
         }
 
@@ -69,13 +75,13 @@ function Waveform({ isRecording, className }: WaveFormProps) {
 
         // 히스토리가 너무 길어지지 않도록 제한
         const maxBars =
-          Math.ceil(canvasWidthRef.current / (BAR_WIDTH + BAR_GAP)) + 10;
+          Math.ceil(canvasWidthRef.current / (barWidthPx + barGapPx)) + 10;
         if (amplitudeHistoryRef.current.length > maxBars) {
           amplitudeHistoryRef.current.shift();
         }
       },
     });
-  }, []);
+  }, [barWidthPx, barGapPx, updateIntervalMs]);
 
   React.useEffect(() => {
     const canvas = canvasRef.current;
@@ -144,16 +150,16 @@ function Waveform({ isRecording, className }: WaveFormProps) {
 
     // 패딩 구간의 IDLE 바 그리기 (오른쪽 끝)
     if (history.length) {
-      for (let i = 0; i < PADDING_BARS; i++) {
+      for (let i = 0; i < numberOfPaddingBars; i++) {
         const barX =
-          canvasWidthRef.current - i * (BAR_WIDTH + BAR_GAP) - BAR_WIDTH;
+          canvasWidthRef.current - i * (barWidthPx + barGapPx) - barWidthPx;
         const idleAmplitude = 4; // IDLE 바의 작은 높이
         const barY = canvasHeightRef.current / 2 - idleAmplitude / 2;
 
-        ctx.fillStyle = BAR_COLOR;
+        ctx.fillStyle = barColor;
         ctx.beginPath();
-        const radius = BAR_WIDTH / 2;
-        ctx.roundRect(barX, barY, BAR_WIDTH, idleAmplitude, radius);
+        const radius = barWidthPx / 2;
+        ctx.roundRect(barX, barY, barWidthPx, idleAmplitude, radius);
         ctx.fill();
       }
     }
@@ -166,19 +172,19 @@ function Waveform({ isRecording, className }: WaveFormProps) {
       // 패딩 구간을 고려한 위치 계산
       const barX =
         canvasWidthRef.current -
-        (PADDING_BARS + i) * (BAR_WIDTH + BAR_GAP) -
-        BAR_WIDTH;
+        (numberOfPaddingBars + i) * (barWidthPx + barGapPx) -
+        barWidthPx;
       const barY = canvasHeightRef.current / 2 - amplitude / 2;
 
       // 바가 화면 밖으로 나가면 그리지 않음
-      if (barX + BAR_WIDTH < 0) {
+      if (barX + barWidthPx < 0) {
         break;
       }
 
-      ctx.fillStyle = BAR_COLOR;
+      ctx.fillStyle = barColor;
       ctx.beginPath();
-      const radius = BAR_WIDTH / 2;
-      ctx.roundRect(barX, barY, BAR_WIDTH, amplitude, radius);
+      const radius = barWidthPx / 2;
+      ctx.roundRect(barX, barY, barWidthPx, amplitude, radius);
       ctx.fill();
     }
   });

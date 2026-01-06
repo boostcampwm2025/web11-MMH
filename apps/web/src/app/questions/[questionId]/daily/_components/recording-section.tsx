@@ -13,7 +13,6 @@ function RecordingSection() {
   return (
     <section className="flex flex-col gap-6">
       <Waveform isRecording={isRecording} />
-      {/* Controls */}
       <div className="flex items-center justify-center gap-4">
         {isRecording && (
           <Button
