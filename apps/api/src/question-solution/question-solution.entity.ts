@@ -1,0 +1,42 @@
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
+
+@Entity('question_solutions')
+class QuestionSolution {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ name: 'question_id', type: 'int' })
+  questionId: number;
+
+  @Column({
+    name: 'reference_source',
+    type: 'varchar',
+    length: 255,
+  })
+  referenceSource: string;
+
+  @Column({ name: 'standard_definition', type: 'text' })
+  standardDefinition: string;
+
+  @Column({ name: 'technical_mechanism', type: 'jsonb' })
+  technicalMechanism: any;
+
+  @Column({ name: 'key_terminology', type: 'jsonb' })
+  keyTerminology: any;
+
+  @Column({ name: 'practical_application', type: 'text' })
+  practicalApplication: string;
+
+  @Column({ name: 'common_misconceptions', type: 'text' })
+  commonMisconceptions: string;
+
+  @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
+}
+
+export { QuestionSolution };
