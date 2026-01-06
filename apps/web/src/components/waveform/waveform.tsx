@@ -59,8 +59,8 @@ function Waveform({ isRecording, className }: WaveFormProps) {
         const rms = Math.sqrt(sum / wave.length);
 
         // RMS 값을 캔버스 높이에 맞게 스케일링
-        const maxAmplitude = canvasHeightRef.current * 0.8; // 캔버스 높이의 80%를 최대값으로
-        const amplitude = rms * maxAmplitude * 4; // RMS 값을 10배로 증폭
+        const maxAmplitude = canvasHeightRef.current * 0.6; // 캔버스 높이의 80%를 최대값으로
+        const amplitude = rms * maxAmplitude * 6; // RMS 값을 10배로 증폭
 
         // 최소 높이 설정 (너무 작으면 보이지 않으므로)
         const finalAmplitude = Math.max(Math.min(amplitude, maxAmplitude), 4);
@@ -200,9 +200,18 @@ function Waveform({ isRecording, className }: WaveFormProps) {
         }}
       />
       <canvas ref={canvasRef} className="w-full h-full relative z-10" />
-      <div className="absolute bottom-3 right-4 text-zinc-400 text-xs font-mono font-medium select-none pointer-events-none bg-white/80 px-2 py-1 rounded backdrop-blur-sm border border-zinc-100">
-        READY TO RECORD
-      </div>
+      {!isRecording ? (
+        <div className="absolute bottom-3 right-4 text-zinc-400 text-xs font-mono font-medium select-none pointer-events-none bg-white/80 px-2 py-1 rounded backdrop-blur-sm border border-zinc-100">
+          READY TO RECORD
+        </div>
+      ) : (
+        <div className="absolute top-3 right-3 flex items-center gap-1.5">
+          <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+          <span className="text-xs font-medium text-red-500 uppercase tracking-wider">
+            Recording
+          </span>
+        </div>
+      )}
     </div>
   );
 }
