@@ -3,8 +3,8 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 
 @Entity('questions')
@@ -30,7 +30,7 @@ class Question {
   @Column({ name: 'category_id', type: 'int', nullable: true })
   categoryId: number;
 
-  @ManyToOne(() => Category)
+  @OneToOne(() => Category)
   @JoinColumn({ name: 'category_id' })
   category: Category;
 }

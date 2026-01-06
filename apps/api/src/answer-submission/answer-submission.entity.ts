@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import {
   QuizMode,
@@ -12,6 +13,7 @@ import {
   ProcessStatus,
 } from './answer-submission.constants';
 import { Question } from 'src/question/question.entity';
+import { AudioAsset } from 'src/audio-asset/audio-asset.entity';
 
 @Entity('answer_submissions')
 class AnswerSubmission {
@@ -64,6 +66,10 @@ class AnswerSubmission {
   @ManyToOne(() => Question)
   @JoinColumn({ name: 'question_id' })
   question: Question;
+
+  @OneToOne(() => AudioAsset)
+  @JoinColumn({ name: 'audio_asset_id' })
+  audioAsset: AudioAsset;
 }
 
 export { AnswerSubmission };
