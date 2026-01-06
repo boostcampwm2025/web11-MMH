@@ -18,8 +18,8 @@ class AnswerEvaluation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'attempt_id', type: 'int' })
-  attemptId: number;
+  @Column({ name: 'submission_id', type: 'int' })
+  submissionId: number;
 
   @Column({ name: 'feedback_message', type: 'text' })
   feedbackMessage: string;
@@ -49,7 +49,7 @@ class AnswerEvaluation {
   createdAt: Date;
 
   @OneToOne(() => AnswerSubmission)
-  @JoinColumn({ name: 'attempt_id' })
+  @JoinColumn({ name: 'submission_id' })
   submission: AnswerSubmission;
 }
 
