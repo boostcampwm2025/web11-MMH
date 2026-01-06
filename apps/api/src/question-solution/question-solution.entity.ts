@@ -1,8 +1,11 @@
+import { Question } from 'src/question/question.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity('question_solutions')
@@ -13,11 +16,7 @@ class QuestionSolution {
   @Column({ name: 'question_id', type: 'int' })
   questionId: number;
 
-  @Column({
-    name: 'reference_source',
-    type: 'varchar',
-    length: 255,
-  })
+  @Column({ name: 'reference_source', type: 'varchar', length: 255 })
   referenceSource: string;
 
   @Column({ name: 'standard_definition', type: 'text' })
@@ -37,6 +36,10 @@ class QuestionSolution {
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
+
+  @OneToOne(() => Question)
+  @JoinColumn({ name: 'question_id' })
+  question: Question;
 }
 
 export { QuestionSolution };

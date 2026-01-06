@@ -3,12 +3,15 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import {
   AccuracyEval,
   LogicEval,
   DepthEval,
 } from './answer-evaluation.constants';
+import { AnswerSubmission } from 'src/answer-submission/answer-submission.entity';
 
 @Entity('answer_evaluations')
 class AnswerEvaluation {
@@ -44,6 +47,10 @@ class AnswerEvaluation {
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
+
+  @OneToOne(() => AnswerSubmission)
+  @JoinColumn({ name: 'attempt_id' })
+  submission: AnswerSubmission;
 }
 
 export { AnswerEvaluation };
