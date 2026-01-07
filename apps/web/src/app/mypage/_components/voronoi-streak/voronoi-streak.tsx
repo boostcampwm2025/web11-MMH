@@ -2,7 +2,7 @@
 
 import { Delaunay } from "d3-delaunay";
 import { randomLcg } from "d3-random";
-import { useEffect, useRef, useState } from "react";
+import * as React from "react";
 import skmeans from "skmeans";
 import { VORONOI_COLOR_CONSTANT, VORONOI_NUMBER_CONSTANT } from "../../_constants/voronoi-constant";
 import computeCells from "../../_lib/compute-cells";
@@ -22,10 +22,10 @@ interface CellData {
 }
 
 function VoronoiStreak({ width, height, streakCount, imageSrc }: VoronoiStreakProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [cellData, setCellData] = useState<CellData[]>([]);
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const [cellData, setCellData] = React.useState<CellData[]>([]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!imageSrc) return;
 
     const image = new Image();
@@ -81,7 +81,7 @@ function VoronoiStreak({ width, height, streakCount, imageSrc }: VoronoiStreakPr
     };
   }, [imageSrc, width, height]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const canvas = canvasRef.current;
 
     if (!canvas || cellData.length === 0) return;
