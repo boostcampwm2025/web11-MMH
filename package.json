@@ -10,9 +10,11 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "storybook": "pnpm --filter web storybook"
+    "storybook": "pnpm --filter web storybook",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "husky": "^9.1.7",
     "prettier": "^3.7.4",
     "turbo": "^2.7.1",
     "typescript": "5.9.2"
