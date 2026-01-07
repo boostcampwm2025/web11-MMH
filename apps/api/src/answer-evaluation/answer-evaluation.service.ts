@@ -91,9 +91,59 @@ export class AnswerEvaluationService {
       mentoringFeedback: rawResponse.mentoring_feedback,
     };
 
-    // TODO: 점수 계산 로직
-    // TODO: DB 저장 로직 (AnswerSubmission.score 업데이트 및 AnswerEvaluation 생성)
+    // 점수 계산
+    const { totalScore, scoreDetails } = this.calculateScore(result);
+    result.totalScore = totalScore;
+    result.scoreDetails = scoreDetails;
 
     return result;
+  }
+
+  private calculateScore(result: EvaluationResultDto): {
+    totalScore: number;
+    scoreDetails: Required<EvaluationResultDto>['scoreDetails'];
+  } {
+    const accuracyMap: Record<AccuracyEval, number> = {
+      [AccuracyEval.PERFECT]: 35,
+      [AccuracyEval.MINOR_ERROR]: 20,
+      [AccuracyEval.WRONG]: 0,
+    };
+    const accuracyScore = accuracyMap[result.accuracyLevel] ?? 0;
+
+    const logicMap: Record<LogicEval, number> = {
+      [LogicEval.CLEAR]: 30,
+      [LogicEval.WEAK]: 15,
+      [LogicEval.NONE]: 0,
+    };
+    const logicScore = logicMap[result.logicLevel] ?? 0;
+
+    const depthMap: Record<DepthEval, number> = {
+      [DepthEval.DEEP]: 25,
+      [DepthEval.BASIC]: 10,
+      [DepthEval.NONE]: 0,
+    };
+    const depthScore = depthMap[result.depthLevel] ?? 0;
+
+    const completenessScore = result.isCompleteSentence ? 5 : 0;
+
+    const applicationScore = result.hasApplication ? 5 : 0;
+
+    const totalScore =
+      accuracyScore +
+      logicScore +
+      depthScore +
+      completenessScore +
+      applicationScore;
+
+    return {
+      totalScore,
+      scoreDetails: {
+        accuracy: accuracyScore,
+        logic: logicScore,
+        depth: depthScore,
+        completeness: completenessScore,
+        application: applicationScore,
+      },
+    };
   }
 }

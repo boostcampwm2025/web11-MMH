@@ -60,7 +60,10 @@ describe('AnswerEvaluationService', () => {
 
       const result = await service.evaluate();
 
-      // 상세 점수 검증
+      // 변환 및 점수 검증
+      expect(result.accuracyLevel).toBe(AccuracyEval.PERFECT);
+      expect(result.accuracyReason).toBe(mockLlmResult.accuracy_reason);
+      expect(result.isCompleteSentence).toBe(true);
       expect(result.scoreDetails).toEqual({
         accuracy: 35,
         logic: 30,
@@ -69,7 +72,6 @@ describe('AnswerEvaluationService', () => {
         application: 5,
       });
       expect(result.totalScore).toBe(100);
-      expect(result.accuracyLevel).toBe(AccuracyEval.PERFECT);
     });
 
     it('각 항목별 등급에 따라 점수가 올바르게 합산되어야 한다 (경미한 오류 케이스)', async () => {
