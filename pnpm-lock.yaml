@@ -160,6 +160,9 @@ importers:
       react-dom:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
+      skmeans:
+        specifier: ^0.11.3
+        version: 0.11.3
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
@@ -209,6 +212,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.2(@types/react@19.2.2)
+      '@types/skmeans':
+        specifier: ^0.11.8
+        version: 0.11.8
       '@vitejs/plugin-react':
         specifier: ^5.1.2
         version: 5.1.2(vite@7.3.0(@types/node@20.19.27)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1))
@@ -2233,6 +2239,9 @@ packages:
 
   '@types/serve-static@2.2.0':
     resolution: {integrity: sha512-8mam4H1NHLtu7nmtalF7eyBH14QyOASmcxHhSfEoRyr0nP/YdoesEtU+uSRvMe96TW/HPTtkoKqQLl53N7UXMQ==}
+
+  '@types/skmeans@0.11.8':
+    resolution: {integrity: sha512-aX/h9LeMfsyOo0j8FR0GiyQbFK9st9zyH5OaLBoenNcC+FOifDieORNFn/6WRyXh0YP4P9+rIKrwQBTxcWW5YA==}
 
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
@@ -5111,6 +5120,9 @@ packages:
     resolution: {integrity: sha512-2wcC/oGxHis/BoHkkPwldgiPSYcpZK3JU28WoMVv55yHJgcZ8rlXvuG9iZggz+sU1d4bRgIGASwyWqjxu3FM0g==}
     engines: {node: '>=18'}
 
+  skmeans@0.11.3:
+    resolution: {integrity: sha512-nccEnlSeOMNAYM9ETMSq+m15u8g0KRCIvH2an/ROTx4Igmci/j3oYHBPGdAeGjhR7knAVoIIQwr/wy2dN/eKQA==}
+
   slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
@@ -7895,6 +7907,8 @@ snapshots:
     dependencies:
       '@types/http-errors': 2.0.5
       '@types/node': 22.15.3
+
+  '@types/skmeans@0.11.8': {}
 
   '@types/stack-utils@2.0.3': {}
 
@@ -11285,6 +11299,8 @@ snapshots:
       mrmime: 2.0.1
       totalist: 3.0.1
     optional: true
+
+  skmeans@0.11.3: {}
 
   slash@3.0.0: {}
 
