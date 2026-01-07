@@ -19,4 +19,3 @@ export class UserModule implements OnModuleInit {
     await this.userService.ensureTestUser();
   }
 }
-

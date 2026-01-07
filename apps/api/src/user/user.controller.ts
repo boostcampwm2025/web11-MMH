@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Req, Res, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Req,
+  Res,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { UserService } from './user.service';
 import type { User } from './entities/user.entity';
@@ -57,4 +66,3 @@ export class UserController {
     return this.userService.getCurrentUser(userId);
   }
 }
-

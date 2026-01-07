@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { UserRepository } from './user.repository';
 
@@ -10,7 +14,8 @@ export class UserService {
 
   async ensureTestUser(): Promise<void> {
     const testUserNickname = '테스트 유저';
-    const existingUser = await this.userRepository.findOneByNickname(testUserNickname);
+    const existingUser =
+      await this.userRepository.findOneByNickname(testUserNickname);
 
     if (!existingUser) {
       await this.userRepository.create({
@@ -59,4 +64,3 @@ export class UserService {
     return this.userRepository.findOneById(userId);
   }
 }
-

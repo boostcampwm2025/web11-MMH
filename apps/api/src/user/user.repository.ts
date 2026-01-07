@@ -31,4 +31,3 @@ export class UserRepository {
     return this.repository.save(user);
   }
 }
-
