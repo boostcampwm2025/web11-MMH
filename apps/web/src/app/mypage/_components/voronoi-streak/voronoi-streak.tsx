@@ -19,6 +19,7 @@ interface VoronoiStreakProps {
 interface CellData {
   path: Path2D;
   color: string;
+  cluster: number;
 }
 
 function VoronoiStreak({ width, height, streakCount, imageSrc }: VoronoiStreakProps) {
@@ -73,10 +74,11 @@ function VoronoiStreak({ width, height, streakCount, imageSrc }: VoronoiStreakPr
       }));
       pointsWithCluster.sort((a, b) => a.cluster - b.cluster);
       points = pointsWithCluster.map((p) => p.point);
+      const clusters = pointsWithCluster.map((p) => p.cluster);
 
       const delaunay = Delaunay.from(points);
       const voronoi = delaunay.voronoi([0, 0, width, height]);
-      const computedCells = computeCells(points, voronoi, imageData, width, height);
+      const computedCells = computeCells(points, voronoi, imageData, width, height, clusters);
       setCellData(computedCells);
     };
   }, [imageSrc, width, height]);
@@ -91,12 +93,12 @@ function VoronoiStreak({ width, height, streakCount, imageSrc }: VoronoiStreakPr
 
     ctx.clearRect(0, 0, width, height);
 
-    cellData.forEach((cell, idx) => {
+    cellData.forEach((cell) => {
       ctx.beginPath();
 
-      if (idx < streakCount * VORONOI_NUMBER_CONSTANT.PERIOD_POINT_SCALE) {
+      if (cell.cluster < streakCount) {
         ctx.fillStyle = cell.color;
-        ctx.strokeStyle = VORONOI_COLOR_CONSTANT.WHITE;
+        ctx.strokeStyle = cell.color;
       } else {
         ctx.fillStyle = VORONOI_COLOR_CONSTANT.GRAY;
         ctx.strokeStyle = VORONOI_COLOR_CONSTANT.WHITE;
