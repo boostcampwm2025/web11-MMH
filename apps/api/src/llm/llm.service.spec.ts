@@ -66,9 +66,9 @@ describe('LlmService', () => {
 
       expect(mockGenerateContent).toHaveBeenCalledWith({
         model: 'gemini-2.5-flash-lite-preview-09-2025',
-        systemInstruction: systemPrompt,
         contents: userPrompt,
         config: {
+          systemInstruction: systemPrompt,
           responseMimeType: 'application/json',
           responseSchema: schema,
           temperature: 0.1,
@@ -85,7 +85,7 @@ describe('LlmService', () => {
 
       await expect(
         service.callWithSchema(systemPrompt, userPrompt, schema),
-      ).rejects.toThrow('LLM did not return any text content');
+      ).rejects.toThrow('LLM으로부터 응답 텍스트를 수신하지 못했습니다.');
     });
 
     it('잘못된 JSON 형식일 경우 에러를 던져야 한다', async () => {
@@ -95,7 +95,7 @@ describe('LlmService', () => {
 
       await expect(
         service.callWithSchema(systemPrompt, userPrompt, schema),
-      ).rejects.toThrow(/Gemini Schema Error/);
+      ).rejects.toThrow(/Gemini 스키마 응답 생성 중 오류 발생/);
     });
 
     it('Gemini API 호출 중 에러가 발생한 경우 에러를 던져야 한다', async () => {
@@ -103,7 +103,7 @@ describe('LlmService', () => {
 
       await expect(
         service.callWithSchema(systemPrompt, userPrompt, schema),
-      ).rejects.toThrow('Gemini Schema Error: API Error');
+      ).rejects.toThrow('Gemini 스키마 응답 생성 중 오류 발생: API Error');
     });
   });
 });
