@@ -59,7 +59,7 @@ export const EVALUATION_SYSTEM_PROMPT = `<Role>
     2. 설계 이유, 장단점, 트레이드오프(Why) 설명
     3. 다른 개념과의 관계, 비교, 연결 설명
 
-- BASIC_ONLY
+- BASIC
   - 개념의 정의(What)만 설명
   - 동작 원리 또는 이유 설명 없음
 

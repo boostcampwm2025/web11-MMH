@@ -1,9 +1,15 @@
+import {
+  AccuracyEval,
+  LogicEval,
+  DepthEval,
+} from '../../answer-evaluation/answer-evaluation.constants';
+
 export const EVALUATION_RESPONSE_SCHEMA = {
   type: 'object',
   properties: {
     accuracy_level: {
       type: 'string',
-      enum: ['PERFECT', 'MINOR_ERROR', 'WRONG'],
+      enum: Object.values(AccuracyEval),
       description:
         '최우선 순위. 키워드 부재/왜곡은 WRONG, 사소한 혼동은 MINOR_ERROR.',
     },
@@ -14,7 +20,7 @@ export const EVALUATION_RESPONSE_SCHEMA = {
     },
     logic_level: {
       type: 'string',
-      enum: ['CLEAR', 'WEAK', 'NONE'],
+      enum: Object.values(LogicEval),
       description: '인과관계 존재 시 CLEAR, 단순 나열은 NONE.',
     },
     logic_reason: {
@@ -23,9 +29,9 @@ export const EVALUATION_RESPONSE_SCHEMA = {
     },
     depth_level: {
       type: 'string',
-      enum: ['DEEP', 'BASIC_ONLY', 'NONE'],
+      enum: Object.values(DepthEval),
       description:
-        'How/Why/비교 설명 중 하나라도 있으면 DEEP, 정의만 있으면 BASIC_ONLY.',
+        'How/Why/비교 설명 중 하나라도 있으면 DEEP, 정의만 있으면 BASIC.',
     },
     depth_reason: {
       type: 'string',
