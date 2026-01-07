@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { typeOrmModuleOptions } from './configs/typeorm.config';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { typeOrmModuleOptions } from './configs/typeorm.config';
       envFilePath: ['.env.local', '.env'],
     }),
     TypeOrmModule.forRoot(typeOrmModuleOptions),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
