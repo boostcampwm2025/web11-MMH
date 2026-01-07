@@ -2,10 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { LlmService } from '../llm/llm.service';
 import { LLM_MODELS } from '../llm/llm.constants';
-import {
-  EVALUATION_SYSTEM_PROMPT,
-  buildEvaluationUserPrompt,
-} from '../llm/prompts/evaluation.prompt';
+import { EVALUATION_SYSTEM_PROMPT } from '../llm/prompts/evaluation.prompt';
+import { buildEvaluationUserPrompt } from '../llm/prompts/evaluation-user.prompt';
 import { EvaluationResultDto } from './dtos/evaluation-result.dto';
 import { EVALUATION_RESPONSE_SCHEMA } from '../llm/prompts/evaluation.schema';
 import {
