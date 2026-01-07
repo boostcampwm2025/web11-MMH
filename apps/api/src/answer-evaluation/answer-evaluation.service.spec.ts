@@ -43,6 +43,7 @@ describe('AnswerEvaluationService', () => {
 
   describe('evaluate', () => {
     it('LLM을 호출하고 점수가 계산된 평가 결과를 반환해야 한다 (100점 만점 케이스)', async () => {
+      // AI로부터의 원본 응답
       const mockLlmResult = {
         accuracy_level: AccuracyEval.PERFECT,
         accuracy_reason: '핵심 개념을 완벽하게 설명했습니다.',
@@ -60,14 +61,15 @@ describe('AnswerEvaluationService', () => {
       const result = await service.evaluate();
 
       // 상세 점수 검증
-      expect(result.score_details).toEqual({
+      expect(result.scoreDetails).toEqual({
         accuracy: 35,
         logic: 30,
         depth: 25,
         completeness: 5,
         application: 5,
       });
-      expect(result.total_score).toBe(100);
+      expect(result.totalScore).toBe(100);
+      expect(result.accuracyLevel).toBe(AccuracyEval.PERFECT);
     });
 
     it('각 항목별 등급에 따라 점수가 올바르게 합산되어야 한다 (경미한 오류 케이스)', async () => {
@@ -88,14 +90,14 @@ describe('AnswerEvaluationService', () => {
 
       const result = await service.evaluate();
 
-      expect(result.score_details).toEqual({
+      expect(result.scoreDetails).toEqual({
         accuracy: 20,
         logic: 15,
         depth: 10,
         completeness: 5,
         application: 0,
       });
-      expect(result.total_score).toBe(50);
+      expect(result.totalScore).toBe(50);
     });
 
     it('최저 점수 케이스를 올바르게 계산해야 한다', async () => {
@@ -115,14 +117,14 @@ describe('AnswerEvaluationService', () => {
 
       const result = await service.evaluate();
 
-      expect(result.score_details).toEqual({
+      expect(result.scoreDetails).toEqual({
         accuracy: 0,
         logic: 0,
         depth: 0,
         completeness: 0,
         application: 0,
       });
-      expect(result.total_score).toBe(0);
+      expect(result.totalScore).toBe(0);
     });
 
     it('LLM 호출 중 에러가 발생하면 에러를 던져야 한다', async () => {

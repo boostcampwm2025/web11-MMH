@@ -8,6 +8,23 @@ import {
 } from '../llm/prompts/evaluation.prompt';
 import { EvaluationResultDto } from './dtos/evaluation-result.dto';
 import { EVALUATION_RESPONSE_SCHEMA } from '../llm/prompts/evaluation.schema';
+import {
+  AccuracyEval,
+  DepthEval,
+  LogicEval,
+} from './answer-evaluation.constants';
+
+interface AiEvaluationRawResponse {
+  accuracy_level: AccuracyEval;
+  accuracy_reason: string;
+  logic_level: LogicEval;
+  logic_reason: string;
+  depth_level: DepthEval;
+  depth_reason: string;
+  is_complete_sentence: boolean;
+  has_application: boolean;
+  mentoring_feedback: string;
+}
 
 @Injectable()
 export class AnswerEvaluationService {
@@ -52,12 +69,27 @@ export class AnswerEvaluationService {
       userAnswer,
     });
 
-    const result = await this.llmService.callWithSchema<EvaluationResultDto>(
-      EVALUATION_SYSTEM_PROMPT,
-      userPrompt,
-      EVALUATION_RESPONSE_SCHEMA,
-      { model: this.evaluationModel },
-    );
+    // AI로부터 snake_case 응답 수신
+    const rawResponse =
+      await this.llmService.callWithSchema<AiEvaluationRawResponse>(
+        EVALUATION_SYSTEM_PROMPT,
+        userPrompt,
+        EVALUATION_RESPONSE_SCHEMA,
+        { model: this.evaluationModel },
+      );
+
+    // camelCase로 변환
+    const result: EvaluationResultDto = {
+      accuracyLevel: rawResponse.accuracy_level,
+      accuracyReason: rawResponse.accuracy_reason,
+      logicLevel: rawResponse.logic_level,
+      logicReason: rawResponse.logic_reason,
+      depthLevel: rawResponse.depth_level,
+      depthReason: rawResponse.depth_reason,
+      isCompleteSentence: rawResponse.is_complete_sentence,
+      hasApplication: rawResponse.has_application,
+      mentoringFeedback: rawResponse.mentoring_feedback,
+    };
 
     // TODO: 점수 계산 로직
     // TODO: DB 저장 로직 (AnswerSubmission.score 업데이트 및 AnswerEvaluation 생성)
