@@ -32,12 +32,12 @@ export class StreaksController {
   }
 
   @Get('/sequence')
-  async getSequenceDailyCount(@Req() req: Request) {
+  async getConsecutiveDayCount(@Req() req: Request) {
     const userId = Number((req.cookies as { userId?: string })?.userId);
     if (!userId) {
       throw new UnauthorizedException('로그인이 필요합니다.');
     }
-    return this.streaksService.getSequencyDailyCount(userId);
+    return this.streaksService.getConsecutiveDayCount(userId);
   }
 
   @Post()

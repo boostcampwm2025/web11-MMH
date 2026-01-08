@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { StreaksService } from './streaks.service';
 import { Streaks } from './entities/streaks.entity';
+import { StreaksService } from './streaks.service';
 
 describe('StreaksService', () => {
   let service: StreaksService;
@@ -83,7 +83,7 @@ describe('StreaksService', () => {
     });
   });
 
-  describe('getSequencyDailyCount', () => {
+  describe('getConsecutiveDayCount', () => {
     beforeEach(() => {
       jest.useFakeTimers();
       jest.setSystemTime(new Date('2026-01-08T00:00:00.000Z'));
@@ -101,7 +101,7 @@ describe('StreaksService', () => {
       ];
       mockStreaksRepository.find.mockResolvedValue(mockData);
 
-      const result = await service.getSequencyDailyCount(1);
+      const result = await service.getConsecutiveDayCount(1);
 
       expect(result).toEqual({ sequencyDailyCount: 7 });
     });
@@ -119,7 +119,7 @@ describe('StreaksService', () => {
       ];
       mockStreaksRepository.find.mockResolvedValue(mockData);
 
-      const result = await service.getSequencyDailyCount(1);
+      const result = await service.getConsecutiveDayCount(1);
 
       expect(result).toEqual({ sequencyDailyCount: 8 });
     });
@@ -135,7 +135,7 @@ describe('StreaksService', () => {
       ];
       mockStreaksRepository.find.mockResolvedValue(mockData);
 
-      const result = await service.getSequencyDailyCount(1);
+      const result = await service.getConsecutiveDayCount(1);
 
       expect(result).toEqual({ sequencyDailyCount: 0 });
     });
@@ -143,7 +143,7 @@ describe('StreaksService', () => {
     it('스트릭 데이터가 없다면 0을 리턴한다', async () => {
       mockStreaksRepository.find.mockResolvedValue([]);
 
-      const result = await service.getSequencyDailyCount(1);
+      const result = await service.getConsecutiveDayCount(1);
 
       expect(result).toEqual({ sequencyDailyCount: 0 });
     });
@@ -155,7 +155,7 @@ describe('StreaksService', () => {
       ];
       mockStreaksRepository.find.mockResolvedValue(mockData);
 
-      const result = await service.getSequencyDailyCount(1);
+      const result = await service.getConsecutiveDayCount(1);
 
       expect(result).toEqual({ sequencyDailyCount: 2 });
     });
@@ -166,7 +166,7 @@ describe('StreaksService', () => {
       ];
       mockStreaksRepository.find.mockResolvedValue(mockData);
 
-      const result = await service.getSequencyDailyCount(1);
+      const result = await service.getConsecutiveDayCount(1);
 
       expect(result).toEqual({ sequencyDailyCount: 1 });
     });
@@ -177,7 +177,7 @@ describe('StreaksService', () => {
       ];
       mockStreaksRepository.find.mockResolvedValue(mockData);
 
-      const result = await service.getSequencyDailyCount(1);
+      const result = await service.getConsecutiveDayCount(1);
 
       expect(result).toEqual({ sequencyDailyCount: 1 });
     });

@@ -27,7 +27,7 @@ export class StreaksService {
     return { streakCount };
   }
 
-  async getSequencyDailyCount(
+  async getConsecutiveDayCount(
     userId: number,
   ): Promise<{ sequencyDailyCount: number }> {
     const today = new Date();
