@@ -2,7 +2,7 @@ export interface Problem {
   id: number;
   title: string;
   description: string;
-  difficulty: number;
+  importance: number;
 }
 
 export interface Category {
