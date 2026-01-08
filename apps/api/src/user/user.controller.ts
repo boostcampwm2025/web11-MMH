@@ -60,7 +60,7 @@ export class UserController {
 
   @Get('me')
   async getCurrentUser(@Req() req: Request): Promise<User> {
-    const userId = req.cookies?.userId;
+    const userId = Number(req.cookies?.userId);
     if (!userId) {
       throw new UnauthorizedException('로그인이 필요합니다.');
     }

@@ -13,7 +13,7 @@ export class User {
   @Column({ type: 'varchar' })
   nickname: string | null;
 
-  @Column({ type: 'varchar'})
+  @Column({ type: 'varchar' })
   password: string | null;
 
   @Column({ type: 'int', name: 'total_point', default: 0 })
