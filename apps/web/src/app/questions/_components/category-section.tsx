@@ -1,8 +1,7 @@
 "use client";
 
 import * as React from "react";
-import QuestionItem from "./question-item";
-import { Category } from "../_types/types";
+import { Category, Question } from "../_types/types";
 
 interface CategoryProps {
   category: Category;
@@ -10,43 +9,74 @@ interface CategoryProps {
 }
 
 function CategorySection({ category, forceExpand }: CategoryProps) {
-  const [isExpanded, setIsExpanded] = React.useState(forceExpand);
+  const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const [questions, setQuestions] = React.useState<Question[]>([]);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [hasFetched, setHasFetched] = React.useState(false);
+
+  const handleFetchQuestions = React.useCallback(async () => {
+    setIsOpen(true);
+    if (hasFetched || isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const res = await fetch(
+        `http://localhost:8000/questions/category/${category.id}`,
+      );
+      const data = await res.json();
+      setQuestions(Array.isArray(data) ? data : []);
+      setHasFetched(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [category.id, hasFetched, isLoading]);
 
   React.useEffect(() => {
-    setIsExpanded(forceExpand);
+    if (forceExpand) {
+      handleFetchQuestions();
+    } else {
+      setIsOpen(false);
+    }
   }, [forceExpand]);
 
   return (
-    <div className="border border-gray-100 rounded-xl overflow-hidden shadow-sm bg-white">
+    <div className="border border-gray-100 rounded-xl bg-gray-50/50 overflow-hidden">
       <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between p-5 hover:bg-gray-50/50 transition-colors text-left"
+        onClick={() => (isOpen ? setIsOpen(false) : handleFetchQuestions())}
+        className="w-full flex justify-between p-3.5 hover:bg-gray-100 transition-colors"
       >
-        <div className="flex items-center gap-3">
-          <span
-            className={`text-gray-400 transition-transform duration-200 ${isExpanded ? "rotate-90" : ""}`}
-          >
-            ▶
-          </span>
-          <span className="font-bold text-gray-800 text-lg">
-            {category.name}
-          </span>
-          <span className="text-gray-400 font-medium">
-            ({category.count}개)
-          </span>
-        </div>
+        <span className="font-semibold text-gray-700 text-sm">
+          {category.name}
+        </span>
+        <span className="text-xs text-gray-400">{isOpen ? "▼" : "▲"}</span>
       </button>
 
-      {isExpanded && (
-        <div className="divide-y divide-gray-50 border-t border-gray-50 bg-white">
-          {category.questions.length > 0 ? (
-            category.questions.map((question) => (
-              <QuestionItem key={question.id} question={question} />
-            ))
-          ) : (
-            <div className="p-10 text-center text-gray-400 text-sm">
-              준비된 문제가 없습니다.
+      {isOpen && (
+        <div className="p-4 border-t bg-white space-y-4">
+          {isLoading ? (
+            <div className="py-4 text-center text-gray-400 text-xs animate-pulse">
+              질문을 가져오는 중...
             </div>
+          ) : hasFetched && questions.length === 0 ? (
+            <div className="py-4 text-center text-gray-400 text-xs">
+              등록된 질문이 없습니다.
+            </div>
+          ) : (
+            questions.map((q) => (
+              <div
+                key={q.id}
+                className="group border-b border-gray-50 last:border-0 pb-3"
+              >
+                <h4 className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors cursor-pointer">
+                  {q.title}
+                </h4>
+                <p className="text-sm text-gray-500 mt-1 leading-relaxed">
+                  {q.content}
+                </p>
+              </div>
+            ))
           )}
         </div>
       )}
