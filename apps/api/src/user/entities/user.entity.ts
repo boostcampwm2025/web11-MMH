@@ -10,16 +10,16 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar' })
   nickname: string | null;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar' })
   password: string | null;
 
-  @Column({ type: 'int', nullable: true, name: 'total_point' })
+  @Column({ type: 'int', name: 'total_point', default: 0 })
   totalPoint: number | null;
 
-  @Column({ type: 'float', nullable: true, name: 'total_score' })
+  @Column({ type: 'float', name: 'total_score', default: 0 })
   totalScore: number | null;
 
   @CreateDateColumn({

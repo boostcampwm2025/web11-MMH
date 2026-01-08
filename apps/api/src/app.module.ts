@@ -5,6 +5,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { typeOrmModuleOptions } from './configs/typeorm.config';
 import { UserModule } from './user/user.module';
+import { AnswerEvaluationModule } from './answer-evaluation/answer-evaluation.module';
+import { AudioStreamModule } from './audio-stream/audio-stream.module';
 
 @Module({
   imports: [
@@ -13,6 +15,8 @@ import { UserModule } from './user/user.module';
     }),
     TypeOrmModule.forRoot(typeOrmModuleOptions),
     UserModule,
+    AnswerEvaluationModule,
+    AudioStreamModule,
   ],
   controllers: [AppController],
   providers: [AppService],
