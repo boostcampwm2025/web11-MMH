@@ -47,9 +47,13 @@ export class StreaksService {
     );
 
     const referenceDate = new Date(today);
+    referenceDate.setDate(referenceDate.getDate() - 1);
     while (streakDates.has(referenceDate.getTime())) {
       count++;
       referenceDate.setDate(referenceDate.getDate() - 1);
+    }
+    if (streakDates.has(today.getTime())) {
+      count++;
     }
     return { sequencyDailyCount: count };
   }
