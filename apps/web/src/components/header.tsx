@@ -1,21 +1,9 @@
-"use client";
-
 import Link from "next/link";
-import { useAuth } from "@/contexts/auth-context";
-import { useRouter } from "next/navigation";
+import { getCurrentUser } from "@/app/(auth)/_utils/auth";
+import LogoutButton from "@/app/(auth)/_components/logout-button";
 
-function Header() {
-  const { user, logout, loading } = useAuth();
-  const router = useRouter();
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      router.push("/");
-    } catch {
-      // 에러 발생 시 무시 (로그아웃 실패해도 홈으로 이동)
-    }
-  };
+async function Header() {
+  const user = await getCurrentUser();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-white/80 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/80">
@@ -28,19 +16,12 @@ function Header() {
         </Link>
 
         <div className="flex items-center gap-4">
-          {loading ? (
-            <div className="text-sm text-zinc-500">로딩 중...</div>
-          ) : user ? (
+          {user ? (
             <>
               <span className="text-sm text-zinc-700 dark:text-zinc-300">
                 {user.nickname || "유저"}
               </span>
-              <button
-                onClick={handleLogout}
-                className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
-              >
-                로그아웃
-              </button>
+              <LogoutButton />
             </>
           ) : (
             <Link
@@ -56,4 +37,4 @@ function Header() {
   );
 }
 
-export default { Header };
+export default Header;
