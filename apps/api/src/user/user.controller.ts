@@ -44,10 +44,7 @@ export class UserController {
       user: {
         id: user.id,
         nickname: user.nickname,
-        totalPoint: user.totalPoint,
-        totalScore: user.totalScore,
       },
-      message: '로그인 성공',
     };
 
     res.json(response);
