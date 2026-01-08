@@ -10,14 +10,20 @@ export class StreaksService {
     private readonly streaksRepository: Repository<Streaks>,
   ) {}
 
-  async getYearlyActivityCount(userId: number, year: number): Promise<number> {
+  async getYearlyActivityCount(
+    userId: number,
+    year: number,
+  ): Promise<{ streakCount: number }> {
     const userStreak = await this.streaksRepository.findBy({ userId: userId });
-    return userStreak.filter((user) => {
+    const streakCount = userStreak.filter((user) => {
       return new Date(user.activityDate).getFullYear() === year;
     }).length;
+    return { streakCount };
   }
 
-  async getSequencyDailyCount(userId: number): Promise<number> {
+  async getSequencyDailyCount(
+    userId: number,
+  ): Promise<{ sequencyDailyCount: number }> {
     const today = new Date();
     today.setHours(0, 0, 0, 0); //시간으로 인해 이틀 뒤로 날짜가 밀리는것을 방지하기 위한 정규화
 
@@ -27,7 +33,7 @@ export class StreaksService {
     });
 
     if (!userStreaks.length) {
-      return 0;
+      return { sequencyDailyCount: 0 };
     }
 
     let count = 0;
@@ -45,21 +51,24 @@ export class StreaksService {
       count++;
       referenceDate.setDate(referenceDate.getDate() - 1);
     }
-    return count;
+    return { sequencyDailyCount: count };
   }
 
-  async recordDailyActivity(userId: number, submittedAt: Date) {
+  async recordDailyActivity(
+    userId: number,
+    submittedAt: Date,
+  ): Promise<{ success: boolean }> {
     const checkDay = await this.streaksRepository.findOneBy({
       userId: userId,
       activityDate: submittedAt,
     });
     if (checkDay) {
-      return true;
+      return { success: true };
     }
     await this.streaksRepository.insert({
       userId: userId,
       activityDate: submittedAt,
     });
-    return true;
+    return { success: true };
   }
 }
