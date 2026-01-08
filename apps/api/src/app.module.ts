@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { typeOrmModuleOptions } from './configs/typeorm.config';
+import { AnswerEvaluationModule } from './answer-evaluation/answer-evaluation.module';
 import { AudioStreamModule } from './audio-stream/audio-stream.module';
 
 @Module({
@@ -12,6 +13,7 @@ import { AudioStreamModule } from './audio-stream/audio-stream.module';
       envFilePath: ['.env.local', '.env'],
     }),
     TypeOrmModule.forRoot(typeOrmModuleOptions),
+    AnswerEvaluationModule,
     AudioStreamModule,
   ],
   controllers: [AppController],
