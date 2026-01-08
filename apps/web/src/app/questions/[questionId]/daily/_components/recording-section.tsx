@@ -4,6 +4,8 @@ import Waveform from "@/components/waveform/waveform";
 import { Button } from "@/components/button/button";
 import { CheckCircle2, Mic, RotateCcw, Square } from "lucide-react";
 import useAudioStreamSession from "../_hooks/use-audio-stream-session";
+import { cn } from "@/lib/cn";
+import WaveformFrame from "@/components/waveform/waveform-frame";
 
 function RecordingSection() {
   const {
@@ -19,7 +21,14 @@ function RecordingSection() {
   // 녹음 중지 핸들러
   return (
     <section className="flex flex-col gap-6">
-      <Waveform historyRef={historyRef} />
+      <WaveformFrame
+        className={cn(
+          "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] overflow-hidden",
+          isRecording ? "h-40" : "h-0 opacity-0",
+        )}
+      >
+        <Waveform historyRef={historyRef} />
+      </WaveformFrame>
       <div className="flex items-center justify-center gap-4">
         {(() => {
           if (isLoading) {

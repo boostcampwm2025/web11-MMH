@@ -26,12 +26,12 @@ function Waveform({
   onChangeSize,
 }: WaveFormProps) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const { ctx, width, height } = useCanvas2D(canvasRef, { onChangeSize });
+  const { ctx, width } = useCanvas2D(canvasRef, { onChangeSize });
 
   useAnimationFrame(() => {
     if (!ctx) return;
 
-    drawWaveform(ctx, width, height, historyRef.current, {
+    drawWaveform(ctx, width, 158, historyRef.current, {
       barWidthPx: barWidthPx,
       barGapPx: barGapPx,
       barColor: barColor,
@@ -40,23 +40,10 @@ function Waveform({
   });
 
   return (
-    <div
-      className={cn(
-        "w-full h-40 bg-white rounded-xl border border-zinc-200 flex items-center justify-center overflow-hidden relative shadow-sm group",
-        className,
-      )}
-    >
-      {/* Background Grid Pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)",
-          backgroundSize: "20px 20px",
-        }}
-      />
-      <canvas ref={canvasRef} className="w-full h-full relative z-10" />
-    </div>
+    <canvas
+      ref={canvasRef}
+      className={cn("w-full h-40 relative z-10", className)}
+    />
   );
 }
 
