@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import { Streaks } from './entities/streaks.entity';
 
 @Injectable()
@@ -14,10 +14,16 @@ export class StreaksService {
     userId: number,
     year: number,
   ): Promise<{ streakCount: number }> {
-    const userStreak = await this.streaksRepository.findBy({ userId: userId });
-    const streakCount = userStreak.filter((user) => {
-      return new Date(user.activityDate).getFullYear() === year;
-    }).length;
+    const today = new Date();
+    const start = new Date(`${year}-01-01`);
+    const end =
+      today.getFullYear() < year ? new Date(`${year}-12-31`) : new Date();
+    const streakCount = await this.streaksRepository.count({
+      where: {
+        userId: userId,
+        activityDate: Between(start, end),
+      },
+    });
     return { streakCount };
   }
 

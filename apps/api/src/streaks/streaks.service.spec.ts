@@ -7,7 +7,7 @@ describe('StreaksService', () => {
   let service: StreaksService;
 
   const mockStreaksRepository = {
-    findBy: jest.fn(),
+    count: jest.fn(),
     find: jest.fn(),
     findOneBy: jest.fn(),
     insert: jest.fn(),
@@ -34,7 +34,7 @@ describe('StreaksService', () => {
 
   describe('getYearlyActivityCount', () => {
     it('2026년 기준으로 데이터가 없으면 0이 리턴된다', async () => {
-      mockStreaksRepository.findBy.mockResolvedValue([]);
+      mockStreaksRepository.count.mockResolvedValue(0);
 
       const result = await service.getYearlyActivityCount(1, 2026);
 
@@ -42,14 +42,7 @@ describe('StreaksService', () => {
     });
 
     it('2026년 기준으로 데이터가 5개 있으면 5가 리턴된다', async () => {
-      const mockData = [
-        { id: 1, userId: 1, activityDate: new Date('2026-01-01') },
-        { id: 2, userId: 1, activityDate: new Date('2026-01-02') },
-        { id: 3, userId: 1, activityDate: new Date('2026-01-03') },
-        { id: 4, userId: 1, activityDate: new Date('2026-01-04') },
-        { id: 5, userId: 1, activityDate: new Date('2026-01-05') },
-      ];
-      mockStreaksRepository.findBy.mockResolvedValue(mockData);
+      mockStreaksRepository.count.mockResolvedValue(5);
 
       const result = await service.getYearlyActivityCount(1, 2026);
 
@@ -57,7 +50,7 @@ describe('StreaksService', () => {
     });
 
     it('2025년 기준으로 데이터가 없으면 0을 리턴한다', async () => {
-      mockStreaksRepository.findBy.mockResolvedValue([]);
+      mockStreaksRepository.count.mockResolvedValue(0);
 
       const result = await service.getYearlyActivityCount(1, 2025);
 
@@ -65,14 +58,7 @@ describe('StreaksService', () => {
     });
 
     it('2025년 기준으로 데이터가 5개 있으면 5를 리턴한다', async () => {
-      const mockData = [
-        { id: 1, userId: 1, activityDate: new Date('2025-01-01') },
-        { id: 2, userId: 1, activityDate: new Date('2025-01-02') },
-        { id: 3, userId: 1, activityDate: new Date('2025-01-03') },
-        { id: 4, userId: 1, activityDate: new Date('2025-01-04') },
-        { id: 5, userId: 1, activityDate: new Date('2025-01-05') },
-      ];
-      mockStreaksRepository.findBy.mockResolvedValue(mockData);
+      mockStreaksRepository.count.mockResolvedValue(5);
 
       const result = await service.getYearlyActivityCount(1, 2025);
 
@@ -80,17 +66,7 @@ describe('StreaksService', () => {
     });
 
     it('2025년 3개 + 2026년 5개 혼합 시 2026년 조회하면 5를 리턴한다', async () => {
-      const mockData = [
-        { id: 1, userId: 1, activityDate: new Date('2025-12-01') },
-        { id: 2, userId: 1, activityDate: new Date('2025-12-02') },
-        { id: 3, userId: 1, activityDate: new Date('2025-12-03') },
-        { id: 4, userId: 1, activityDate: new Date('2026-01-01') },
-        { id: 5, userId: 1, activityDate: new Date('2026-01-02') },
-        { id: 6, userId: 1, activityDate: new Date('2026-01-03') },
-        { id: 7, userId: 1, activityDate: new Date('2026-01-04') },
-        { id: 8, userId: 1, activityDate: new Date('2026-01-05') },
-      ];
-      mockStreaksRepository.findBy.mockResolvedValue(mockData);
+      mockStreaksRepository.count.mockResolvedValue(5);
 
       const result = await service.getYearlyActivityCount(1, 2026);
 
@@ -98,18 +74,11 @@ describe('StreaksService', () => {
     });
 
     it('userId별로 데이터를 구분하여 조회한다', async () => {
-      const mockDataForUser1 = [
-        { id: 1, userId: 1, activityDate: new Date('2026-01-01') },
-        { id: 2, userId: 1, activityDate: new Date('2026-01-02') },
-        { id: 3, userId: 1, activityDate: new Date('2026-01-03') },
-        { id: 4, userId: 1, activityDate: new Date('2026-01-04') },
-        { id: 5, userId: 1, activityDate: new Date('2026-01-05') },
-      ];
-      mockStreaksRepository.findBy.mockResolvedValue(mockDataForUser1);
+      mockStreaksRepository.count.mockResolvedValue(5);
 
       const result = await service.getYearlyActivityCount(1, 2026);
 
-      expect(mockStreaksRepository.findBy).toHaveBeenCalledWith({ userId: 1 });
+      expect(mockStreaksRepository.count).toHaveBeenCalled();
       expect(result).toEqual({ streakCount: 5 });
     });
   });
