@@ -8,11 +8,13 @@ async function bootstrap() {
   // 쿠키 파서 (개발용)
   app.use(cookieParser());
 
-  // CORS 설정 (개발용)
-  app.enableCors({
-    origin: true,
-    credentials: true,
-  });
+ // CORS 설정 (개발용)
+  if(process.env.NODE_ENV === 'development') {
+    app.enableCors({
+      origin: true,
+      credentials: true,
+    });
+  }
 
   await app.listen(process.env.PORT ?? 8000);
 }
