@@ -28,7 +28,7 @@ function ProblemItem({ problem }: ProblemItemProps) {
           {label}
         </span>
         <span className="text-[10px] text-gray-400 font-medium">
-          Score: {problem.importance.toFixed(1)}
+          중요도: {problem.importance.toFixed(1)}
         </span>
       </div>
     </div>
