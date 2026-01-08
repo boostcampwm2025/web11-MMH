@@ -102,8 +102,6 @@ function useAudioStreamSession() {
       setIsLoading(false);
       setSessionId(newSessionId);
       setIsRecording(true);
-
-      console.log("Recording started with session:", newSessionId);
     } catch (error) {
       console.error("Failed to start recording:", error);
     }
@@ -121,15 +119,13 @@ function useAudioStreamSession() {
       setIsLoading(true);
 
       // 세션 종료
-      const result = await finalizeAudioSession({
+      await finalizeAudioSession({
         sessionId,
       });
 
       setIsLoading(false);
 
       socketRef.current?.disconnect();
-
-      console.log("Recording stopped:", result);
     } catch (error) {
       console.error("Failed to stop recording:", error);
     }
