@@ -70,11 +70,8 @@ export function useCanvas2D(
         onChangeSize?.({ width: nextWidthCss, height: nextHeightCss });
       }
 
-      // ✅ CSS 좌표계로 그리게 transform 고정
-      // setTransform(a,b,c,d,e,f): (a,d)가 스케일
       ctx.setTransform(nextDpr, 0, 0, nextDpr, 0, 0);
 
-      // 스냅샷 업데이트 (ctx는 stable이라 매번 바꿀 필요 없음)
       setSnapshot((prev) => {
         if (
           prev.width === nextWidthCss &&
