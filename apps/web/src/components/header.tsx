@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useAuth } from '@/contexts/auth-context';
-import { useRouter } from 'next/navigation';
+import Link from "next/link";
+import { useAuth } from "@/contexts/auth-context";
+import { useRouter } from "next/navigation";
 
 function Header() {
   const { user, logout, loading } = useAuth();
@@ -11,7 +11,7 @@ function Header() {
   const handleLogout = async () => {
     try {
       await logout();
-      router.push('/');
+      router.push("/");
     } catch {
       // 에러 발생 시 무시 (로그아웃 실패해도 홈으로 이동)
     }
@@ -20,7 +20,10 @@ function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-white/80 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-900/80">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="text-lg font-semibold text-black dark:text-zinc-50">
+        <Link
+          href="/"
+          className="text-lg font-semibold text-black dark:text-zinc-50"
+        >
           말만해
         </Link>
 
@@ -30,7 +33,7 @@ function Header() {
           ) : user ? (
             <>
               <span className="text-sm text-zinc-700 dark:text-zinc-300">
-                {user.nickname || '유저'}
+                {user.nickname || "유저"}
               </span>
               <button
                 onClick={handleLogout}
@@ -53,5 +56,4 @@ function Header() {
   );
 }
 
-export { Header };
-
+export default { Header };
