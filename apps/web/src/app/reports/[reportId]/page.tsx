@@ -1,20 +1,34 @@
 import ReportHeader from "./_components/report-header";
+import FeedbackSection from "./_components/feedback/FeedbackSection";
+import { MOCK_QUESTION, MOCK_REPORTS } from "./_constants/mock-data";
 
 interface ReportPageProps {
   params: Promise<{ reportId: string }>;
+  searchParams: Promise<{ attempt?: string }>;
 }
 
-async function ReportPage({ params }: ReportPageProps) {
-  const { reportId } = await params;
+async function ReportPage({ searchParams }: ReportPageProps) {
+  const { attempt } = await searchParams;
+
+  const targetId = attempt || MOCK_REPORTS[0].id.toString();
+  const reportData = MOCK_REPORTS.find((r) => r.id.toString() === targetId);
+
+  if (!reportData) return null; // TODO: 에러 처리 필요
 
   return (
-    <main className="max-w-225 mx-auto w-full px-6 pt-12 pb-24 flex flex-col gap-10">
+    <main className="max-w-4xl mx-auto w-full px-6 pt-12 pb-24 flex flex-col gap-6">
       <ReportHeader
-        category="Frontend"
-        subcategory="React"
-        title="React의 Virtual DOM에 대해 설명하고, 이것이 어떻게 성능을 향상시키는지 설명해주세요."
-        description="재조정(Reconciliation)과 Diffing 알고리즘에 초점을 맞춰주세요. 실제 DOM 조작이 왜 비용이 많이 드는지, 그리고 React가 어떻게 가벼운 객체 트리를 사용하여 업데이트를 효율적으로 처리하는지 설명해주세요."
+        category={MOCK_QUESTION.category}
+        subcategory={MOCK_QUESTION.subCategory}
+        title={MOCK_QUESTION.title}
+        description={MOCK_QUESTION.description}
       />
+
+      {reportData.status === "PENDING" ? (
+        <div>채점 중...</div>
+      ) : (
+        <FeedbackSection data={reportData} />
+      )}
     </main>
   );
 }
