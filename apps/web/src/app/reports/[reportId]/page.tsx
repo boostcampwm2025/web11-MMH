@@ -1,5 +1,6 @@
 import ReportHeader from "./_components/report-header";
 import FeedbackSection from "./_components/feedback/FeedbackSection";
+import HistorySection from "./_components/history/history-section";
 import { MOCK_QUESTION, MOCK_REPORTS } from "./_constants/mock-data";
 
 interface ReportPageProps {
@@ -29,6 +30,8 @@ async function ReportPage({ searchParams }: ReportPageProps) {
       ) : (
         <FeedbackSection data={reportData} />
       )}
+
+      <HistorySection history={MOCK_REPORTS} selectedId={targetId} />
     </main>
   );
 }
