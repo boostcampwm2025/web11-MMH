@@ -6,7 +6,7 @@ export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
   @Get('category/:categoryId')
-  async getQuestionsByCategory(@Param('categoryId') categoryId: string) {
+  async getBySubCategory(@Param('categoryId') categoryId: string) {
     return await this.questionService.findByCategory(+categoryId);
   }
 }

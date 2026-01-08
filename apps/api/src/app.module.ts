@@ -7,6 +7,8 @@ import { typeOrmModuleOptions } from './configs/typeorm.config';
 import { UserModule } from './user/user.module';
 import { AnswerEvaluationModule } from './answer-evaluation/answer-evaluation.module';
 import { AudioStreamModule } from './audio-stream/audio-stream.module';
+import { CategoryModule } from './category/category.module';
+import { QuestionModule } from './question/question.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { AudioStreamModule } from './audio-stream/audio-stream.module';
     UserModule,
     AnswerEvaluationModule,
     AudioStreamModule,
+    CategoryModule,
+    QuestionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

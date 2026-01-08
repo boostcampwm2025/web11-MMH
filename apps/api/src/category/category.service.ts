@@ -5,6 +5,7 @@ import { Category } from './entities/category.entity';
 
 @Injectable()
 export class CategoryService implements OnApplicationBootstrap {
+  [x: string]: any;
   constructor(
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
@@ -14,7 +15,7 @@ export class CategoryService implements OnApplicationBootstrap {
     const count = await this.categoryRepository.count();
     if (count > 0) return;
 
-    // 1. 대분류 생성 (Depth 1)
+    // 대분류 생성 (Depth 1)
     const roots = await this.categoryRepository.save([
       { name: 'Computer Science', depth: 1 },
       { name: 'Web', depth: 1 },
@@ -24,7 +25,7 @@ export class CategoryService implements OnApplicationBootstrap {
 
     const [cs, web, fe, be] = roots;
 
-    // 2. 중분류 생성 (Depth 2)
+    // 중분류 생성 (Depth 2)
     const subCategories = [
       // Computer Science 하위
       { name: 'Network', depth: 2, parent: cs },
@@ -71,7 +72,7 @@ export class CategoryService implements OnApplicationBootstrap {
     );
   }
 
-  async getCategoryTree(rootName: string) {
+  async getCategoryTreeByRootName(rootName: string) {
     return await this.categoryRepository.findOne({
       where: { name: rootName, depth: 1 },
       relations: ['children', 'children.questions'],
@@ -86,6 +87,16 @@ export class CategoryService implements OnApplicationBootstrap {
   async getRootCategories() {
     return await this.categoryRepository.find({
       where: { depth: 1 },
+    });
+  }
+
+  async getCategoryTreeById(id: number) {
+    return await this.categoryRepository.findOne({
+      where: { id },
+      relations: ['children'], // 하위 중분류까지만 로드
+      order: {
+        children: { name: 'ASC' },
+      },
     });
   }
 }
