@@ -10,11 +10,11 @@ import {
   AccuracyEval,
   LogicEval,
   DepthEval,
-} from './answer-evaluation.constants';
-import { AnswerSubmission } from 'src/answer-submission/answer-submission.entity';
+} from '../answer-evaluation.constants';
+import { AnswerSubmission } from '../../answer-submission/answer-submission.entity';
 
 @Entity('answer_evaluations')
-class AnswerEvaluation {
+export class AnswerEvaluation {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -52,5 +52,3 @@ class AnswerEvaluation {
   @JoinColumn({ name: 'submission_id' })
   submission: AnswerSubmission;
 }
-
-export { AnswerEvaluation };
