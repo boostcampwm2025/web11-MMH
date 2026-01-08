@@ -1,4 +1,4 @@
-import { Question } from 'src/question/question.entity';
+import { Question } from 'src/question/entities/question.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -15,9 +15,6 @@ export class Category {
 
   @Column({ type: 'varchar', length: 255 })
   name: string;
-
-  @Column({ name: 'parent_id', type: 'int', nullable: true })
-  parentId: number | null;
 
   @Column({ type: 'int', default: 1 })
   depth: number;

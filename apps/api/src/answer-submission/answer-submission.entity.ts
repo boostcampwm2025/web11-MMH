@@ -12,7 +12,7 @@ import {
   InputType,
   ProcessStatus,
 } from './answer-submission.constants';
-import { Question } from 'src/question/question.entity';
+import { Question } from 'src/question/entities/question.entity';
 import { AudioAsset } from 'src/audio-stream/entities/audio-asset.entity';
 
 @Entity('answer_submissions')

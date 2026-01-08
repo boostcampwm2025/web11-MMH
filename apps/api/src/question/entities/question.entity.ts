@@ -1,4 +1,4 @@
-import { Category } from 'src/category/category.entity';
+import { Category } from 'src/category/entities/category.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
