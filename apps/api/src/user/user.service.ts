@@ -49,7 +49,7 @@ export class UserService {
       throw new NotFoundException('유저를 찾을 수 없습니다.');
     }
 
-    if (!user.password || user.password !== password) {
+    if (user.password !== password) {
       throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
     }
 
