@@ -16,7 +16,7 @@ function SearchHeader({ onToggleExpand, isAllExpanded }: SearchHeaderProps) {
           className="w-full bg-gray-50 border border-gray-200 rounded-lg py-2.5 pl-11 pr-4 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
         />
       </div>
-      <button 
+      <button
         onClick={onToggleExpand}
         className="px-5 py-2.5 border border-gray-200 rounded-lg hover:bg-gray-50 font-medium text-gray-700 transition-colors"
       >
