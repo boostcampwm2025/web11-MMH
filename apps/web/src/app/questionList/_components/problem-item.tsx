@@ -16,8 +16,8 @@ function ProblemItem({ problem }: ProblemItemProps) {
   const { label, style } = getImportanceUI(problem.importance);
 
   return (
-    <div className="p-6 flex items-start justify-between gap-6 hover:bg-gray-50 transition-all cursor-pointer">
-      <div className="space-y-2">
+    <div className="p-6 flex items-center justify-between gap-6 hover:bg-gray-50 transition-all cursor-pointer">
+      <div>
         <h3 className="font-semibold text-gray-900">{problem.title}</h3>
       </div>
 
