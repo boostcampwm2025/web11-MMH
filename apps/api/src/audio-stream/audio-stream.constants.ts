@@ -1,9 +1,7 @@
-const AudioSessionStatus = {
+export const AudioSessionStatus = {
   OPEN: 'OPEN',
   FINALIZED: 'FINALIZED',
   FAILED: 'FAILED',
 } as const;
-type AudioSessionStatus =
+export type AudioSessionStatus =
   (typeof AudioSessionStatus)[keyof typeof AudioSessionStatus];
-
-export { AudioSessionStatus };
