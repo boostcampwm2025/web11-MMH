@@ -4,7 +4,10 @@ import { Delaunay } from "d3-delaunay";
 import { randomLcg } from "d3-random";
 import * as React from "react";
 import skmeans from "skmeans";
-import { VORONOI_COLOR_CONSTANT, VORONOI_NUMBER_CONSTANT } from "../../_constants/voronoi-constant";
+import {
+  VORONOI_COLOR_CONSTANT,
+  VORONOI_NUMBER_CONSTANT,
+} from "../../_constants/voronoi-constant";
 import computeCells from "../../_lib/compute-cells";
 import generateRandomPoint from "../../_lib/generate-random-point";
 import lloydRelaxation from "../../_lib/lloyd-relaxation";
@@ -22,7 +25,12 @@ interface CellData {
   cluster: number;
 }
 
-function VoronoiStreak({ width, height, streakCount, imageSrc }: VoronoiStreakProps) {
+function VoronoiStreak({
+  width,
+  height,
+  streakCount,
+  imageSrc,
+}: VoronoiStreakProps) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const [cellData, setCellData] = React.useState<CellData[]>([]);
 
@@ -46,7 +54,11 @@ function VoronoiStreak({ width, height, streakCount, imageSrc }: VoronoiStreakPr
       const tempDelaunay = Delaunay.from(points);
       const tempVoronoi = tempDelaunay.voronoi([0, 0, width, height]);
 
-      for (let i = 0; i < VORONOI_NUMBER_CONSTANT.NUMBER_OF_LLOYD_ATTEMPTS; i++) {
+      for (
+        let i = 0;
+        i < VORONOI_NUMBER_CONSTANT.NUMBER_OF_LLOYD_ATTEMPTS;
+        i++
+      ) {
         points = lloydRelaxation(tempVoronoi, points);
         tempVoronoi.update();
       }
@@ -67,7 +79,11 @@ function VoronoiStreak({ width, height, streakCount, imageSrc }: VoronoiStreakPr
         const idx = Math.floor(lcg() * points.length);
         initialCentroids.push(points[idx]);
       }
-      const clusterResult = skmeans(points, VORONOI_NUMBER_CONSTANT.PERIOD, initialCentroids);
+      const clusterResult = skmeans(
+        points,
+        VORONOI_NUMBER_CONSTANT.PERIOD,
+        initialCentroids,
+      );
       const pointsWithCluster = points.map((point, idx) => ({
         point,
         cluster: clusterResult.idxs[idx],
@@ -78,7 +94,14 @@ function VoronoiStreak({ width, height, streakCount, imageSrc }: VoronoiStreakPr
 
       const delaunay = Delaunay.from(points);
       const voronoi = delaunay.voronoi([0, 0, width, height]);
-      const computedCells = computeCells(points, voronoi, imageData, width, height, clusters);
+      const computedCells = computeCells(
+        points,
+        voronoi,
+        imageData,
+        width,
+        height,
+        clusters,
+      );
       setCellData(computedCells);
     };
   }, [imageSrc, width, height]);

@@ -1,6 +1,9 @@
 import { Delaunay, Voronoi } from "d3-delaunay";
 
-function lloydRelaxation(voronoi: Voronoi<Delaunay.Point>, points: [number, number][]) {
+function lloydRelaxation(
+  voronoi: Voronoi<Delaunay.Point>,
+  points: [number, number][],
+) {
   const newPoints: [number, number][] = [];
   for (let i = 0; i < points.length; i++) {
     const polygon = voronoi.cellPolygon(i);

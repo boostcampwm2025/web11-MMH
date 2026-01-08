@@ -6,7 +6,7 @@ function computeCells(
   imageData: ImageDataArray,
   width: number,
   height: number,
-  clusters: number[]
+  clusters: number[],
 ) {
   const computedCells = points.map((point, idx) => {
     // renderCell 실행시 canvasAPI 연동 안되어있으면 SVG path string이 return.

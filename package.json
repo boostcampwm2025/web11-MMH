@@ -23,7 +23,7 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "prettier --write",
-      "eslint --fix"
+      "turbo run lint -- --fix"
     ]
   },
   "packageManager": "pnpm@10.24.0",
