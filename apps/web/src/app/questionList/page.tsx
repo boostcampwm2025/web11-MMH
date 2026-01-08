@@ -17,7 +17,7 @@ const MOCK_DATA: MockData = {
       id: "1",
       name: "네트워크",
       count: 4,
-      problems: [
+      questions: [
         {
           id: 1,
           title: "OSI 7 계층의 역할",
@@ -52,7 +52,7 @@ const MOCK_DATA: MockData = {
       id: "2",
       name: "운영체제",
       count: 4,
-      problems: [
+      questions: [
         {
           id: 5,
           title: "프로세스와 스레드의 차이",
@@ -87,7 +87,7 @@ const MOCK_DATA: MockData = {
       id: "3",
       name: "알고리즘",
       count: 4,
-      problems: [
+      questions: [
         {
           id: 9,
           title: "시간 복잡도와 Big-O",
@@ -121,7 +121,7 @@ const MOCK_DATA: MockData = {
   ],
 };
 
-export default function QuestionListPage() {
+function QuestionListPage() {
   const [isAllExpanded, setIsAllExpanded] = React.useState(false);
   return (
     <main className="max-w-4xl mx-auto p-8 space-y-8 bg-white min-h-screen">
@@ -153,3 +153,5 @@ export default function QuestionListPage() {
     </main>
   );
 }
+
+export default QuestionListPage;

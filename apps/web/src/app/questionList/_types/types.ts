@@ -1,4 +1,4 @@
-export interface Problem {
+export interface Question {
   id: number;
   title: string;
   context: string;
@@ -9,5 +9,5 @@ export interface Category {
   id: string;
   name: string;
   count: number;
-  problems: Problem[];
+  questions: Question[];
 }

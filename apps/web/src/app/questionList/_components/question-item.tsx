@@ -1,10 +1,10 @@
-import { Problem } from "../_types/types";
+import { Question } from "../_types/types";
 
-interface ProblemItemProps {
-  problem: Problem;
+interface QuestionItemProps {
+  question: Question;
 }
 
-function ProblemItem({ problem }: ProblemItemProps) {
+function QuestionItem({ question }: QuestionItemProps) {
   const getImportanceUI = (score: number) => {
     if (score <= 2.0)
       return { label: "낮음", style: "text-emerald-500 bg-emerald-50" };
@@ -13,12 +13,12 @@ function ProblemItem({ problem }: ProblemItemProps) {
     return { label: "높음", style: "text-rose-500 bg-rose-50" };
   };
 
-  const { label, style } = getImportanceUI(problem.importance);
+  const { label, style } = getImportanceUI(question.importance);
 
   return (
     <div className="p-6 flex items-center justify-between gap-6 hover:bg-gray-50 transition-all cursor-pointer">
       <div>
-        <h3 className="font-semibold text-gray-900">{problem.title}</h3>
+        <h3 className="font-semibold text-gray-900">{question.title}</h3>
       </div>
 
       <div className="flex flex-col items-end gap-1">
@@ -28,11 +28,11 @@ function ProblemItem({ problem }: ProblemItemProps) {
           {label}
         </span>
         <span className="text-[10px] text-gray-400 font-medium">
-          중요도: {problem.importance.toFixed(1)}
+          중요도: {question.importance.toFixed(1)}
         </span>
       </div>
     </div>
   );
 }
 
-export default ProblemItem;
+export default QuestionItem;

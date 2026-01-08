@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import ProblemItem from "./problem-item";
+import QuestionItem from "./question-item";
 import { Category } from "../_types/types";
 
 interface CategoryProps {
@@ -39,9 +39,9 @@ function CategorySection({ category, forceExpand }: CategoryProps) {
 
       {isExpanded && (
         <div className="divide-y divide-gray-50 border-t border-gray-50 bg-white">
-          {category.problems.length > 0 ? (
-            category.problems.map((problem) => (
-              <ProblemItem key={problem.id} problem={problem} />
+          {category.questions.length > 0 ? (
+            category.questions.map((question) => (
+              <QuestionItem key={question.id} question={question} />
             ))
           ) : (
             <div className="p-10 text-center text-gray-400 text-sm">
