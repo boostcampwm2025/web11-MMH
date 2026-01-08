@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '@/contexts/auth-context';
-import { getTestUsers, User } from '@/lib/api';
-import { Header } from '@/components/header';
+import React from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/auth-context";
+import { getTestUsers, User } from "@/lib/api";
+import { Header } from "@/components/header";
 
 function LoginPage() {
   const router = useRouter();
@@ -15,7 +15,7 @@ function LoginPage() {
   React.useEffect(() => {
     // 이미 로그인되어 있으면 홈으로 리다이렉트
     if (user) {
-      router.push('/');
+      router.push("/");
       return;
     }
 
@@ -35,9 +35,9 @@ function LoginPage() {
   const handleLogin = async (nickname: string) => {
     try {
       await login(nickname);
-      router.push('/');
+      router.push("/");
     } catch {
-      alert('로그인에 실패했습니다.');
+      alert("로그인에 실패했습니다.");
     }
   };
 
@@ -56,35 +56,30 @@ function LoginPage() {
     <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-black">
       <Header />
       <div className="flex flex-1 items-center justify-center">
-      <div className="w-full max-w-md rounded-lg border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
-            테스트 로그인
-          </h1>
-          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-            개발/테스트 전용 로그인 페이지입니다.
-          </p>
-        </div>
+        <div className="w-full max-w-md rounded-lg border border-zinc-200 bg-white p-8 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+          <div className="mb-6">
+            <h1 className="text-2xl font-semibold text-black dark:text-zinc-50">
+              테스트 로그인
+            </h1>
+            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+              개발/테스트 전용 로그인 페이지입니다.
+            </p>
+          </div>
 
-        <div className="space-y-2">
-          {testUsers.map((testUser) => (
-            <button
-              key={testUser.id}
-              onClick={() => handleLogin(testUser.nickname ?? '')}
-              className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 text-left transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800"
-            >
-              <div className="font-medium text-black dark:text-zinc-50">
-                {testUser.nickname || `유저 #${testUser.id}`}
-              </div>
-              {testUser.totalPoint !== null && (
-                <div className="text-sm text-zinc-600 dark:text-zinc-400">
-                  포인트: {testUser.totalPoint}
+          <div className="space-y-2">
+            {testUsers.map((testUser) => (
+              <button
+                key={testUser.id}
+                onClick={() => handleLogin(testUser.nickname ?? "")}
+                className="w-full rounded-lg border border-zinc-200 bg-white px-4 py-3 text-left transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800"
+              >
+                <div className="font-medium text-black dark:text-zinc-50">
+                  {testUser.nickname || `유저 #${testUser.id}`}
                 </div>
-              )}
-            </button>
-          ))}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
       </div>
     </div>
   );

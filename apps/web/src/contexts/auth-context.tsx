@@ -1,7 +1,12 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { User, getCurrentUser, login as apiLogin, logout as apiLogout } from '@/lib/api';
+import React from "react";
+import {
+  User,
+  getCurrentUser,
+  login as apiLogin,
+  logout as apiLogout,
+} from "@/lib/api";
 
 interface AuthContextType {
   user: User | null;
@@ -36,9 +41,11 @@ function AuthProvider({ children }: AuthProviderProps) {
 
   const login = async (nickname: string, password?: string) => {
     // 테스트/내부용: 비밀번호 미입력 시 기본값 사용
-    const finalPassword = password ?? 'test123';
+    const finalPassword = password ?? "test123";
     const result = await apiLogin(nickname, finalPassword);
-    setUser(result.user);
+    // 로그인 후 전체 유저 정보를 다시 조회하여 상태 업데이트
+    const currentUser = await getCurrentUser();
+    setUser(currentUser);
   };
 
   const logout = async () => {
@@ -56,11 +63,9 @@ function AuthProvider({ children }: AuthProviderProps) {
 function useAuth() {
   const context = React.useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth는 AuthProvider 내에서 사용되어야 합니다');
+    throw new Error("useAuth는 AuthProvider 내에서 사용되어야 합니다");
   }
   return context;
 }
 
 export { AuthProvider, useAuth };
-
-
