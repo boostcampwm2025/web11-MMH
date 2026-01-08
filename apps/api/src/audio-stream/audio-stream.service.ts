@@ -128,10 +128,6 @@ export class AudioStreamService {
           // 세션 정보 업데이트
           session.lastSeq = seq;
 
-          this.logger.debug(
-            `Chunk saved: session=${sessionId}, seq=${seq}, size=${bytes.length}`,
-          );
-
           resolve();
         }
       });
