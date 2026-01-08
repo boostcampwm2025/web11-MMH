@@ -26,6 +26,7 @@ export interface ReportDetail {
 }
 
 export const MOCK_QUESTION = {
+  id: 1,
   title: "React의 Virtual DOM에 대해 설명해주세요.",
   category: "Frontend",
   subCategory: "React",

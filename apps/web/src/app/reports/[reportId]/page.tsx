@@ -11,8 +11,7 @@ interface ReportPageProps {
   searchParams: Promise<{ attempt?: string }>;
 }
 
-async function ReportPage({ params, searchParams }: ReportPageProps) {
-  const { reportId } = await params;
+async function ReportPage({ searchParams }: ReportPageProps) {
   const { attempt } = await searchParams;
 
   const targetId = attempt || MOCK_REPORTS[0].id.toString();
@@ -52,7 +51,7 @@ async function ReportPage({ params, searchParams }: ReportPageProps) {
           variant="default"
           className="flex-1 h-11 font-bold rounded-xl bg-zinc-900 hover:bg-zinc-800 text-white shadow-md"
         >
-          <Link href={`/questions/${reportId}/daily`}>
+          <Link href={`/questions/${MOCK_QUESTION.id}/daily`}>
             <RotateCcw className="mr-1.5" />
             다시 시도
           </Link>
