@@ -32,7 +32,8 @@ function RecordingSection() {
       <div className="flex items-center justify-center gap-4">
         {(() => {
           if (isLoading) {
-            return <div>Loading</div>;
+            // TODO: Add a loading indicator
+            return null;
           }
 
           if (isRecording) {
