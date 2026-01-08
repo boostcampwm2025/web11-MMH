@@ -17,7 +17,7 @@ type UseCanvas2DOptions = Partial<{
 /**
  * 캔버스를 컨테이너 크기에 맞춰 자동 리사이즈 + DPR 스케일 정렬.
  * - width/height는 "CSS 픽셀" 기준 (canvas.clientWidth/Height)
- * - canvas.width/height는 "실제 백버퍼" 기준 (CSS * dpr)
+ * - canvas.width/height는 CSS pixel * dpr
  * - ctx는 항상 CSS 좌표계로 그릴 수 있게 transform 설정됨
  */
 export function useCanvas2D(
@@ -60,7 +60,6 @@ export function useCanvas2D(
       const nextWidthBuffer = Math.max(1, Math.round(nextWidthCss * nextDpr));
       const nextHeightBuffer = Math.max(1, Math.round(nextHeightCss * nextDpr));
 
-      // 백버퍼 사이즈가 다를 때만 재설정 (불필요한 clear/메모리 churn 방지)
       if (
         canvas.width !== nextWidthBuffer ||
         canvas.height !== nextHeightBuffer

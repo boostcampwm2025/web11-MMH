@@ -53,14 +53,12 @@ export class AudioStreamController {
   async finalize(
     @Body() data: AudioFinalizeRequestDto,
   ): Promise<AudioFinalizeResponseDto> {
-    this.logger.log(
-      `POST /audio-stream/finalize: session=${data.sessionId}, userId=${data.userId}`,
-    );
+    this.logger.log(`POST /audio-stream/finalize: session=${data.sessionId}`);
 
     try {
       const result = await this.audioStreamService.finalizeSession(
         data.sessionId,
-        data.userId,
+        1, // TODO: 실제 userID로 변경하기
       );
 
       return result;

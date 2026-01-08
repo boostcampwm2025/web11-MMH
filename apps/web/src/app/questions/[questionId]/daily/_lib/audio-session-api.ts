@@ -14,7 +14,6 @@ interface StartSessionResponse {
 
 interface FinalizeSessionParams {
   sessionId: string;
-  userId: number;
 }
 
 interface FinalizeSessionResponse {

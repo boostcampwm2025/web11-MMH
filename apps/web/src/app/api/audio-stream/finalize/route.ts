@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { sessionId, userId } = body;
+    const { sessionId } = body;
 
     // NestJS API 호출
     const apiUrl = process.env.API_URL || "http://localhost:3000";
@@ -18,7 +18,6 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         sessionId,
-        userId,
       }),
     });
 

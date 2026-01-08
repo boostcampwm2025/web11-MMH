@@ -123,7 +123,6 @@ function useAudioStreamSession() {
       // 세션 종료
       const result = await finalizeAudioSession({
         sessionId,
-        userId: 1, // TODO: 실제 userId로 교체 필요
       });
 
       setIsLoading(false);
