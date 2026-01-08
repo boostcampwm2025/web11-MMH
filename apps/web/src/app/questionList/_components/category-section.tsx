@@ -9,7 +9,7 @@ interface CategoryProps {
   forceExpand: boolean;
 }
 
-export default function CategorySection({ category, forceExpand }: CategoryProps) {
+function CategorySection({ category, forceExpand }: CategoryProps) {
   const [isExpanded, setIsExpanded] = React.useState(false);
 
   React.useEffect(() => {
@@ -47,3 +47,5 @@ export default function CategorySection({ category, forceExpand }: CategoryProps
     </div>
   );
 }
+
+export default CategorySection;

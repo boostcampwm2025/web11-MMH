@@ -4,7 +4,7 @@ interface ProblemItemProps {
   problem: Problem;
 }
 
-export default function ProblemItem({ problem }: ProblemItemProps) {
+function ProblemItem({ problem }: ProblemItemProps) {
   const getDifficultyUI = (score: number) => {
     if (score <= 2.0) return { label: '쉬움', style: 'text-emerald-500 bg-emerald-50' };
     if (score <= 4.0) return { label: '보통', style: 'text-amber-500 bg-amber-50' };
@@ -33,3 +33,5 @@ export default function ProblemItem({ problem }: ProblemItemProps) {
     </div>
   );
 }
+
+export default ProblemItem;
