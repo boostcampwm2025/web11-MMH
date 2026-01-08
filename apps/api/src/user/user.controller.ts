@@ -7,6 +7,7 @@ import {
   Res,
   HttpCode,
   HttpStatus,
+  UnauthorizedException,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { UserService } from './user.service';
@@ -58,8 +59,11 @@ export class UserController {
   }
 
   @Get('me')
-  async getCurrentUser(@Req() req: Request): Promise<User | null> {
-    const userId = req.cookies?.userId ? Number(req.cookies.userId) : undefined;
+  async getCurrentUser(@Req() req: Request): Promise<User> {
+    const userId = req.cookies?.userId;
+    if (!userId) {
+      throw new UnauthorizedException('로그인이 필요합니다.');
+    }
     return this.userService.getCurrentUser(userId);
   }
 }

@@ -56,11 +56,11 @@ export class UserService {
     return user;
   }
 
-  async getCurrentUser(userId: number | undefined): Promise<User | null> {
-    if (!userId) {
-      return null;
+  async getCurrentUser(userId: number): Promise<User> {
+    const user = await this.userRepository.findOneById(userId);
+    if (!user) {
+      throw new NotFoundException('사용자를 찾을 수 없습니다.');
     }
-
-    return this.userRepository.findOneById(userId);
+    return user;
   }
 }
