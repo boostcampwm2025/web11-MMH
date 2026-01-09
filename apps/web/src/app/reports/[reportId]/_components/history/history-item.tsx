@@ -1,17 +1,19 @@
+import Link from "next/link";
 import { Badge } from "@/components/badge/badge";
 import { ReportDetail } from "../../_constants/mock-data";
 
 interface HistoryItemProps {
   item: ReportDetail;
   isSelected: boolean;
-  onClick: () => void;
+  href: string;
 }
 
-function HistoryItem({ item, isSelected, onClick }: HistoryItemProps) {
+function HistoryItem({ item, isSelected, href }: HistoryItemProps) {
   return (
-    <button
-      onClick={onClick}
-      className={`cursor-pointer w-full text-left p-3.5 rounded-xl transition-all duration-200 border ${
+    <Link
+      href={href}
+      scroll={false}
+      className={`block w-full text-left p-3.5 rounded-xl transition-all duration-200 border ${
         isSelected
           ? "bg-zinc-100 border-zinc-200 text-zinc-600 shadow-md"
           : "bg-white border-transparent hover:bg-zinc-100 text-zinc-600 hover:border-zinc-200"
@@ -30,7 +32,7 @@ function HistoryItem({ item, isSelected, onClick }: HistoryItemProps) {
       <div className="text-[0.75rem] font-medium text-zinc-500">
         {item.date}
       </div>
-    </button>
+    </Link>
   );
 }
 
