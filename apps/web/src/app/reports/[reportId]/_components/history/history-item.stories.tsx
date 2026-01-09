@@ -6,9 +6,7 @@ const meta: Meta<typeof HistoryItem> = {
   title: "Report/HistoryItem",
   component: HistoryItem,
   tags: ["autodocs"],
-  argTypes: {
-    onClick: { action: "clicked" },
-  },
+  argTypes: {},
   decorators: [
     (Story) => (
       <div className="w-75">
@@ -25,6 +23,7 @@ export const Default: Story = {
   args: {
     item: MOCK_REPORTS[1],
     isSelected: false,
+    href: "?attempt=1",
   },
 };
 
@@ -32,12 +31,6 @@ export const Selected: Story = {
   args: {
     item: MOCK_REPORTS[1],
     isSelected: true,
-  },
-};
-
-export const Pending: Story = {
-  args: {
-    item: MOCK_REPORTS[0],
-    isSelected: false,
+    href: "?attempt=1",
   },
 };
