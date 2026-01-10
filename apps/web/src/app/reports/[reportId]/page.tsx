@@ -28,11 +28,7 @@ async function ReportPage({ searchParams }: ReportPageProps) {
         description={MOCK_QUESTION.description}
       />
 
-      {reportData.status === "PENDING" ? (
-        <div>채점 중...</div>
-      ) : (
-        <FeedbackSection data={reportData} />
-      )}
+      <FeedbackSection data={reportData} />
 
       <HistorySection history={MOCK_REPORTS} selectedId={targetId} />
 

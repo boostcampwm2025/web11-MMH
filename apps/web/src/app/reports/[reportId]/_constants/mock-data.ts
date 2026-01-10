@@ -21,7 +21,7 @@ export interface ReportDetail {
   status: AnalysisStatus;
   duration: string;
   answerContent: string;
-  totalScore: number;
+  totalScore: number | null;
   feedback?: FeedbackResult;
 }
 
@@ -40,8 +40,8 @@ export const MOCK_REPORTS: ReportDetail[] = [
     date: "2024-01-09",
     status: "PENDING",
     duration: "00:00",
-    answerContent: "분석 진행 중...",
-    totalScore: 0,
+    answerContent: "React는 가상 DOM을 사용하여",
+    totalScore: null,
   },
   {
     id: 2,

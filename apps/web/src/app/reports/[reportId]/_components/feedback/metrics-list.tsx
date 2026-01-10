@@ -2,10 +2,34 @@ import { FeedbackResult } from "../../_constants/mock-data";
 import MetricItem from "./metric-item";
 
 interface MetricsListProps {
-  feedback: FeedbackResult;
+  feedback?: FeedbackResult;
+  isPending: boolean;
 }
 
-function MetricsList({ feedback }: MetricsListProps) {
+function MetricsList({ feedback, isPending }: MetricsListProps) {
+  if (isPending || !feedback) {
+    return (
+      <div className="space-y-6 animate-pulse">
+        <div className="mb-4">
+          <div className="h-5 w-32 bg-zinc-100 rounded mb-2" />
+          <div className="h-3 w-40 bg-zinc-50 rounded" />
+        </div>
+        <div className="flex flex-col gap-4">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="h-24 bg-zinc-50 rounded-2xl border border-zinc-100"
+            />
+          ))}
+        </div>
+        <div className="grid grid-cols-2 gap-4 pt-2">
+          <div className="h-16 bg-zinc-50 rounded-2xl" />
+          <div className="h-16 bg-zinc-50 rounded-2xl" />
+        </div>
+      </div>
+    );
+  }
+
   const coreMetrics = [
     {
       label: "정확성",

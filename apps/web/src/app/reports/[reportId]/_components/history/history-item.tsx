@@ -27,7 +27,9 @@ function HistoryItem({ item, isSelected, href }: HistoryItemProps) {
         >
           ATTEMPT #{item.id}
         </span>
-        <Badge variant="outline">{item.totalScore}점</Badge>
+        <Badge variant="outline">
+          {item.totalScore !== null ? `${item.totalScore}점` : "준비중"}
+        </Badge>
       </div>
       <div className="text-[0.75rem] font-medium text-zinc-500">
         {item.date}
