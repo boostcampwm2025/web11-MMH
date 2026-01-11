@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import FeedbackSection from "./feedback-section";
-import { ReportDetail } from "../../_constants/mock-data";
+import { ReportDetail } from "../../_types/report-detail";
 
 const meta = {
   title: "Report/FeedbackSection",

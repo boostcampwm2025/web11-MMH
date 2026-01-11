@@ -1,4 +1,4 @@
-import { FeedbackResult } from "../../_constants/mock-data";
+import { FeedbackResult } from "../../_types/report-detail";
 import MetricItem from "./metric-item";
 
 interface MetricsListProps {

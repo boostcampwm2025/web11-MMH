@@ -1,29 +1,4 @@
-export type AnalysisStatus = "COMPLETED" | "PENDING" | "FAILED";
-
-export interface FeedbackResult {
-  accuracyReason: string;
-  logicReason: string;
-  depthReason: string;
-  mentoringFeedback: string;
-  scoreDetails: {
-    accuracy: number;
-    logic: number;
-    depth: number;
-    completeness: number;
-    application: number;
-  };
-}
-
-export interface ReportDetail {
-  id: number;
-  questionId: number;
-  date: string;
-  status: AnalysisStatus;
-  duration: string;
-  answerContent: string;
-  totalScore: number | null;
-  feedback?: FeedbackResult;
-}
+import { ReportDetail } from "../_types/report-detail";
 
 export const MOCK_QUESTION = {
   id: 1,

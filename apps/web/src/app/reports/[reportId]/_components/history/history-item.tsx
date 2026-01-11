@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Badge } from "@/components/badge/badge";
-import { ReportDetail } from "../../_constants/mock-data";
+import { ReportDetail } from "../../_types/report-detail";
 
 interface HistoryItemProps {
   item: ReportDetail;

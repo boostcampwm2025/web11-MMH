@@ -1,4 +1,4 @@
-import { ReportDetail } from "../../_constants/mock-data";
+import { ReportDetail } from "../../_types/report-detail";
 import { Badge } from "@/components/badge/badge";
 import HistoryItem from "./history-item";
 

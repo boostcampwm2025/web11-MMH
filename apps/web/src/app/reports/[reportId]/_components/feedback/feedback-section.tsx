@@ -1,4 +1,4 @@
-import { ReportDetail } from "../../_constants/mock-data";
+import { ReportDetail } from "../../_types/report-detail";
 import ScoreGauge from "./score-gauge";
 import AiFeedback from "./ai-feedback";
 import MetricsList from "./metrics-list";
@@ -37,7 +37,7 @@ function FeedbackSection({ data }: FeedbackSectionProps) {
     );
   }
 
-  if (data.status === "FAILED" || data.totalScore === null || !data.feedback) {
+  if (data.status === "FAILED") {
     return (
       <section className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-8 transition-all duration-300 hover:shadow-md">
         <div className="flex justify-between items-center mb-10">
