@@ -6,7 +6,6 @@ import RootCategorySection from "./_components/root-category-section";
 import { Category } from "./_types/types";
 
 function QuestionListPage() {
-  const [isAllExpanded, setIsAllExpanded] = React.useState(false);
   const [roots, setRoots] = React.useState<Category[]>([]);
 
   React.useEffect(() => {
