@@ -2,57 +2,36 @@
 
 import * as React from "react";
 import CategorySection from "./category-section";
-import { Category } from "../_types/types";
+import { RootTree } from "../page";
 
 interface RootCategorySectionProps {
-  root: Category;
+  root: RootTree;
 }
 
 export default function RootCategorySection({
   root,
 }: RootCategorySectionProps) {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [subCategories, setSubCategories] = React.useState<Category[]>([]);
   const [isChildrenForceExpanded, setIsChildrenForceExpanded] =
     React.useState(false);
 
-  const handleOpenRoot = async () => {
-    setIsOpen(true);
-    if (subCategories.length === 0) {
-      try {
-        const res = await fetch(
-          `http://localhost:8000/categories/tree-by-id/${root.id}`,
-        );
-        const data = await res.json();
-        setSubCategories(data.children || []);
-      } catch (error) {
-        console.error("중분류 로드 실패:", error);
-      }
-    }
-  };
-
-  const handleToggleAll = async (e: React.MouseEvent) => {
+  const handleToggleAll = (e: React.MouseEvent) => {
     e.stopPropagation();
-
-    if (!isChildrenForceExpanded) {
-      await handleOpenRoot();
-      setIsChildrenForceExpanded(true);
-    } else {
-      setIsChildrenForceExpanded(false);
-    }
+    setIsChildrenForceExpanded(!isChildrenForceExpanded);
+    if (!isOpen) setIsOpen(true);
   };
 
   return (
     <div className="space-y-3 p-4 border rounded-2xl bg-white shadow-sm">
       <div
-        onClick={() => (isOpen ? setIsOpen(false) : handleOpenRoot())}
+        onClick={() => setIsOpen(!isOpen)}
         className="flex items-center justify-between cursor-pointer group"
       >
         <div className="flex items-center gap-3">
           <div className="bg-black text-white px-4 py-2 rounded-lg font-bold text-lg">
             {root.name}
           </div>
-          <span className="text-gray-400 text-sm">{isOpen ? "접기" : ""}</span>
+          {isOpen && <span className="text-gray-400 text-sm">접기</span>}
         </div>
 
         <button
@@ -69,8 +48,8 @@ export default function RootCategorySection({
 
       {isOpen && (
         <div className="pl-2 space-y-3 pt-2 animate-in fade-in slide-in-from-top-1 duration-200">
-          {subCategories.length > 0 ? (
-            subCategories.map((sub) => (
+          {root.children.length > 0 ? (
+            root.children.map((sub) => (
               <CategorySection
                 key={sub.id}
                 category={sub}

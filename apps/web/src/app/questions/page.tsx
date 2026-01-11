@@ -1,18 +1,52 @@
-"use client";
-
-import * as React from "react";
 import SearchHeader from "./_components/search-header";
 import RootCategorySection from "./_components/root-category-section";
-import { Category } from "./_types/types";
+import { Category, Question } from "./_types/types";
 
-function QuestionListPage() {
-  const [roots, setRoots] = React.useState<Category[]>([]);
+export interface CategoryWithQuestions extends Category {
+  questions: Question[];
+}
 
-  React.useEffect(() => {
-    fetch("http://localhost:8000/categories/roots")
-      .then((res) => res.json())
-      .then((data: Category[]) => setRoots(data));
-  }, []);
+export interface RootTree extends Category {
+  children: CategoryWithQuestions[];
+}
+
+async function getFullCategoryTree(): Promise<RootTree[]> {
+  const res = await fetch("http://localhost:8000/categories/roots", {
+    next: { revalidate: 3600 }, //3600초동안 불러온 데이터를 캐싱해서 재사용
+  });
+  const roots: Category[] = await res.json();
+
+  return Promise.all(
+    roots.map(async (root): Promise<RootTree> => {
+      const treeRes = await fetch(
+        `http://localhost:8000/categories/tree-by-id/${root.id}`,
+      );
+      const treeData: Category = await treeRes.json();
+      const subCategories = treeData.children || [];
+
+      const childrenWithQuestions = await Promise.all(
+        subCategories.map(async (sub): Promise<CategoryWithQuestions> => {
+          const qRes = await fetch(
+            `http://localhost:8000/questions/category/${sub.id}`,
+          );
+          const questions: Question[] = await qRes.json();
+          return {
+            ...sub,
+            questions: Array.isArray(questions) ? questions : [],
+          };
+        }),
+      );
+
+      return {
+        ...root,
+        children: childrenWithQuestions,
+      };
+    }),
+  );
+}
+
+export default async function QuestionListPage() {
+  const roots = await getFullCategoryTree();
 
   return (
     <main className="max-w-4xl mx-auto p-8 space-y-8 bg-gray-50/30 min-h-screen">
@@ -28,16 +62,10 @@ function QuestionListPage() {
       <SearchHeader />
 
       <section className="space-y-6">
-        {Array.isArray(roots) && roots.length > 0 ? (
-          roots.map((root) => <RootCategorySection key={root.id} root={root} />)
-        ) : (
-          <div className="text-center py-20 text-gray-400">
-            대분류 데이터를 불러오는 중이거나 데이터가 없습니다.
-          </div>
-        )}
+        {roots.map((root) => (
+          <RootCategorySection key={root.id} root={root} />
+        ))}
       </section>
     </main>
   );
 }
-
-export default QuestionListPage;
