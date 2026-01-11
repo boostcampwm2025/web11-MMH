@@ -1,5 +1,5 @@
 import ReportHeader from "./_components/report-header";
-import FeedbackSection from "./_components/feedback/FeedbackSection";
+import FeedbackSection from "./_components/feedback/feedback-section";
 import HistorySection from "./_components/history/history-section";
 import { MOCK_QUESTION, MOCK_REPORTS } from "./_constants/mock-data";
 import { List, RotateCcw, User } from "lucide-react";
