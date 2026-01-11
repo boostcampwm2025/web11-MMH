@@ -16,9 +16,10 @@ export default function HistoryList({ history, selectedId }: HistoryListProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
-        {history.map((item) => (
+        {history.map((item, idx) => (
           <HistoryItem
             key={item.id}
+            index={history.length - idx}
             item={item}
             isSelected={selectedId === item.id.toString()}
             href={`?attempt=${item.id}`}
