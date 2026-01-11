@@ -6,9 +6,18 @@ interface HistoryItemProps {
   item: ReportDetail;
   isSelected: boolean;
   href: string;
+  index: number;
 }
 
-function HistoryItem({ item, isSelected, href }: HistoryItemProps) {
+const STATUS_CONFIG = {
+  PENDING: { label: "채점 중", variant: "secondary" as const },
+  FAILED: { label: "채점 실패", variant: "destructive" as const },
+  COMPLETED: { label: "점", variant: "default" as const },
+} as const;
+
+function HistoryItem({ item, isSelected, href, index }: HistoryItemProps) {
+  const config = STATUS_CONFIG[item.status];
+
   return (
     <Link
       href={href}
@@ -25,10 +34,12 @@ function HistoryItem({ item, isSelected, href }: HistoryItemProps) {
             isSelected ? "text-zinc-400" : "text-zinc-400"
           }`}
         >
-          ATTEMPT #{item.id}
+          ATTEMPT #{index}
         </span>
-        <Badge variant="outline">
-          {item.totalScore !== null ? `${item.totalScore}점` : "준비중"}
+        <Badge variant={config.variant}>
+          {item.status === "COMPLETED"
+            ? `${item.totalScore}${config.label}`
+            : config.label}
         </Badge>
       </div>
       <div className="text-[0.75rem] font-medium text-zinc-500">

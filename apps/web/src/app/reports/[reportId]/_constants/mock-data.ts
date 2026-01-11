@@ -69,7 +69,7 @@ export const MOCK_REPORTS: ReportDetail[] = [
     },
   },
   {
-    id: 1,
+    id: 12,
     questionId: 1,
     date: "2024-01-07",
     status: "COMPLETED",
@@ -90,5 +90,14 @@ export const MOCK_REPORTS: ReportDetail[] = [
         application: 0,
       },
     },
+  },
+  {
+    id: 1,
+    questionId: 1,
+    date: "2024-01-06",
+    status: "FAILED",
+    duration: "00:00",
+    answerContent: "React는 가상 DOM을 사용하여",
+    totalScore: null,
   },
 ];
