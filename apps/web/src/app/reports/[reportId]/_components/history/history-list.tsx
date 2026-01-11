@@ -7,7 +7,7 @@ interface HistoryListProps {
   selectedId: string;
 }
 
-export default function HistoryList({ history, selectedId }: HistoryListProps) {
+function HistoryList({ history, selectedId }: HistoryListProps) {
   return (
     <div className="w-full md:w-72 flex flex-col bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm h-75 md:h-auto">
       <div className="p-5 border-b border-zinc-100 bg-zinc-50/50 flex justify-between items-center shrink-0">
@@ -29,3 +29,5 @@ export default function HistoryList({ history, selectedId }: HistoryListProps) {
     </div>
   );
 }
+
+export default HistoryList;
