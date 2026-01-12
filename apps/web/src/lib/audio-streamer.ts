@@ -8,7 +8,7 @@ interface AudioStreamerConfig {
    * - sampleRate: 실제 전송 샘플레이트(보통 config.sampleRate)
    * - wave: 오디오 파형
    */
-  onAudioChunk: (payload: {
+  onAudioChunk?: (payload: {
     buffer: ArrayBufferLike;
     sampleRate: number;
     wave: Float32Array;
@@ -23,6 +23,7 @@ interface AudioStreamerHandle {
   start: () => Promise<void>;
   stop: () => Promise<void>;
   getState: () => { isRecording: boolean };
+  setOnAudioChunk: (callback: AudioStreamerConfig["onAudioChunk"]) => void;
 }
 
 function createAudioStreamer(config: AudioStreamerConfig): AudioStreamerHandle {
@@ -30,6 +31,7 @@ function createAudioStreamer(config: AudioStreamerConfig): AudioStreamerHandle {
   let audioWorkletNode: AudioWorkletNode | null = null;
   let mediaStream: MediaStream | null = null;
   let isRecording = false;
+  let onAudioChunkCallback = config.onAudioChunk;
 
   const defaultConstraints: MediaStreamConstraints = {
     audio: {
@@ -65,7 +67,7 @@ function createAudioStreamer(config: AudioStreamerConfig): AudioStreamerHandle {
 
     const pcmData = floatToPCM16(resampled);
 
-    config.onAudioChunk({
+    onAudioChunkCallback?.({
       buffer: pcmData.buffer,
       sampleRate: config.sampleRate,
       wave,
@@ -101,7 +103,7 @@ function createAudioStreamer(config: AudioStreamerConfig): AudioStreamerHandle {
 
     try {
       mediaStream = await navigator.mediaDevices.getUserMedia(
-        config.constraints ?? defaultConstraints
+        config.constraints ?? defaultConstraints,
       );
 
       audioContext = new AudioContext();
@@ -146,7 +148,11 @@ function createAudioStreamer(config: AudioStreamerConfig): AudioStreamerHandle {
 
   const getState = () => ({ isRecording });
 
-  return { start, stop, getState };
+  const setOnAudioChunk = (callback: AudioStreamerConfig["onAudioChunk"]) => {
+    onAudioChunkCallback = callback;
+  };
+
+  return { start, stop, getState, setOnAudioChunk };
 }
 
 function makeWorkletURL() {
@@ -164,7 +170,7 @@ function makeWorkletURL() {
     registerProcessor("mic-tap", MicTap);
   `;
   return URL.createObjectURL(
-    new Blob([code], { type: "application/javascript" })
+    new Blob([code], { type: "application/javascript" }),
   );
 }
 
