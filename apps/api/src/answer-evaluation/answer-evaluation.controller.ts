@@ -1,4 +1,11 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { AnswerEvaluationService } from './answer-evaluation.service';
 import { CreateEvaluationDto } from './dtos/create-evaluation.dto';
 
@@ -15,5 +22,10 @@ export class AnswerEvaluationController {
     );
 
     return result;
+  }
+
+  @Get(':id')
+  async getEvaluationBySubmissionId(@Param('id', ParseIntPipe) id: number) {
+    return await this.answerEvaluationService.getEvaluationById(id);
   }
 }

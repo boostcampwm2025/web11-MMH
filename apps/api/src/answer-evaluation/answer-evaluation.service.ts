@@ -184,6 +184,20 @@ export class AnswerEvaluationService {
     }
   }
 
+  async getEvaluationById(id: number) {
+    const evaluation = await this.answerEvaluationRepository.findOne({
+      where: { id },
+    });
+
+    if (!evaluation) {
+      throw new NotFoundException(
+        '해당 답안에 대한 평가 결과를 찾을 수 없습니다.',
+      );
+    }
+
+    return evaluation;
+  }
+
   private calculateScore(result: EvaluationResultDto): {
     totalScore: number;
     scoreDetails: Required<EvaluationResultDto>['scoreDetails'];
