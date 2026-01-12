@@ -18,3 +18,11 @@ export const DepthEval = {
   NONE: 'NONE',
 } as const;
 export type DepthEval = (typeof DepthEval)[keyof typeof DepthEval];
+
+export const EvaluationStatus = {
+  COMPLETED: 'COMPLETED',
+  PENDING: 'PENDING',
+  FAILED: 'FAILED',
+};
+export type EvaluationStatus =
+  (typeof EvaluationStatus)[keyof typeof EvaluationStatus];

@@ -12,7 +12,7 @@ import { AnswerEvaluation } from './entities/answer-evaluation.entity';
 import { AnswerSubmission } from '../answer-submission/answer-submission.entity';
 import { Question } from '../question/question.entity';
 import { QuestionSolution } from '../question-solution/entities/question-solution.entity';
-import { ProcessStatus } from '../answer-submission/answer-submission.constants';
+import { EvaluationStatus } from '../answer-evaluation/answer-evaluation.constants';
 import {
   ConflictException,
   NotFoundException,
@@ -110,7 +110,7 @@ describe('AnswerEvaluationService', () => {
       answerSubmissionRepository.findOne.mockResolvedValue({
         id: 1,
         rawAnswer: '',
-        evaluationStatus: ProcessStatus.PENDING,
+        evaluationStatus: EvaluationStatus.PENDING,
       });
       await expect(service.evaluate(1)).rejects.toThrow(BadRequestException);
     });
@@ -119,7 +119,7 @@ describe('AnswerEvaluationService', () => {
       answerSubmissionRepository.findOne.mockResolvedValue({
         id: 1,
         rawAnswer: 'Some answer',
-        evaluationStatus: ProcessStatus.DONE,
+        evaluationStatus: EvaluationStatus.COMPLETED,
       });
       await expect(service.evaluate(1)).rejects.toThrow(ConflictException);
     });
@@ -128,7 +128,7 @@ describe('AnswerEvaluationService', () => {
       const mockSubmission = {
         id: 1,
         rawAnswer: 'Some answer',
-        evaluationStatus: ProcessStatus.PENDING,
+        evaluationStatus: EvaluationStatus.PENDING,
         questionId: 10,
       };
       const mockSavedEvaluation = { id: 100 };
@@ -205,7 +205,7 @@ describe('AnswerEvaluationService', () => {
 
       // Submission Status Update 검증
       expect(answerSubmissionRepository.update).toHaveBeenCalledWith(1, {
-        evaluationStatus: ProcessStatus.DONE,
+        evaluationStatus: EvaluationStatus.COMPLETED,
       });
     });
 
@@ -220,7 +220,7 @@ describe('AnswerEvaluationService', () => {
       await service.aiEvaluate(100, mockSubmission);
 
       expect(answerSubmissionRepository.update).toHaveBeenCalledWith(1, {
-        evaluationStatus: ProcessStatus.FAILED,
+        evaluationStatus: EvaluationStatus.FAILED,
       });
     });
   });

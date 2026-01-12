@@ -14,6 +14,7 @@ import {
 } from './answer-submission.constants';
 import { Question } from '../question/question.entity';
 import { AudioAsset } from '../audio-stream/entities/audio-asset.entity';
+import { EvaluationStatus } from '../answer-evaluation/answer-evaluation.constants';
 
 @Entity('answer_submissions')
 class AnswerSubmission {
@@ -49,10 +50,10 @@ class AnswerSubmission {
   @Column({
     name: 'evaluation_status',
     type: 'enum',
-    enum: ProcessStatus,
-    default: ProcessStatus.PENDING,
+    enum: EvaluationStatus,
+    default: EvaluationStatus.PENDING,
   })
-  evaluationStatus: ProcessStatus;
+  evaluationStatus: EvaluationStatus;
 
   @Column({ name: 'user_id', type: 'int' })
   userId: number;

@@ -17,11 +17,11 @@ import { EVALUATION_RESPONSE_SCHEMA } from '../llm/prompts/evaluation.schema';
 import {
   AccuracyEval,
   DepthEval,
+  EvaluationStatus,
   LogicEval,
 } from './answer-evaluation.constants';
 import { AnswerEvaluation } from './entities/answer-evaluation.entity';
 import { AnswerSubmission } from '../answer-submission/answer-submission.entity';
-import { ProcessStatus } from '../answer-submission/answer-submission.constants';
 import { Question } from '../question/question.entity';
 import { QuestionSolution } from '../question-solution/entities/question-solution.entity';
 
@@ -69,7 +69,7 @@ export class AnswerEvaluationService {
     if (!submission.rawAnswer || submission.rawAnswer.trim().length === 0) {
       throw new BadRequestException('내용이 없는 답안은 채점할 수 없습니다.');
     }
-    if (submission.evaluationStatus === ProcessStatus.DONE) {
+    if (submission.evaluationStatus === EvaluationStatus.COMPLETED) {
       throw new ConflictException('이미 채점이 완료된 답안입니다.');
     }
 
@@ -174,12 +174,12 @@ export class AnswerEvaluationService {
 
       // 제출 상태 업데이트
       await this.answerSubmissionRepository.update(submission.id, {
-        evaluationStatus: ProcessStatus.DONE,
+        evaluationStatus: EvaluationStatus.COMPLETED,
       });
     } catch (error) {
       this.logger.error(error);
       await this.answerSubmissionRepository.update(submission.id, {
-        evaluationStatus: ProcessStatus.FAILED,
+        evaluationStatus: EvaluationStatus.FAILED,
       });
     }
   }
