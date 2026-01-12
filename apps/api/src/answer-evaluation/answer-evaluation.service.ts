@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { LlmService } from '../llm/llm.service';
 import { LLM_MODELS } from '../llm/llm.constants';
 import { EVALUATION_SYSTEM_PROMPT } from '../llm/prompts/evaluation.prompt';
@@ -53,6 +53,7 @@ export class AnswerEvaluationService {
     private readonly questionRepository: Repository<Question>,
     @InjectRepository(QuestionSolution)
     private readonly questionSolutionRepository: Repository<QuestionSolution>,
+    private readonly dataSource: DataSource,
   ) {
     this.evaluationModel =
       this.configService.get<string>('GEMINI_EVALUATION_MODEL') ||
@@ -157,24 +158,26 @@ export class AnswerEvaluationService {
       result.scoreDetails = scoreDetails;
 
       // Entity 업데이트
-      await this.answerEvaluationRepository.update(evaluationId, {
-        feedbackMessage: result.mentoringFeedback,
-        detailAnalysis: {
-          accuracy: result.accuracyReason,
-          logic: result.logicReason,
-          depth: result.depthReason,
-        },
-        scoreDetails: result.scoreDetails,
-        accuracyEval: result.accuracyLevel,
-        logicEval: result.logicLevel,
-        depthEval: result.depthLevel,
-        hasApplication: result.hasApplication,
-        isCompleteSentence: result.isCompleteSentence,
-      });
+      await this.dataSource.transaction(async (manager) => {
+        await manager.update(AnswerEvaluation, evaluationId, {
+          feedbackMessage: result.mentoringFeedback,
+          detailAnalysis: {
+            accuracy: result.accuracyReason,
+            logic: result.logicReason,
+            depth: result.depthReason,
+          },
+          scoreDetails: result.scoreDetails,
+          accuracyEval: result.accuracyLevel,
+          logicEval: result.logicLevel,
+          depthEval: result.depthLevel,
+          hasApplication: result.hasApplication,
+          isCompleteSentence: result.isCompleteSentence,
+        });
 
-      // 제출 상태 업데이트
-      await this.answerSubmissionRepository.update(submission.id, {
-        evaluationStatus: EvaluationStatus.COMPLETED,
+        await manager.update(AnswerSubmission, submission.id, {
+          evaluationStatus: EvaluationStatus.COMPLETED,
+          score: totalScore,
+        });
       });
     } catch (error) {
       this.logger.error(error);

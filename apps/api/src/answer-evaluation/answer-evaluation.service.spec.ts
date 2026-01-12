@@ -1,39 +1,41 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 import { AnswerEvaluationService } from './answer-evaluation.service';
 import { LlmService } from '../llm/llm.service';
 import {
   AccuracyEval,
   LogicEval,
   DepthEval,
+  EvaluationStatus,
 } from './answer-evaluation.constants';
 import { AnswerEvaluation } from './entities/answer-evaluation.entity';
 import { AnswerSubmission } from '../answer-submission/answer-submission.entity';
 import { Question } from '../question/question.entity';
 import { QuestionSolution } from '../question-solution/entities/question-solution.entity';
-import { EvaluationStatus } from '../answer-evaluation/answer-evaluation.constants';
 import {
   ConflictException,
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
 
-const mockRepo = {
+const mockRepoFactory = () => ({
   findOne: jest.fn(),
   create: jest.fn(),
   save: jest.fn(),
   update: jest.fn(),
   delete: jest.fn(),
-};
+});
 
 describe('AnswerEvaluationService', () => {
   let service: AnswerEvaluationService;
-  let answerEvaluationRepository: typeof mockRepo;
-  let answerSubmissionRepository: typeof mockRepo;
-  let questionRepository: typeof mockRepo;
-  let questionSolutionRepository: typeof mockRepo;
+  let answerEvaluationRepository: ReturnType<typeof mockRepoFactory>;
+  let answerSubmissionRepository: ReturnType<typeof mockRepoFactory>;
+  let questionRepository: ReturnType<typeof mockRepoFactory>;
+  let questionSolutionRepository: ReturnType<typeof mockRepoFactory>;
   let llmService: { callWithSchema: jest.Mock };
+  let dataSource: { transaction: jest.Mock };
 
   const mockLlmService = {
     callWithSchema: jest.fn(),
@@ -43,15 +45,22 @@ describe('AnswerEvaluationService', () => {
     get: jest.fn().mockReturnValue('gemini-2.5-flash-lite-preview-09-2025'),
   };
 
-  const mockRepoFactory = () => ({
-    findOne: jest.fn(),
-    create: jest.fn(),
-    save: jest.fn(),
+  const mockEntityManager = {
     update: jest.fn(),
-    delete: jest.fn(),
-  });
+    save: jest.fn(),
+  } as unknown as EntityManager;
 
   beforeEach(async () => {
+    dataSource = {
+      transaction: jest
+        .fn()
+        .mockImplementation(
+          async (cb: (manager: Partial<EntityManager>) => Promise<unknown>) => {
+            return await cb(mockEntityManager);
+          },
+        ),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AnswerEvaluationService,
@@ -77,7 +86,11 @@ describe('AnswerEvaluationService', () => {
         },
         {
           provide: getRepositoryToken(QuestionSolution),
-          useValue: { ...mockRepo },
+          useValue: mockRepoFactory(),
+        },
+        {
+          provide: DataSource,
+          useValue: dataSource,
         },
       ],
     }).compile();
@@ -186,9 +199,11 @@ describe('AnswerEvaluationService', () => {
       await service.aiEvaluate(100, mockSubmission);
 
       expect(llmService.callWithSchema).toHaveBeenCalled();
+      expect(dataSource.transaction).toHaveBeenCalled();
 
-      // Evaluation Update 검증
-      expect(answerEvaluationRepository.update).toHaveBeenCalledWith(
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(mockEntityManager.update).toHaveBeenCalledWith(
+        AnswerEvaluation,
         100,
         expect.objectContaining({
           feedbackMessage: 'Excellent',
@@ -203,10 +218,14 @@ describe('AnswerEvaluationService', () => {
         }),
       );
 
-      // Submission Status Update 검증
-      expect(answerSubmissionRepository.update).toHaveBeenCalledWith(1, {
-        evaluationStatus: EvaluationStatus.COMPLETED,
-      });
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(mockEntityManager.update).toHaveBeenCalledWith(
+        AnswerSubmission,
+        1,
+        expect.objectContaining({
+          evaluationStatus: EvaluationStatus.COMPLETED,
+        }),
+      );
     });
 
     it('에러 발생 시 Submission Status를 FAILED로 업데이트해야 한다', async () => {
@@ -224,6 +243,7 @@ describe('AnswerEvaluationService', () => {
       });
     });
   });
+
   describe('getEvaluationById', () => {
     it('평가 결과가 존재하면 해당 엔티티를 반환해야 한다', async () => {
       const mockEvaluation = { id: 1 };
