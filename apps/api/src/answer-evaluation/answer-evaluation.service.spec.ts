@@ -224,16 +224,16 @@ describe('AnswerEvaluationService', () => {
       });
     });
   });
-  describe('getEvaluationBySubmissionId', () => {
+  describe('getEvaluationById', () => {
     it('평가 결과가 존재하면 해당 엔티티를 반환해야 한다', async () => {
-      const mockEvaluation = { id: 100, submissionId: 1 };
+      const mockEvaluation = { id: 1 };
       answerEvaluationRepository.findOne.mockResolvedValue(mockEvaluation);
 
       const result = await service.getEvaluationById(1);
 
       expect(result).toEqual(mockEvaluation);
       expect(answerEvaluationRepository.findOne).toHaveBeenCalledWith({
-        where: { submissionId: 1 },
+        where: { id: 1 },
       });
     });
 
