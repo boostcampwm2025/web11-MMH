@@ -13,36 +13,43 @@ export interface RootTree extends Category {
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 async function getFullCategoryTree(): Promise<RootTree[]> {
-  const res = await fetch(`${API_URL}/categories/roots`, {
-    next: { revalidate: 3600 }, //3600초동안 불러온 데이터를 캐싱해서 재사용
-  });
-  const roots: Category[] = await res.json();
+  try {
+    const res = await fetch(`${API_URL}/categories/roots`, {
+      next: { revalidate: 3600 },
+    });
 
-  return Promise.all(
-    roots.map(async (root): Promise<RootTree> => {
-      const treeRes = await fetch(
-        `${API_URL}/categories/tree-by-id/${root.id}`,
-      );
-      const treeData: Category = await treeRes.json();
-      const subCategories = treeData.children || [];
+    if (!res.ok) throw new Error("Failed to fetch roots");
+    const roots: Category[] = await res.json();
 
-      const childrenWithQuestions = await Promise.all(
-        subCategories.map(async (sub): Promise<CategoryWithQuestions> => {
-          const qRes = await fetch(`${API_URL}/questions/category/${sub.id}`);
-          const questions: Question[] = await qRes.json();
-          return {
-            ...sub,
-            questions: Array.isArray(questions) ? questions : [],
-          };
-        }),
-      );
+    return Promise.all(
+      roots.map(async (root): Promise<RootTree> => {
+        const treeRes = await fetch(
+          `${API_URL}/categories/tree-by-id/${root.id}`,
+        );
+        if (!treeRes.ok) throw new Error("Failed to fetch tree");
+        const treeData: Category = await treeRes.json();
 
-      return {
-        ...root,
-        children: childrenWithQuestions,
-      };
-    }),
-  );
+        const subCategories = treeData.children || [];
+
+        const childrenWithQuestions = await Promise.all(
+          subCategories.map(async (sub): Promise<CategoryWithQuestions> => {
+            const qRes = await fetch(`${API_URL}/questions/category/${sub.id}`);
+            const questions = qRes.ok ? await qRes.json() : [];
+
+            return {
+              ...sub,
+              questions: Array.isArray(questions) ? questions : [],
+            };
+          }),
+        );
+
+        return { ...root, children: childrenWithQuestions };
+      }),
+    );
+  } catch (error) {
+    console.error("Data fetching failed during build/runtime:", error);
+    return [];
+  }
 }
 
 async function QuestionListPage() {
