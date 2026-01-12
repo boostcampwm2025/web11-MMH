@@ -140,17 +140,7 @@ export class AnswerEvaluationService {
         );
 
       // camelCase로 변환
-      const result: EvaluationResultDto = {
-        accuracyLevel: rawResponse.accuracy_level,
-        accuracyReason: rawResponse.accuracy_reason,
-        logicLevel: rawResponse.logic_level,
-        logicReason: rawResponse.logic_reason,
-        depthLevel: rawResponse.depth_level,
-        depthReason: rawResponse.depth_reason,
-        isCompleteSentence: rawResponse.is_complete_sentence,
-        hasApplication: rawResponse.has_application,
-        mentoringFeedback: rawResponse.mentoring_feedback,
-      };
+      const result: EvaluationResultDto = this.parseLlmResponse(rawResponse);
 
       // 점수 계산
       const { totalScore, scoreDetails } = this.calculateScore(result);
@@ -199,6 +189,22 @@ export class AnswerEvaluationService {
     }
 
     return evaluation;
+  }
+
+  private parseLlmResponse(
+    rawResponse: AiEvaluationRawResponse,
+  ): EvaluationResultDto {
+    return {
+      accuracyLevel: rawResponse.accuracy_level,
+      accuracyReason: rawResponse.accuracy_reason,
+      logicLevel: rawResponse.logic_level,
+      logicReason: rawResponse.logic_reason,
+      depthLevel: rawResponse.depth_level,
+      depthReason: rawResponse.depth_reason,
+      isCompleteSentence: rawResponse.is_complete_sentence,
+      hasApplication: rawResponse.has_application,
+      mentoringFeedback: rawResponse.mentoring_feedback,
+    };
   }
 
   private calculateScore(result: EvaluationResultDto): {
