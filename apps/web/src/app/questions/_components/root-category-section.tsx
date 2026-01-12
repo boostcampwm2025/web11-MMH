@@ -8,9 +8,7 @@ interface RootCategorySectionProps {
   root: RootTree;
 }
 
-export default function RootCategorySection({
-  root,
-}: RootCategorySectionProps) {
+function RootCategorySection({ root }: RootCategorySectionProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isChildrenForceExpanded, setIsChildrenForceExpanded] =
     React.useState(false);
@@ -66,3 +64,4 @@ export default function RootCategorySection({
     </div>
   );
 }
+export default RootCategorySection;

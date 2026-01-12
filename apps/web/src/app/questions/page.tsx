@@ -45,7 +45,7 @@ async function getFullCategoryTree(): Promise<RootTree[]> {
   );
 }
 
-export default async function QuestionListPage() {
+async function QuestionListPage() {
   const roots = await getFullCategoryTree();
 
   return (
@@ -69,3 +69,4 @@ export default async function QuestionListPage() {
     </main>
   );
 }
+export default QuestionListPage;
