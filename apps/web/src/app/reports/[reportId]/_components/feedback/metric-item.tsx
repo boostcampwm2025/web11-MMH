@@ -14,7 +14,9 @@ function MetricItem({ label, score, max, reason }: MetricItemProps) {
         <span className="font-bold text-sm text-zinc-800">{label}</span>
         <div className="flex items-baseline gap-0.5">
           <span className="text-lg font-black text-zinc-700">{score}</span>
-          <span className="text-[10px] font-medium text-zinc-400">/ {max}</span>
+          <span className="text-[0.625rem] font-medium text-zinc-400">
+            / {max}
+          </span>
         </div>
       </div>
 

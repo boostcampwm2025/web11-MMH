@@ -20,7 +20,9 @@ function ReportHeader({
         <Badge variant="secondary">{subcategory}</Badge>
       </div>
       <h2 className="text-2xl font-semibold leading-tight mb-4">{title}</h2>
-      <p className="text-zinc-600 leading-relaxed text-[15px]">{description}</p>
+      <p className="text-zinc-600 leading-relaxed text-[0.9375rem]">
+        {description}
+      </p>
     </section>
   );
 }

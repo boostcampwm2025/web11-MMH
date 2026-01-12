@@ -42,9 +42,7 @@ function HistoryItem({ item, isSelected, href, index }: HistoryItemProps) {
             : config.label}
         </Badge>
       </div>
-      <div className="text-[0.75rem] font-medium text-zinc-500">
-        {item.date}
-      </div>
+      <div className="text-xs font-medium text-zinc-500">{item.date}</div>
     </Link>
   );
 }

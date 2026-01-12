@@ -8,7 +8,7 @@ function AiFeedback({ feedback }: AiFeedbackProps) {
       <div className="flex text-[0.625rem] font-extrabold text-zinc-400 mb-2 uppercase">
         <span>AI MENTOR&apos;S FEEDBACK</span>
       </div>
-      <p className="text-[0.875rem] font-medium leading-relaxed text-zinc-700 m-0">
+      <p className="text-sm font-medium leading-relaxed text-zinc-700 m-0">
         {feedback}
       </p>
     </div>

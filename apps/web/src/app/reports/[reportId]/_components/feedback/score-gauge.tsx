@@ -22,7 +22,7 @@ function ScoreGauge({ score }: ScoreGaugeProps) {
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-[1.5rem] font-extrabold leading-none text-zinc-900">
+        <span className="text-2xl font-extrabold leading-none text-zinc-900">
           {score}
         </span>
         <span className="text-[0.5rem] font-extrabold text-zinc-400 mt-0.5">
