@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { AnswerEvaluationService } from './answer-evaluation.service';
 import { LlmService } from '../llm/llm.service';
 import {
@@ -7,9 +8,32 @@ import {
   LogicEval,
   DepthEval,
 } from './answer-evaluation.constants';
+import { AnswerEvaluation } from './entities/answer-evaluation.entity';
+import { AnswerSubmission } from '../answer-submission/answer-submission.entity';
+import { Question } from '../question/question.entity';
+import { QuestionSolution } from '../question-solution/entities/question-solution.entity';
+import { ProcessStatus } from '../answer-submission/answer-submission.constants';
+import {
+  ConflictException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
+
+const mockRepo = {
+  findOne: jest.fn(),
+  create: jest.fn(),
+  save: jest.fn(),
+  update: jest.fn(),
+  delete: jest.fn(),
+};
 
 describe('AnswerEvaluationService', () => {
   let service: AnswerEvaluationService;
+  let answerEvaluationRepository: typeof mockRepo;
+  let answerSubmissionRepository: typeof mockRepo;
+  let questionRepository: typeof mockRepo;
+  let questionSolutionRepository: typeof mockRepo;
+  let llmService: { callWithSchema: jest.Mock };
 
   const mockLlmService = {
     callWithSchema: jest.fn(),
@@ -18,6 +42,14 @@ describe('AnswerEvaluationService', () => {
   const mockConfigService = {
     get: jest.fn().mockReturnValue('gemini-2.5-flash-lite-preview-09-2025'),
   };
+
+  const mockRepoFactory = () => ({
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  });
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -31,10 +63,37 @@ describe('AnswerEvaluationService', () => {
           provide: ConfigService,
           useValue: mockConfigService,
         },
+        {
+          provide: getRepositoryToken(AnswerEvaluation),
+          useValue: mockRepoFactory(),
+        },
+        {
+          provide: getRepositoryToken(AnswerSubmission),
+          useValue: mockRepoFactory(),
+        },
+        {
+          provide: getRepositoryToken(Question),
+          useValue: mockRepoFactory(),
+        },
+        {
+          provide: getRepositoryToken(QuestionSolution),
+          useValue: { ...mockRepo },
+        },
       ],
     }).compile();
 
     service = module.get<AnswerEvaluationService>(AnswerEvaluationService);
+    answerEvaluationRepository = module.get(
+      getRepositoryToken(AnswerEvaluation),
+    );
+    answerSubmissionRepository = module.get(
+      getRepositoryToken(AnswerSubmission),
+    );
+    questionRepository = module.get(getRepositoryToken(Question));
+    questionSolutionRepository = module.get(
+      getRepositoryToken(QuestionSolution),
+    );
+    llmService = module.get(LlmService);
   });
 
   afterEach(() => {
@@ -42,99 +101,127 @@ describe('AnswerEvaluationService', () => {
   });
 
   describe('evaluate', () => {
-    it('LLM을 호출하고 점수가 계산된 평가 결과를 반환해야 한다 (100점 만점 케이스)', async () => {
-      // AI로부터의 원본 응답
+    it('답안을 찾지 못하면 NotFoundException을 던져야 한다', async () => {
+      answerSubmissionRepository.findOne.mockResolvedValue(null);
+      await expect(service.evaluate(1)).rejects.toThrow(NotFoundException);
+    });
+
+    it('답안 내용이 없으면 BadRequestException을 던져야 한다', async () => {
+      answerSubmissionRepository.findOne.mockResolvedValue({
+        id: 1,
+        rawAnswer: '',
+        evaluationStatus: ProcessStatus.PENDING,
+      });
+      await expect(service.evaluate(1)).rejects.toThrow(BadRequestException);
+    });
+
+    it('이미 완료된 답안이면 ConflictException을 던져야 한다', async () => {
+      answerSubmissionRepository.findOne.mockResolvedValue({
+        id: 1,
+        rawAnswer: 'Some answer',
+        evaluationStatus: ProcessStatus.DONE,
+      });
+      await expect(service.evaluate(1)).rejects.toThrow(ConflictException);
+    });
+
+    it('정상적인 경우 초기 평가 엔티티를 생성하고 ID를 반환해야 한다', async () => {
+      const mockSubmission = {
+        id: 1,
+        rawAnswer: 'Some answer',
+        evaluationStatus: ProcessStatus.PENDING,
+        questionId: 10,
+      };
+      const mockSavedEvaluation = { id: 100 };
+
+      answerSubmissionRepository.findOne.mockResolvedValue(mockSubmission);
+      answerEvaluationRepository.create.mockReturnValue({});
+      answerEvaluationRepository.save.mockResolvedValue(mockSavedEvaluation);
+
+      questionRepository.findOne.mockResolvedValue({ content: 'Question' });
+      questionSolutionRepository.findOne.mockResolvedValue({});
+      llmService.callWithSchema.mockResolvedValue({});
+
+      const result = await service.evaluate(1);
+
+      expect(result).toEqual({ evaluationId: 100 });
+      expect(answerEvaluationRepository.create).toHaveBeenCalledWith({
+        submissionId: 1,
+        createdAt: expect.any(Date) as Date,
+      });
+      expect(answerEvaluationRepository.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('aiEvaluate', () => {
+    it('LLM 호출 후 점수를 계산하고 엔티티를 업데이트해야 한다', async () => {
+      const mockSubmission = {
+        id: 1,
+        questionId: 10,
+        rawAnswer: 'User Answer',
+      } as AnswerSubmission;
+      const mockQuestion = { content: 'Question Content' };
+      const mockSolution = {
+        standardDefinition: 'def',
+        technicalMechanism: {},
+        keyTerminology: [],
+        practicalApplication: '',
+        commonMisconceptions: '',
+      };
       const mockLlmResult = {
         accuracy_level: AccuracyEval.PERFECT,
-        accuracy_reason: '핵심 개념을 완벽하게 설명했습니다.',
+        accuracy_reason: 'Good',
         logic_level: LogicEval.CLEAR,
-        logic_reason: '인과관계가 명확하게 서술되었습니다.',
+        logic_reason: 'Logic',
         depth_level: DepthEval.DEEP,
-        depth_reason: '내부 메커니즘을 상세히 다뤘습니다.',
+        depth_reason: 'Deep',
         is_complete_sentence: true,
         has_application: true,
-        mentoring_feedback: '아주 훌륭한 답변입니다.',
+        mentoring_feedback: 'Excellent',
       };
 
-      mockLlmService.callWithSchema.mockResolvedValue(mockLlmResult);
+      questionRepository.findOne.mockResolvedValue(mockQuestion);
+      questionSolutionRepository.findOne.mockResolvedValue(mockSolution);
+      llmService.callWithSchema.mockResolvedValue(mockLlmResult);
 
-      const result = await service.evaluate();
+      await service.aiEvaluate(100, mockSubmission);
 
-      // 변환 및 점수 검증
-      expect(result.accuracyLevel).toBe(AccuracyEval.PERFECT);
-      expect(result.accuracyReason).toBe(mockLlmResult.accuracy_reason);
-      expect(result.isCompleteSentence).toBe(true);
-      expect(result.scoreDetails).toEqual({
-        accuracy: 35,
-        logic: 30,
-        depth: 25,
-        completeness: 5,
-        application: 5,
-      });
-      expect(result.totalScore).toBe(100);
-    });
+      expect(llmService.callWithSchema).toHaveBeenCalled();
 
-    it('각 항목별 등급에 따라 점수가 올바르게 합산되어야 한다 (경미한 오류 케이스)', async () => {
-      // 20(MINOR_ERROR) + 15(WEAK) + 10(BASIC) + 5(Sentence) + 0(Application) = 50점 예상
-      const mixedResult = {
-        accuracy_level: AccuracyEval.MINOR_ERROR,
-        accuracy_reason: '일부 용어 혼동이 있습니다.',
-        logic_level: LogicEval.WEAK,
-        logic_reason: '인과관계가 다소 부족합니다.',
-        depth_level: DepthEval.BASIC,
-        depth_reason: '기본적인 정의만 설명했습니다.',
-        is_complete_sentence: true,
-        has_application: false,
-        mentoring_feedback: '조금 더 보완이 필요합니다.',
-      };
-
-      mockLlmService.callWithSchema.mockResolvedValue(mixedResult);
-
-      const result = await service.evaluate();
-
-      expect(result.scoreDetails).toEqual({
-        accuracy: 20,
-        logic: 15,
-        depth: 10,
-        completeness: 5,
-        application: 0,
-      });
-      expect(result.totalScore).toBe(50);
-    });
-
-    it('최저 점수 케이스를 올바르게 계산해야 한다', async () => {
-      const worstResult = {
-        accuracy_level: AccuracyEval.WRONG,
-        accuracy_reason: '내용이 틀렸습니다.',
-        logic_level: LogicEval.NONE,
-        logic_reason: '논리가 없습니다.',
-        depth_level: DepthEval.NONE,
-        depth_reason: '내용이 없습니다.',
-        is_complete_sentence: false,
-        has_application: false,
-        mentoring_feedback: '다시 공부하세요.',
-      };
-
-      mockLlmService.callWithSchema.mockResolvedValue(worstResult);
-
-      const result = await service.evaluate();
-
-      expect(result.scoreDetails).toEqual({
-        accuracy: 0,
-        logic: 0,
-        depth: 0,
-        completeness: 0,
-        application: 0,
-      });
-      expect(result.totalScore).toBe(0);
-    });
-
-    it('LLM 호출 중 에러가 발생하면 에러를 던져야 한다', async () => {
-      mockLlmService.callWithSchema.mockRejectedValue(
-        new Error('LLM 호출 실패'),
+      // Evaluation Update 검증
+      expect(answerEvaluationRepository.update).toHaveBeenCalledWith(
+        100,
+        expect.objectContaining({
+          feedbackMessage: 'Excellent',
+          scoreDetails: {
+            accuracy: 35,
+            logic: 30,
+            depth: 25,
+            completeness: 5,
+            application: 5,
+          },
+          accuracyEval: AccuracyEval.PERFECT,
+        }),
       );
 
-      await expect(service.evaluate()).rejects.toThrow('LLM 호출 실패');
+      // Submission Status Update 검증
+      expect(answerSubmissionRepository.update).toHaveBeenCalledWith(1, {
+        evaluationStatus: ProcessStatus.DONE,
+      });
+    });
+
+    it('에러 발생 시 Submission Status를 FAILED로 업데이트해야 한다', async () => {
+      const mockSubmission = {
+        id: 1,
+        questionId: 10,
+        rawAnswer: 'User Answer',
+      } as AnswerSubmission;
+      questionRepository.findOne.mockRejectedValue(new Error('DB Error'));
+
+      await service.aiEvaluate(100, mockSubmission);
+
+      expect(answerSubmissionRepository.update).toHaveBeenCalledWith(1, {
+        evaluationStatus: ProcessStatus.FAILED,
+      });
     });
   });
 });
