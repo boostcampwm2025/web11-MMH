@@ -6,6 +6,7 @@ import { CheckCircle2, Mic, RotateCcw, Square } from "lucide-react";
 import useAudioStreamSession from "../_hooks/use-audio-stream-session";
 import { cn } from "@/lib/cn";
 import WaveformFrame from "@/components/waveform/waveform-frame";
+import { transcribeAsset } from "../_lib/stt-api";
 
 function RecordingSection() {
   const {
@@ -13,6 +14,7 @@ function RecordingSection() {
     isLoading,
     isRecording,
     sessionId,
+    assetId,
     startRecording,
     stopRecording,
     retryRecording,
@@ -58,7 +60,14 @@ function RecordingSection() {
                 <Button variant="outline" onClick={retryRecording}>
                   <RotateCcw className="w-4 h-4" /> 다시 시도
                 </Button>
-                <Button className="pl-6 pr-6">
+                <Button
+                  className="pl-6 pr-6"
+                  onClick={() => {
+                    if (assetId) {
+                      transcribeAsset({ assetId });
+                    }
+                  }}
+                >
                   답변 제출 <CheckCircle2 className="w-4 h-4" />
                 </Button>
               </div>

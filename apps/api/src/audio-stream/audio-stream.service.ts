@@ -198,9 +198,9 @@ export class AudioStreamService {
 
     // Object Storage에 업로드
     let storageUrl: string;
+    const fileName = path.basename(session.filePath);
+    const objectKey = `audio-sessions/${sessionId}/${fileName}`;
     try {
-      const fileName = path.basename(session.filePath);
-      const objectKey = `audio-sessions/${sessionId}/${fileName}`;
       storageUrl = await this.objectStorageService.uploadFile(
         session.filePath,
         objectKey,
@@ -232,6 +232,7 @@ export class AudioStreamService {
     const audioAsset = this.audioAssetRepository.create({
       userId,
       storageUrl, // Object Storage URL 또는 로컬 디스크 경로 (fallback)
+      objectKey,
       durationMs: null, // MVP: duration 계산 생략
       byteSize: byteSize.toString(),
       codec: session.codec,
@@ -240,8 +241,6 @@ export class AudioStreamService {
     });
 
     const savedAsset = await this.audioAssetRepository.save(audioAsset);
-
-    const fileName = path.basename(session.filePath);
 
     this.logger.log(
       `Session finalized: ${sessionId}, file: ${session.filePath}, asset_id: ${savedAsset.id}`,
