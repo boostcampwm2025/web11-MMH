@@ -1,5 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { LlmService } from '../llm/llm.service';
 import { LLM_MODELS } from '../llm/llm.constants';
 import { EVALUATION_SYSTEM_PROMPT } from '../llm/prompts/evaluation.prompt';
@@ -11,6 +19,11 @@ import {
   DepthEval,
   LogicEval,
 } from './answer-evaluation.constants';
+import { AnswerEvaluation } from './entities/answer-evaluation.entity';
+import { AnswerSubmission } from 'src/answer-submission/answer-submission.entity';
+import { ProcessStatus } from 'src/answer-submission/answer-submission.constants';
+import { Question } from 'src/question/question.entity';
+import { QuestionSolution } from 'src/question-solution/entities/question-solution.entity';
 
 interface AiEvaluationRawResponse {
   accuracy_level: AccuracyEval;
@@ -27,74 +40,148 @@ interface AiEvaluationRawResponse {
 @Injectable()
 export class AnswerEvaluationService {
   private readonly evaluationModel: string;
+  private readonly logger = new Logger();
 
   constructor(
     private readonly llmService: LlmService,
     private readonly configService: ConfigService,
+    @InjectRepository(AnswerEvaluation)
+    private readonly answerEvaluationRepository: Repository<AnswerEvaluation>,
+    @InjectRepository(AnswerSubmission)
+    private readonly answerSubmissionRepository: Repository<AnswerSubmission>,
+    @InjectRepository(Question)
+    private readonly questionRepository: Repository<Question>,
+    @InjectRepository(QuestionSolution)
+    private readonly questionSolutionRepository: Repository<QuestionSolution>,
   ) {
     this.evaluationModel =
       this.configService.get<string>('GEMINI_EVALUATION_MODEL') ||
       LLM_MODELS.EVALUATION;
   }
 
+  async evaluate(submissionId: number): Promise<{ evaluationId: number }> {
+    const submission = await this.answerSubmissionRepository.findOne({
+      where: { id: submissionId },
+    });
+    if (!submission) {
+      throw new NotFoundException('저장된 답안을 찾을 수 없습니다.');
+    }
+    if (!submission.rawAnswer || submission.rawAnswer.trim().length === 0) {
+      throw new BadRequestException('내용이 없는 답안은 채점할 수 없습니다.');
+    }
+    if (submission.evaluationStatus === ProcessStatus.DONE) {
+      throw new ConflictException('이미 채점이 완료된 답안입니다.');
+    }
+
+    // Evaluation Entity 먼저 생성
+    const initialEvaluation = this.answerEvaluationRepository.create({
+      submissionId,
+      createdAt: new Date(),
+    });
+
+    const savedEvaluation =
+      await this.answerEvaluationRepository.save(initialEvaluation);
+
+    void this.aiEvaluate(savedEvaluation.id, submission);
+
+    return { evaluationId: savedEvaluation.id };
+  }
+
   /**
    * 평가 실행
    * @param submissionId 답변 제출 ID
+   * @param submission 답안 엔티티
    */
-  async evaluate(): Promise<EvaluationResultDto> {
-    // TODO: AnswerSubmission / Question 조회 로직 구현 필요
+  async aiEvaluate(
+    evaluationId: number,
+    submission: AnswerSubmission,
+  ): Promise<void> {
+    try {
+      const questionEntity = await this.questionRepository.findOne({
+        where: { id: submission.questionId },
+      });
+      if (!questionEntity) {
+        throw new NotFoundException('문제를 찾을 수 없습니다.');
+      }
 
-    // TODO: QuestionAnswer 조회 로직 구현 필요
-    // 임시 테스트 데이터
-    const question = '프로세스와 스레드의 차이점을 설명해주세요.';
-    const solution = {
-      standardDefinition:
-        '프로세스는 독립적인 메모리 공간을 가진 실행 단위입니다.',
-      technicalMechanism: {
-        basic_principle: 'Code, Data, Heap, Stack으로 구성됨',
-        deep_principle:
-          '프로세스 간 메모리 보호로 인해 한 프로세스 장애가 다른 프로세스에 파급되지 않음',
-      },
-      keyTerminology: ['독립성', '자원 할당', '컨텍스트 스위칭'],
-      practicalApplication: '',
-      misconceptions: '',
-    };
-    const userAnswer = '프로세스는 실행 중인 프로그램이고...';
+      const solutionEntity = await this.questionSolutionRepository.findOne({
+        where: { questionId: submission.questionId },
+      });
+      if (!solutionEntity) {
+        throw new NotFoundException('모범 답안을 찾을 수 없습니다.');
+      }
 
-    const userPrompt = buildEvaluationUserPrompt({
-      question,
-      solution,
-      userAnswer,
-    });
+      const question = questionEntity.content;
 
-    // AI로부터 snake_case 응답 수신
-    const rawResponse =
-      await this.llmService.callWithSchema<AiEvaluationRawResponse>(
-        EVALUATION_SYSTEM_PROMPT,
-        userPrompt,
-        EVALUATION_RESPONSE_SCHEMA,
-        { model: this.evaluationModel },
-      );
+      const solution = {
+        standardDefinition: solutionEntity.standardDefinition,
+        technicalMechanism: solutionEntity.technicalMechanism,
+        keyTerminology: solutionEntity.keyTerminology,
+        practicalApplication: solutionEntity.practicalApplication,
+        misconceptions: solutionEntity.commonMisconceptions,
+      };
 
-    // camelCase로 변환
-    const result: EvaluationResultDto = {
-      accuracyLevel: rawResponse.accuracy_level,
-      accuracyReason: rawResponse.accuracy_reason,
-      logicLevel: rawResponse.logic_level,
-      logicReason: rawResponse.logic_reason,
-      depthLevel: rawResponse.depth_level,
-      depthReason: rawResponse.depth_reason,
-      isCompleteSentence: rawResponse.is_complete_sentence,
-      hasApplication: rawResponse.has_application,
-      mentoringFeedback: rawResponse.mentoring_feedback,
-    };
+      const userAnswer = submission.rawAnswer;
 
-    // 점수 계산
-    const { totalScore, scoreDetails } = this.calculateScore(result);
-    result.totalScore = totalScore;
-    result.scoreDetails = scoreDetails;
+      const userPrompt = buildEvaluationUserPrompt({
+        question,
+        solution,
+        userAnswer,
+      });
 
-    return result;
+      // AI로부터 snake_case 응답 수신
+      const rawResponse =
+        await this.llmService.callWithSchema<AiEvaluationRawResponse>(
+          EVALUATION_SYSTEM_PROMPT,
+          userPrompt,
+          EVALUATION_RESPONSE_SCHEMA,
+          { model: this.evaluationModel },
+        );
+
+      // camelCase로 변환
+      const result: EvaluationResultDto = {
+        accuracyLevel: rawResponse.accuracy_level,
+        accuracyReason: rawResponse.accuracy_reason,
+        logicLevel: rawResponse.logic_level,
+        logicReason: rawResponse.logic_reason,
+        depthLevel: rawResponse.depth_level,
+        depthReason: rawResponse.depth_reason,
+        isCompleteSentence: rawResponse.is_complete_sentence,
+        hasApplication: rawResponse.has_application,
+        mentoringFeedback: rawResponse.mentoring_feedback,
+      };
+
+      // 점수 계산
+      const { totalScore, scoreDetails } = this.calculateScore(result);
+      result.totalScore = totalScore;
+      result.scoreDetails = scoreDetails;
+
+      // Entity 업데이트
+      await this.answerEvaluationRepository.update(evaluationId, {
+        feedbackMessage: result.mentoringFeedback,
+        detailAnalysis: {
+          accuracy: result.accuracyReason,
+          logic: result.logicReason,
+          depth: result.depthReason,
+        },
+        scoreDetails: result.scoreDetails,
+        accuracyEval: result.accuracyLevel,
+        logicEval: result.logicLevel,
+        depthEval: result.depthLevel,
+        hasApplication: result.hasApplication,
+        isCompleteSentence: result.isCompleteSentence,
+      });
+
+      // 제출 상태 업데이트
+      await this.answerSubmissionRepository.update(submission.id, {
+        evaluationStatus: ProcessStatus.DONE,
+      });
+    } catch (error) {
+      this.logger.error(error);
+      await this.answerSubmissionRepository.update(submission.id, {
+        evaluationStatus: ProcessStatus.FAILED,
+      });
+    }
   }
 
   private calculateScore(result: EvaluationResultDto): {
