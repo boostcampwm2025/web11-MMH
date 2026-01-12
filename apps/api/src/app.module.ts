@@ -8,10 +8,13 @@ import { AudioStreamModule } from './audio-stream/audio-stream.module';
 import { typeOrmModuleOptions } from './configs/typeorm.config';
 import { StreaksModule } from './streaks/streaks.module';
 import { UserModule } from './user/user.module';
+import { SttModule } from './stt/stt.module';
+import { ObjectStorageModule } from './object-storage/object-storage.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true,
       envFilePath: ['.env.local', '.env'],
     }),
     TypeOrmModule.forRoot(typeOrmModuleOptions),
@@ -19,6 +22,8 @@ import { UserModule } from './user/user.module';
     AnswerEvaluationModule,
     AudioStreamModule,
     StreaksModule,
+    SttModule,
+    ObjectStorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],

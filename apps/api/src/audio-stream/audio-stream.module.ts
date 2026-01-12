@@ -4,9 +4,10 @@ import { AudioStreamGateway } from './audio-stream.gateway';
 import { AudioStreamController } from './audio-stream.controller';
 import { AudioStreamService } from './audio-stream.service';
 import { AudioAsset } from './entities/audio-asset.entity';
+import { ObjectStorageModule } from '../object-storage/object-storage.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([AudioAsset])],
+  imports: [TypeOrmModule.forFeature([AudioAsset]), ObjectStorageModule],
   controllers: [AudioStreamController],
   providers: [AudioStreamGateway, AudioStreamService],
   exports: [AudioStreamService],
