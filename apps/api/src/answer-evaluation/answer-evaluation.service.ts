@@ -74,6 +74,10 @@ export class AnswerEvaluationService {
       throw new ConflictException('이미 채점이 완료된 답안입니다.');
     }
 
+    await this.answerSubmissionRepository.update(submissionId, {
+      evaluationStatus: EvaluationStatus.PENDING,
+    });
+
     // Evaluation Entity 먼저 생성
     const initialEvaluation = this.answerEvaluationRepository.create({
       submissionId,
