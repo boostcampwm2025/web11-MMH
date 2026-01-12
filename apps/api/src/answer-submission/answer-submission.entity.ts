@@ -12,8 +12,8 @@ import {
   InputType,
   ProcessStatus,
 } from './answer-submission.constants';
-import { Question } from 'src/question/question.entity';
-import { AudioAsset } from 'src/audio-stream/entities/audio-asset.entity';
+import { Question } from '../question/question.entity';
+import { AudioAsset } from '../audio-stream/entities/audio-asset.entity';
 
 @Entity('answer_submissions')
 class AnswerSubmission {

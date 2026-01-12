@@ -20,10 +20,10 @@ import {
   LogicEval,
 } from './answer-evaluation.constants';
 import { AnswerEvaluation } from './entities/answer-evaluation.entity';
-import { AnswerSubmission } from 'src/answer-submission/answer-submission.entity';
-import { ProcessStatus } from 'src/answer-submission/answer-submission.constants';
-import { Question } from 'src/question/question.entity';
-import { QuestionSolution } from 'src/question-solution/entities/question-solution.entity';
+import { AnswerSubmission } from '../answer-submission/answer-submission.entity';
+import { ProcessStatus } from '../answer-submission/answer-submission.constants';
+import { Question } from '../question/question.entity';
+import { QuestionSolution } from '../question-solution/entities/question-solution.entity';
 
 interface AiEvaluationRawResponse {
   accuracy_level: AccuracyEval;
