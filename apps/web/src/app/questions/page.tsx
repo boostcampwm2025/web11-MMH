@@ -10,8 +10,10 @@ export interface RootTree extends Category {
   children: CategoryWithQuestions[];
 }
 
+const API_URL = process.env.API_URL;
+
 async function getFullCategoryTree(): Promise<RootTree[]> {
-  const res = await fetch("http://localhost:8000/categories/roots", {
+  const res = await fetch(`${API_URL}/categories/roots`, {
     next: { revalidate: 3600 }, //3600초동안 불러온 데이터를 캐싱해서 재사용
   });
   const roots: Category[] = await res.json();
@@ -19,16 +21,14 @@ async function getFullCategoryTree(): Promise<RootTree[]> {
   return Promise.all(
     roots.map(async (root): Promise<RootTree> => {
       const treeRes = await fetch(
-        `http://localhost:8000/categories/tree-by-id/${root.id}`,
+        `${API_URL}/categories/tree-by-id/${root.id}`,
       );
       const treeData: Category = await treeRes.json();
       const subCategories = treeData.children || [];
 
       const childrenWithQuestions = await Promise.all(
         subCategories.map(async (sub): Promise<CategoryWithQuestions> => {
-          const qRes = await fetch(
-            `http://localhost:8000/questions/category/${sub.id}`,
-          );
+          const qRes = await fetch(`${API_URL}/questions/category/${sub.id}`);
           const questions: Question[] = await qRes.json();
           return {
             ...sub,
