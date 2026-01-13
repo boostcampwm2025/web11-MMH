@@ -16,4 +16,8 @@ export class QuestionService {
       order: { avgImportance: 'DESC' }, // 중요도 순 정렬
     });
   }
+
+  async findOneById(questionId: number) {
+    return this.questionRepository.findOneBy({ id: questionId });
+  }
 }
