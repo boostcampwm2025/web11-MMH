@@ -14,6 +14,7 @@ function useAudioStreamSession() {
   const [isRecording, setIsRecording] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [sessionId, setSessionId] = React.useState<string | null>(null);
+  const [assetId, setAssetId] = React.useState<number | null>(null);
 
   const streamerRef = React.useRef<AudioStreamerHandle | null>(null);
   const lastUpdateTimeRef = React.useRef<number>(0);
@@ -119,10 +120,11 @@ function useAudioStreamSession() {
       setIsLoading(true);
 
       // 세션 종료
-      await finalizeAudioSession({
+      const res = await finalizeAudioSession({
         sessionId,
       });
 
+      setAssetId(res.assetId);
       setIsLoading(false);
 
       socketRef.current?.disconnect();
@@ -143,6 +145,7 @@ function useAudioStreamSession() {
     streamerRef,
     historyRef,
 
+    assetId,
     sessionId,
 
     isLoading,

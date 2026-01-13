@@ -7,6 +7,7 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 import { AudioAsset } from './entities/audio-asset.entity';
 import { AudioSessionStatus } from './audio-stream.constants';
+import { ObjectStorageService } from '../object-storage/object-storage.service';
 
 /**
  * 인메모리 세션 정보
@@ -32,6 +33,7 @@ export class AudioStreamService {
   constructor(
     @InjectRepository(AudioAsset)
     private readonly audioAssetRepository: Repository<AudioAsset>,
+    private readonly objectStorageService: ObjectStorageService,
   ) {}
 
   /**
@@ -194,10 +196,43 @@ export class AudioStreamService {
     const finalStats = await fs.stat(session.filePath);
     const byteSize = finalStats.size;
 
+    // Object Storage에 업로드
+    let storageUrl: string;
+    const fileName = path.basename(session.filePath);
+    const objectKey = `audio-sessions/${sessionId}/${fileName}`;
+    try {
+      storageUrl = await this.objectStorageService.uploadFile(
+        session.filePath,
+        objectKey,
+      );
+      this.logger.log(
+        `File uploaded to Object Storage: ${session.filePath} -> ${storageUrl}`,
+      );
+
+      // 업로드 성공 시 로컬 파일 삭제
+      try {
+        await fs.unlink(session.filePath);
+        this.logger.log(`Local file deleted: ${session.filePath}`);
+      } catch (deleteError) {
+        this.logger.warn(
+          `Failed to delete local file: ${session.filePath}`,
+          deleteError,
+        );
+        // 로컬 파일 삭제 실패는 치명적이지 않으므로 에러를 던지지 않음
+      }
+    } catch (error) {
+      this.logger.error(
+        `Failed to upload file to Object Storage, using local path as fallback: ${session.filePath}`,
+        error,
+      );
+      storageUrl = session.filePath; // 업로드 실패 시 로컬 경로 사용
+    }
+
     // AudioAsset 생성
     const audioAsset = this.audioAssetRepository.create({
       userId,
-      storageUrl: session.filePath, // MVP: 로컬 디스크 경로 (Object Storage URL 아님)
+      storageUrl, // Object Storage URL 또는 로컬 디스크 경로 (fallback)
+      objectKey,
       durationMs: null, // MVP: duration 계산 생략
       byteSize: byteSize.toString(),
       codec: session.codec,
@@ -206,8 +241,6 @@ export class AudioStreamService {
     });
 
     const savedAsset = await this.audioAssetRepository.save(audioAsset);
-
-    const fileName = path.basename(session.filePath);
 
     this.logger.log(
       `Session finalized: ${sessionId}, file: ${session.filePath}, asset_id: ${savedAsset.id}`,
@@ -220,6 +253,15 @@ export class AudioStreamService {
       fileName,
       assetId: savedAsset.id,
     };
+  }
+
+  /**
+   * Audio Asset을 ID로 찾는다.
+   * @param assetId Audio Asset Id
+   * @returns  Audio Asset
+   */
+  async findAudioAsset(assetId: number) {
+    return this.audioAssetRepository.findOneBy({ id: assetId });
   }
 }
 
