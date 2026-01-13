@@ -12,7 +12,7 @@ import {
   InputType,
   ProcessStatus,
 } from './answer-submission.constants';
-import { Question } from '../question/question.entity';
+import { Question } from '../question/entities/question.entity';
 import { AudioAsset } from '../audio-stream/entities/audio-asset.entity';
 import { EvaluationStatus } from '../answer-evaluation/answer-evaluation.constants';
 

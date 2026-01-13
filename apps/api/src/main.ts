@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import type { Request, Response } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +16,36 @@ async function bootstrap() {
       origin: true,
       credentials: true,
     });
+  }
+
+  // Swagger 설정 (로컬/개발 환경에서만 노출)
+  const nodeEnv = process.env.NODE_ENV || 'development';
+  const isSwaggerEnabled = nodeEnv === 'development' || nodeEnv === 'local';
+
+  if (isSwaggerEnabled) {
+    const config = new DocumentBuilder()
+      .setTitle('MMH API')
+      .setDescription('MMH API 문서')
+      .setVersion('1.0')
+      .addCookieAuth('userId')
+      .addTag('users', '사용자 관련 API')
+      .addTag('streaks', '스트릭 관련 API')
+      .addTag('audio-stream', '오디오 스트리밍 관련 API')
+      .build();
+
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api-docs', app, document, {
+      swaggerOptions: {
+        persistAuthorization: true,
+      },
+    });
+
+    // OpenAPI 스펙 JSON 엔드포인트
+    app
+      .getHttpAdapter()
+      .get('/api-docs-json', (_req: Request, res: Response) => {
+        res.json(document);
+      });
   }
 
   await app.listen(process.env.PORT ?? 8000);

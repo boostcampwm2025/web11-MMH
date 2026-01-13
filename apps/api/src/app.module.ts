@@ -8,6 +8,8 @@ import { AudioStreamModule } from './audio-stream/audio-stream.module';
 import { typeOrmModuleOptions } from './configs/typeorm.config';
 import { StreaksModule } from './streaks/streaks.module';
 import { UserModule } from './user/user.module';
+import { CategoryModule } from './category/category.module';
+import { QuestionModule } from './question/question.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { UserModule } from './user/user.module';
     UserModule,
     AnswerEvaluationModule,
     AudioStreamModule,
+    CategoryModule,
+    QuestionModule,
     StreaksModule,
   ],
   controllers: [AppController],

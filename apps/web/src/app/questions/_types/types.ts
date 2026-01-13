@@ -1,13 +1,14 @@
 export interface Question {
   id: number;
   title: string;
-  context: string;
+  content: string;
   importance: number;
 }
 
 export interface Category {
-  id: string;
+  id: number;
   name: string;
-  count: number;
-  questions: Question[];
+  depth: number;
+  parentId: number | null;
+  children?: Category[];
 }

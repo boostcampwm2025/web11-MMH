@@ -1,4 +1,4 @@
-import { Question } from '../../question/question.entity';
+import { Question } from '../../question/entities/question.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
