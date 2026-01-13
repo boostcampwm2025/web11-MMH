@@ -2,7 +2,7 @@ export interface Question {
   id: number;
   title: string;
   content: string;
-  importance: number;
+  avgImportance: number;
 }
 
 export interface Category {
