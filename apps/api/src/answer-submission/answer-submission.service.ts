@@ -82,11 +82,25 @@ export class AnswerSubmissionService {
       await this.answerSubmissionRepository.save(answerSubmission);
 
     // Request STT asynchronously
-    this.sttService.requestStt(audioAsset).catch((error) => {
+    this.sttService.requestStt(audioAsset).catch(async (error) => {
       this.logger.error(
         `Failed to request STT for audioAssetId: ${audioAsset.id}`,
         error,
       );
+
+      // Update submission status to FAILED when STT request fails
+      try {
+        savedSubmission.sttStatus = ProcessStatus.FAILED;
+        await this.answerSubmissionRepository.save(savedSubmission);
+        this.logger.warn(
+          `Updated submission ${savedSubmission.id} sttStatus to FAILED due to STT request failure`,
+        );
+      } catch (updateError) {
+        this.logger.error(
+          `Failed to update submission ${savedSubmission.id} status after STT request failure`,
+          updateError,
+        );
+      }
     });
 
     return savedSubmission;
