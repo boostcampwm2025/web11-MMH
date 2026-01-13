@@ -3,9 +3,12 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AnswerSubmissionService } from './answer-submission.service';
 import { AnswerSubmission } from './entities/answer-submission.entity';
-import { QuizMode } from '../answer-submission/answer-submission.constants';
 import { EvaluationStatus } from '../answer-evaluation/answer-evaluation.constants';
-import { ProcessStatus, InputType } from './answer-submission.constants';
+import {
+  QuizMode,
+  ProcessStatus,
+  InputType,
+} from './answer-submission.constants';
 
 const mockAnswerSubmissionRepository = {
   find: jest.fn(),
