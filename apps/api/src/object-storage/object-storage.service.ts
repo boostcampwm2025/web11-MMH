@@ -8,7 +8,7 @@ import * as path from 'path';
 @Injectable()
 export class ObjectStorageService {
   private readonly logger = new Logger(ObjectStorageService.name);
-  private readonly s3Client: S3Client;
+  private readonly s3Client: S3Client | null = null;
   private readonly bucket?: string;
 
   constructor(private readonly configService: ConfigService) {
@@ -60,6 +60,10 @@ export class ObjectStorageService {
    * @returns 업로드된 파일의 공개 URL
    */
   async uploadFile(localFilePath: string, objectKey: string): Promise<string> {
+    if (!this.s3Client) {
+      throw new Error('Object storage not configured');
+    }
+
     try {
       const fileStream = createReadStream(localFilePath);
       const fileName = path.basename(localFilePath);
@@ -113,6 +117,10 @@ export class ObjectStorageService {
    * @returns 버킷 목록
    */
   async listBuckets(): Promise<any> {
+    if (!this.s3Client) {
+      throw new Error('Object storage not configured');
+    }
+
     try {
       const command = new ListBucketsCommand({});
       const response = await this.s3Client.send(command);
