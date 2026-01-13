@@ -7,7 +7,6 @@ const meta = {
   component: Toggle,
   parameters: {
     layout: "centered",
-    componentSubtitle: "iOS 세그먼트 스타일의 슬라이딩 토글 버튼입니다.",
   },
   tags: ["autodocs"],
   argTypes: {
@@ -47,7 +46,6 @@ const ToggleWithState = ({
 
   const handleChange = (newValue: string) => {
     setValue(newValue);
-    // Actions 패널에 로그를 남기기 위해 원본 onChange도 호출
     if (onChange) {
       onChange(newValue);
     }
@@ -64,8 +62,6 @@ export const Default: Story = {
       { label: "텍스트", value: "text" },
       { label: "음성", value: "voice" },
     ],
-    // [중요] onChange가 필수 prop이므로, 빈 함수라도 넣어주어야 TS 에러가 사라집니다.
-    // 실제 동작은 render 함수의 ToggleWithState가 처리합니다.
     onChange: () => {},
   },
   render: (args) => <ToggleWithState {...args} />,
@@ -75,7 +71,6 @@ export const Small: Story = {
   args: {
     ...Default.args,
     size: "sm",
-    // Default.args를 복사했으므로 onChange도 포함되어 있습니다.
   },
   render: (args) => <ToggleWithState {...args} />,
 };
@@ -96,7 +91,7 @@ export const OnOffSwitch: Story = {
       { label: "ON", value: "on" },
       { label: "OFF", value: "off" },
     ],
-    onChange: () => {}, // 필수 prop 추가
+    onChange: () => {},
   },
   render: (args) => <ToggleWithState {...args} />,
 };
