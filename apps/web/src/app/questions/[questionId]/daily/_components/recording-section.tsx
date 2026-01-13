@@ -7,9 +7,16 @@ import { CheckCircle2, Mic, RotateCcw, Square } from "lucide-react";
 import useAudioStreamSession from "../_hooks/use-audio-stream-session";
 import { cn } from "@/lib/cn";
 import WaveformFrame from "@/components/waveform/waveform-frame";
-import { transcribeAsset } from "../_lib/stt-api";
+import {
+  submitAnswerAction,
+  type SubmitAnswerState,
+} from "../_lib/submit-answer-action";
 
-function RecordingSection() {
+interface RecordingSectionProps {
+  questionId: number;
+}
+
+function RecordingSection({ questionId }: RecordingSectionProps) {
   const {
     historyRef,
     isLoading,
@@ -20,15 +27,18 @@ function RecordingSection() {
     stopRecording,
     retryRecording,
   } = useAudioStreamSession();
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  // 녹음 중지 핸들러
+  const [_, formAction, isPending] = React.useActionState<
+    SubmitAnswerState | null,
+    FormData
+  >(submitAnswerAction, null);
+
   return (
-    <section className="flex flex-col gap-6">
+    <section className="flex flex-col">
       <WaveformFrame
         className={cn(
           "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] overflow-hidden",
-          isRecording ? "h-40" : "h-0 opacity-0",
+          isRecording ? "h-40 mb-6" : "h-0 opacity-0",
         )}
       >
         <Waveform historyRef={historyRef} />
@@ -58,25 +68,30 @@ function RecordingSection() {
 
           if (!isRecording && sessionId) {
             return (
-              <div className="flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                <Button variant="outline" onClick={retryRecording}>
-                  <RotateCcw className="w-4 h-4" /> 다시 시도
-                </Button>
-                <Button
-                  disabled={isSubmitting}
-                  className="pl-6 pr-6"
-                  onClick={async () => {
-                    // TODO: 임시 플로우 연결시 제출 API로 바꿔야함
-                    if (assetId) {
-                      setIsSubmitting(true);
-                      await transcribeAsset({ assetId });
-                      setIsSubmitting(false);
-                    }
-                  }}
-                >
-                  답변 제출 <CheckCircle2 className="w-4 h-4" />
-                </Button>
-              </div>
+              <form action={formAction}>
+                <input
+                  type="hidden"
+                  name="audioAssetId"
+                  value={assetId || ""}
+                />
+                <input type="hidden" name="questionId" value={questionId} />
+                <div className="flex items-center gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={retryRecording}
+                  >
+                    <RotateCcw className="w-4 h-4" /> 다시 시도
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isPending}
+                    className="pl-6 pr-6"
+                  >
+                    답변 제출 <CheckCircle2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </form>
             );
           }
 

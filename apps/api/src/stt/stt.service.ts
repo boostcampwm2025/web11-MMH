@@ -19,13 +19,14 @@ export class SttService {
   /**
    * stt를 비동기로 요청합니다. 결과는 Object Storage에 저장됩니다.
    */
-  async transcribe(audioAsset: AudioAsset) {
+  requestStt(audioAsset: AudioAsset) {
     const requestUrl = `${this.ncpSpeechInvokeUrl}/recognizer/object-storage`;
+    const callbackBaseUrl = this.configService.get<string>('STT_CALLBACK_URL');
     const params = {
       dataKey: audioAsset.objectKey,
       language: 'ko-KR',
       completion: 'async',
-      resultToObs: true,
+      callback: `${callbackBaseUrl}/stt/callback?audioAssetId=${audioAsset.id}`,
       boostings: [
         {
           // TODO: 키워드 부스팅 단어들을 문제별로 다르게 주어야합니다.
@@ -35,7 +36,7 @@ export class SttService {
       ],
     };
 
-    const response = await fetch(requestUrl, {
+    return fetch(requestUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -43,7 +44,5 @@ export class SttService {
       },
       body: JSON.stringify(params),
     });
-
-    return response.ok;
   }
 }
