@@ -10,6 +10,8 @@ import { StreaksModule } from './streaks/streaks.module';
 import { UserModule } from './user/user.module';
 import { SttModule } from './stt/stt.module';
 import { ObjectStorageModule } from './object-storage/object-storage.module';
+import { CategoryModule } from './category/category.module';
+import { QuestionModule } from './question/question.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { ObjectStorageModule } from './object-storage/object-storage.module';
     UserModule,
     AnswerEvaluationModule,
     AudioStreamModule,
+    CategoryModule,
+    QuestionModule,
     StreaksModule,
     SttModule,
     ObjectStorageModule,

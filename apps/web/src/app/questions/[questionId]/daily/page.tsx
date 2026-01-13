@@ -13,7 +13,7 @@ function DailyQuestionPage() {
             향상시키는지 설명해주세요.
           </h2>
           <div className="mb-4">
-            <p className="text-zinc-600 leading-relaxed text-[15px]">
+            <p className="text-zinc-600 leading-relaxed text-[0.9375rem]">
               재조정(Reconciliation)과 Diffing 알고리즘에 초점을 맞춰주세요.
               실제 DOM 조작이 왜 비용이 많이 드는지, 그리고 React가 어떻게
               가벼운 객체 트리를 사용하여 업데이트를 효율적으로 처리하는지

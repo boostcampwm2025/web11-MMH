@@ -40,6 +40,8 @@ jobs:
 
       - name: Build Check
         run: pnpm build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
 
   check-changes:
     runs-on: ubuntu-latest
