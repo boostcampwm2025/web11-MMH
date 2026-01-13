@@ -1,16 +1,14 @@
 "use client";
 import { useCanvas2D } from "@/hooks/use-canvas-2d";
 import * as React from "react";
-import { mockGraphData } from "../../_constants/graph-mock";
 import { GRAPH_NUMBER_CONSTANT } from "../../_constants/graph-view-constant";
 import drawGraphView from "../../_lib/graph-view/draw-graph-view";
 import generateInitialNodePosition from "../../_lib/graph-view/generate-initial-node-position";
+import { GraphData } from "../../types/graph-view";
 
-function GraphView() {
+function GraphView({ mockData }: { mockData: GraphData }) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const { ctx, width, height } = useCanvas2D(canvasRef);
-
-  const mockData = mockGraphData; // 임시 목데이터
 
   const initNodeMap = React.useMemo(
     () =>
@@ -31,7 +29,12 @@ function GraphView() {
     drawGraphView(ctx, initNodeMap, mockData.edges);
   }, [ctx, width, height, initNodeMap, mockData.edges]);
 
-  return <canvas className="w-full h-full" ref={canvasRef}></canvas>;
+  return (
+    <canvas
+      className="w-full h-full rounded-md border border-gray-300"
+      ref={canvasRef}
+    ></canvas>
+  );
 }
 
 export default GraphView;
