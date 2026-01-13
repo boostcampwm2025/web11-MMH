@@ -109,22 +109,24 @@ function VoronoiStreak({ streakCount, imageSrc }: VoronoiStreakProps) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.clearRect(0, 0, width, height);
+    requestAnimationFrame(() => {
+      ctx.clearRect(0, 0, width, height);
 
-    cellData.forEach((cell) => {
-      ctx.beginPath();
+      cellData.forEach((cell) => {
+        ctx.beginPath();
 
-      if (cell.cluster < streakCount) {
-        ctx.fillStyle = cell.color;
-        ctx.strokeStyle = cell.color;
-      } else {
-        ctx.fillStyle = VORONOI_COLOR_CONSTANT.GRAY;
-        ctx.strokeStyle = VORONOI_COLOR_CONSTANT.WHITE;
-      }
+        if (cell.cluster < streakCount) {
+          ctx.fillStyle = cell.color;
+          ctx.strokeStyle = cell.color;
+        } else {
+          ctx.fillStyle = VORONOI_COLOR_CONSTANT.GRAY;
+          ctx.strokeStyle = VORONOI_COLOR_CONSTANT.WHITE;
+        }
 
-      ctx.fill(cell.path);
-      ctx.lineWidth = 0.5;
-      ctx.stroke(cell.path);
+        ctx.fill(cell.path);
+        ctx.lineWidth = 0.5;
+        ctx.stroke(cell.path);
+      });
     });
   }, [cellData, streakCount, width, height]);
   return <canvas className="w-full h-full" ref={canvasRef} />;
