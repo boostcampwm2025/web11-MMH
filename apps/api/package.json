@@ -21,8 +21,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "openapi:generate": "ts-node -r tsconfig-paths/register scripts/generate-openapi-spec.ts",
     "openapi:validate": "pnpm run openapi:generate && node -e \"const spec = require('./openapi-spec.json'); if (!spec.paths || Object.keys(spec.paths).length === 0) { console.error('OpenAPI 스펙에 경로가 없습니다.'); process.exit(1); } console.log('OpenAPI 스펙 검증 성공');\"",
-    "seed": "NODE_ENV=development ts-node -r tsconfig-paths/register src/seeds/seed.runner.ts",
-    "seed:prod": "NODE_ENV=production ts-node -r tsconfig-paths/register src/seeds/seed.runner.ts"
+    "seed": "cross-env NODE_ENV=development ts-node -r tsconfig-paths/register src/seeds/seed.runner.ts",
+    "seed:prod": "cross-env NODE_ENV=production ts-node -r tsconfig-paths/register src/seeds/seed.runner.ts"
   },
   "dependencies": {
     "@google/genai": "^1.34.0",
@@ -54,6 +54,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^22.10.7",
     "@types/supertest": "^6.0.2",
+    "cross-env": "^10.1.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
