@@ -25,10 +25,20 @@ export class AnswerEvaluation {
   feedbackMessage: string;
 
   @Column({ name: 'detail_analysis', type: 'jsonb' })
-  detailAnalysis: any;
+  detailAnalysis: {
+    accuracy: string;
+    logic: string;
+    depth: string;
+  };
 
   @Column({ name: 'score_details', type: 'jsonb' })
-  scoreDetails: any;
+  scoreDetails: {
+    accuracy: number;
+    logic: number;
+    depth: number;
+    completeness: number;
+    application: number;
+  };
 
   @Column({ name: 'accuracy_eval', type: 'enum', enum: AccuracyEval })
   accuracyEval: AccuracyEval;
