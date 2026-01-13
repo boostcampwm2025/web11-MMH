@@ -35,7 +35,7 @@ export class QuestionSeed extends BaseSeed {
     const databaseId = getCategoryId('Database');
     const osId = getCategoryId('Operating System');
 
-    // Questions 삽입 (ON CONFLICT로 idempotent 보장)
+    // Questions 삽입 (멱등성은 상단의 COUNT 체크로 보장됨)
     await queryRunner.query(`
       INSERT INTO questions (
         title,
@@ -85,10 +85,7 @@ export class QuestionSeed extends BaseSeed {
           0,
           4.9,
           ${osId}
-        )
-      ON CONFLICT DO NOTHING;
+        );
     `);
-
-    console.log('Questions seeded successfully');
   }
 }
