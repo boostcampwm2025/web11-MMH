@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnswerEvaluationModule } from './answer-evaluation/answer-evaluation.module';
+import { AnswerSubmissionModule } from './answer-submission/answer-submission.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AudioStreamModule } from './audio-stream/audio-stream.module';
@@ -22,6 +23,7 @@ import { QuestionModule } from './question/question.module';
     TypeOrmModule.forRoot(typeOrmModuleOptions),
     UserModule,
     AnswerEvaluationModule,
+    AnswerSubmissionModule,
     AudioStreamModule,
     CategoryModule,
     QuestionModule,
