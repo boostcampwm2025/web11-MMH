@@ -1,0 +1,19 @@
+language: ko-KR
+early_access: true
+
+reviews:
+  profile: chill
+  request_changes_workflow: true
+  high_level_summary: true
+  review_status: true
+
+  path_filters:
+    - "!**/README.md"
+
+  auto_review:
+    enabled: true
+    drafts: false
+
+tools:
+  github-checks:
+    enabled: true
