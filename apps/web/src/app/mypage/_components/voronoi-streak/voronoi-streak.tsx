@@ -1,5 +1,6 @@
 "use client";
 
+import { useCanvas2D } from "@/hooks/use-canvas-2d";
 import { Delaunay } from "d3-delaunay";
 import { randomLcg } from "d3-random";
 import * as React from "react";
@@ -13,8 +14,6 @@ import generateRandomPoint from "../../_lib/generate-random-point";
 import lloydRelaxation from "../../_lib/lloyd-relaxation";
 
 interface VoronoiStreakProps {
-  width: number;
-  height: number;
   streakCount: number;
   imageSrc: string;
 }
@@ -25,17 +24,13 @@ interface CellData {
   cluster: number;
 }
 
-function VoronoiStreak({
-  width,
-  height,
-  streakCount,
-  imageSrc,
-}: VoronoiStreakProps) {
+function VoronoiStreak({ streakCount, imageSrc }: VoronoiStreakProps) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const { width, height } = useCanvas2D(canvasRef);
   const [cellData, setCellData] = React.useState<CellData[]>([]);
 
   React.useEffect(() => {
-    if (!imageSrc) return;
+    if (!imageSrc || width === 0 || height === 0) return;
 
     const image = new Image();
     image.src = imageSrc;
@@ -132,7 +127,7 @@ function VoronoiStreak({
       ctx.stroke(cell.path);
     });
   }, [cellData, streakCount, width, height]);
-  return <canvas ref={canvasRef} width={width} height={height} />;
+  return <canvas className="w-full h-full" ref={canvasRef} />;
 }
 
 export default VoronoiStreak;
