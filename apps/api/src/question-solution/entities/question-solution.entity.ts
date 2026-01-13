@@ -1,4 +1,4 @@
-import { Question } from 'src/question/entities/question.entity';
+import { Question } from '../../question/entities/question.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -23,10 +23,13 @@ class QuestionSolution {
   standardDefinition: string;
 
   @Column({ name: 'technical_mechanism', type: 'jsonb' })
-  technicalMechanism: any;
+  technicalMechanism: {
+    basicPrinciple: string;
+    deepPrinciple: string;
+  };
 
   @Column({ name: 'key_terminology', type: 'jsonb' })
-  keyTerminology: any;
+  keyTerminology: string[];
 
   @Column({ name: 'practical_application', type: 'text' })
   practicalApplication: string;
