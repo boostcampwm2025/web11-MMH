@@ -1,4 +1,5 @@
 import { Controller, Post, Body, Logger } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { AudioStreamService } from './audio-stream.service';
 import {
   AudioStartRequestDto,
@@ -13,6 +14,7 @@ import {
  * AudioStreamController
  * 오디오 스트리밍 세션 시작/종료를 REST API로 처리
  */
+@ApiTags('audio-stream')
 @Controller('audio-stream')
 export class AudioStreamController {
   private readonly logger = new Logger(AudioStreamController.name);
@@ -24,6 +26,13 @@ export class AudioStreamController {
    * 새로운 오디오 스트리밍 세션을 시작한다.
    */
   @Post('start')
+  @ApiOperation({ summary: '오디오 스트리밍 세션 시작' })
+  @ApiBody({ type: AudioStartRequestDto })
+  @ApiResponse({
+    status: 200,
+    description: '세션 시작 성공',
+    type: AudioStartResponseDto,
+  })
   async start(
     @Body() data: AudioStartRequestDto,
   ): Promise<AudioStartResponseDto> {
@@ -50,6 +59,13 @@ export class AudioStreamController {
    * 오디오 스트리밍을 종료하고 최종 파일 정보를 반환한다.
    */
   @Post('finalize')
+  @ApiOperation({ summary: '오디오 스트리밍 세션 종료' })
+  @ApiBody({ type: AudioFinalizeRequestDto })
+  @ApiResponse({
+    status: 200,
+    description: '세션 종료 성공',
+    type: AudioFinalizeResponseDto,
+  })
   async finalize(
     @Body() data: AudioFinalizeRequestDto,
   ): Promise<AudioFinalizeResponseDto> {
