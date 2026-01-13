@@ -11,7 +11,7 @@ import {
   EvaluationStatus,
 } from './answer-evaluation.constants';
 import { AnswerEvaluation } from './entities/answer-evaluation.entity';
-import { AnswerSubmission } from '../answer-submission/answer-submission.entity';
+import { AnswerSubmission } from '../answer-submission/entities/answer-submission.entity';
 import { Question } from '../question/entities/question.entity';
 import { QuestionSolution } from '../question-solution/entities/question-solution.entity';
 import {
