@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, NotFoundException } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -40,6 +40,10 @@ export class QuestionController {
     description: 'Question not found',
   })
   async getById(@Param() params: FindOneParams) {
-    return await this.questionService.findOneById(+params.id);
+    const question = await this.questionService.findOneById(+params.id);
+    if (!question) {
+      throw new NotFoundException(`Question with ID ${params.id} not found`);
+    }
+    return question;
   }
 }
