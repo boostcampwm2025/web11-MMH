@@ -6,7 +6,7 @@ import { List, RotateCcw, User } from "lucide-react";
 import NavButton from "./_components/nav-button";
 
 interface ReportPageProps {
-  params: Promise<{ reportId: string }>;
+  params: Promise<{ questionId: string }>;
   searchParams: Promise<{ attempt?: string }>;
 }
 
