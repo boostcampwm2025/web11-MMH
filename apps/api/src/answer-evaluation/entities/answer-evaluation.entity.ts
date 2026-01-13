@@ -11,7 +11,7 @@ import {
   LogicEval,
   DepthEval,
 } from '../answer-evaluation.constants';
-import { AnswerSubmission } from '../../answer-submission/answer-submission.entity';
+import { AnswerSubmission } from '../../answer-submission/entities/answer-submission.entity';
 
 @Entity('answer_evaluations')
 export class AnswerEvaluation {

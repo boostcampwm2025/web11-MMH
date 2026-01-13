@@ -1,4 +1,14 @@
-import { Controller, Post, Get, Body, Param, Req } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Param,
+  Req,
+  Query,
+  ParseIntPipe,
+  UnauthorizedException,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -7,11 +17,15 @@ import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiParam,
+  ApiQuery,
+  ApiOkResponse,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { AnswerSubmissionService } from './answer-submission.service';
 import { SubmitAnswerDto } from './dtos/submit-answer.dto';
-import { AnswerSubmission } from './answer-submission.entity';
+import { AnswerSubmission } from './entities/answer-submission.entity';
+import { AnswerSubmissionResponseDto } from './dtos/answer-submission-response.dto';
 
 @ApiTags('answer-submissions')
 @Controller('answer-submissions')
@@ -70,5 +84,43 @@ export class AnswerSubmissionController {
     @Param('id') id: string,
   ): Promise<AnswerSubmission> {
     return await this.answerSubmissionService.findById(Number(id));
+  }
+
+  @Get()
+  @ApiOperation({
+    summary: '문제별 제출 기록 조회',
+    description: '특정 문제에 대한 사용자의 제출 기록을 최신순으로 조회합니다.',
+  })
+  @ApiQuery({
+    name: 'questionId',
+    type: 'number',
+    required: true,
+    description: '조회할 문제 ID',
+    example: 1,
+  })
+  @ApiOkResponse({
+    description: '조회 성공',
+    type: [AnswerSubmissionResponseDto],
+  })
+  @ApiUnauthorizedResponse({
+    description: '로그인 필요',
+  })
+  async getDailySubmissionListByQuestionId(
+    @Query('questionId', ParseIntPipe) questionId: number,
+  ) {
+    // TODO: userId 실제 값 가지고 오도록 수정 필요
+    const userId = 1;
+
+    if (!userId || isNaN(userId)) {
+      throw new UnauthorizedException('로그인이 필요한 서비스입니다.');
+    }
+
+    const result =
+      await this.answerSubmissionService.getHistoryListByQuestionId(
+        userId,
+        questionId,
+      );
+
+    return result;
   }
 }

@@ -79,7 +79,11 @@ export class SttController {
       );
 
       if (isSuccess) {
-        void this.answerEvaluationService.evaluate(submission.id);
+        this.answerEvaluationService.evaluate(submission.id).catch(() => {
+          this.logger.error(
+            `Failed to evaluate answer for audioAssetId: ${audioAssetId}`,
+          );
+        });
       }
 
       return { success: true };

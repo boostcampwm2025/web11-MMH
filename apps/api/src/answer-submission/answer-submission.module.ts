@@ -2,10 +2,10 @@ import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnswerSubmissionController } from './answer-submission.controller';
 import { AnswerSubmissionService } from './answer-submission.service';
-import { AnswerSubmission } from './answer-submission.entity';
 import { AudioAsset } from '../audio-stream/entities/audio-asset.entity';
 import { Question } from '../question/entities/question.entity';
 import { SttModule } from '../stt/stt.module';
+import { AnswerSubmission } from './entities/answer-submission.entity';
 
 @Module({
   imports: [
