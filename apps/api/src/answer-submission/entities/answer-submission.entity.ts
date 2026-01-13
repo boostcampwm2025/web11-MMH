@@ -61,7 +61,7 @@ class AnswerSubmission {
   @Column({ name: 'question_id', type: 'int' })
   questionId: number;
 
-  @Column({ name: 'audio_asset_id', type: 'int' })
+  @Column({ name: 'audio_asset_id', type: 'int', unique: true })
   audioAssetId: number;
 
   @ManyToOne(() => Question)

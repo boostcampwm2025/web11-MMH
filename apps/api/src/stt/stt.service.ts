@@ -36,7 +36,7 @@ export class SttService {
       ],
     };
 
-    void fetch(requestUrl, {
+    return fetch(requestUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

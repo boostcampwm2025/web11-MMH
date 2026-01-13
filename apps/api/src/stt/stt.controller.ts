@@ -1,4 +1,12 @@
-import { Body, Controller, Post, Query, Logger } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Query,
+  Logger,
+  ParseIntPipe,
+  BadRequestException,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
@@ -44,32 +52,21 @@ export class SttController {
     },
   })
   @ApiBadRequestResponse({
-    description: 'audioAssetId가 누락되었거나 답변 제출을 찾을 수 없음',
-    schema: {
-      type: 'object',
-      properties: {
-        error: { type: 'string', example: 'audioAssetId is required' },
-      },
-    },
+    description: 'audioAssetId가 누락되었거나 유효하지 않음',
   })
   async sttResultCallback(
-    @Query('audioAssetId') audioAssetId: string,
+    @Query('audioAssetId', ParseIntPipe) audioAssetId: number,
     @Body() data: SttResult,
   ) {
     this.logger.log(`Received STT callback for audioAssetId: ${audioAssetId}`);
     this.logger.log(`STT Result: ${data.result}`);
-
-    if (!audioAssetId) {
-      this.logger.error('audioAssetId is missing in callback');
-      return { error: 'audioAssetId is required' };
-    }
 
     try {
       const isSuccess = data.result === 'SUCCEEDED';
       const sttText = data.text || '';
 
       const submission = await this.answerSubmissionService.updateSttResult(
-        Number(audioAssetId),
+        audioAssetId,
         sttText,
         isSuccess,
       );
@@ -92,7 +89,7 @@ export class SttController {
         `Failed to update answer submission for audioAssetId: ${audioAssetId}`,
         error,
       );
-      return { error: 'Failed to update answer submission' };
+      throw new BadRequestException('Failed to update answer submission');
     }
   }
 }

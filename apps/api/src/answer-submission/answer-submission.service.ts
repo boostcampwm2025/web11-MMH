@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Logger,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -20,6 +21,8 @@ import { EvaluationStatus } from 'src/answer-evaluation/answer-evaluation.consta
 
 @Injectable()
 export class AnswerSubmissionService {
+  private readonly logger = new Logger(AnswerSubmissionService.name);
+
   constructor(
     @InjectRepository(AnswerSubmission)
     private readonly answerSubmissionRepository: Repository<AnswerSubmission>,
@@ -79,7 +82,12 @@ export class AnswerSubmissionService {
       await this.answerSubmissionRepository.save(answerSubmission);
 
     // Request STT asynchronously
-    this.sttService.requestStt(audioAsset);
+    this.sttService.requestStt(audioAsset).catch((error) => {
+      this.logger.error(
+        `Failed to request STT for audioAssetId: ${audioAsset.id}`,
+        error,
+      );
+    });
 
     return savedSubmission;
   }
