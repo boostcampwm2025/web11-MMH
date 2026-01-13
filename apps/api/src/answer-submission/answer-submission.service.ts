@@ -106,4 +106,16 @@ export class AnswerSubmissionService {
 
     await this.answerSubmissionRepository.save(submission);
   }
+
+  async findById(id: number): Promise<AnswerSubmission> {
+    const submission = await this.answerSubmissionRepository.findOne({
+      where: { id },
+    });
+
+    if (!submission) {
+      throw new NotFoundException(`Answer submission with ID ${id} not found`);
+    }
+
+    return submission;
+  }
 }

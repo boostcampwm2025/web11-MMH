@@ -1,8 +1,11 @@
 "use server";
 
+import { redirect } from "next/navigation";
+
 export interface SubmitAnswerState {
   success: boolean;
   message: string;
+  submissionId?: number;
   error?: string;
 }
 
@@ -21,17 +24,15 @@ export async function submitAnswerAction(
     };
   }
 
-  try {
-    // TODO: 테스트용 하드코딩, 추후 실제 인증으로 변경 필요
-    const userId = "1";
+  const apiUrl = process.env.API_URL;
 
-    // NestJS API 호출
-    const apiUrl = process.env.API_URL || "http://localhost:3000";
+  let submissionId: number | null = null;
+
+  try {
     const response = await fetch(`${apiUrl}/answer-submissions`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Cookie: `userId=${userId}`,
       },
       body: JSON.stringify({
         audioAssetId: Number(audioAssetId),
@@ -49,12 +50,8 @@ export async function submitAnswerAction(
       };
     }
 
-    await response.json();
-
-    return {
-      success: true,
-      message: "답변이 제출되었습니다!",
-    };
+    const data = await response.json();
+    submissionId = data.id;
   } catch (error) {
     console.error("Error submitting answer:", error);
     return {
@@ -63,4 +60,6 @@ export async function submitAnswerAction(
       error: "답변 제출 중 오류가 발생했습니다.",
     };
   }
+
+  redirect(`/reports/${questionId}?attempt=${submissionId}`);
 }

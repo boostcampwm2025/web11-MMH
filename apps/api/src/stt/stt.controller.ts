@@ -63,7 +63,7 @@ export class SttController {
     }
 
     try {
-      const isSuccess = data.result === 'success';
+      const isSuccess = data.result === 'SUCCEEDED';
       const sttText = data.text || '';
 
       await this.answerSubmissionService.updateSttResult(
@@ -75,6 +75,8 @@ export class SttController {
       this.logger.log(
         `Successfully updated answer submission for audioAssetId: ${audioAssetId}`,
       );
+
+      // TODO: 체점 요청
 
       return { success: true };
     } catch (error) {
