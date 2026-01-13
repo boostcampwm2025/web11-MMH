@@ -88,9 +88,9 @@ describe('AnswerSubmissionService', () => {
         evaluationStatus: EvaluationStatus.PENDING,
         sttStatus: ProcessStatus.DONE,
         inputType: InputType.VOICE,
-        rawAnswer: 'test answer',
-        score: 0,
-        takenTime: 10,
+        answerContent: 'test answer',
+        totalScore: 0,
+        duration: 10,
       });
     });
 
