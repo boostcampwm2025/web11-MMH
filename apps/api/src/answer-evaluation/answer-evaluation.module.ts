@@ -6,7 +6,7 @@ import { AnswerEvaluationService } from './answer-evaluation.service';
 import { AnswerEvaluationController } from './answer-evaluation.controller';
 import { AnswerEvaluation } from './entities/answer-evaluation.entity';
 import { AnswerSubmission } from 'src/answer-submission/answer-submission.entity';
-import { Question } from 'src/question/question.entity';
+import { Question } from 'src/question/entities/question.entity';
 import { QuestionSolution } from 'src/question-solution/entities/question-solution.entity';
 
 @Module({
