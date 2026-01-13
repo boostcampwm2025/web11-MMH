@@ -22,6 +22,12 @@ export class SttController {
       );
     }
 
+    if (!audioAsset.objectKey) {
+      throw new BadRequestException(
+        `audio asset not uploaded to object storage, missing objectKey for assetId ${data.assetId}`,
+      );
+    }
+
     return this.sttService.transcribe(audioAsset);
   }
 }
