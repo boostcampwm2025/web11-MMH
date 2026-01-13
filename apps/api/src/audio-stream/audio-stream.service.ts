@@ -198,16 +198,21 @@ export class AudioStreamService {
 
     // Object Storage에 업로드
     let storageUrl: string;
+    let objectKey: string | null = null;
     const fileName = path.basename(session.filePath);
-    const objectKey = `audio-sessions/${sessionId}/${fileName}`;
+
     try {
+      const uploadKey = `audio-sessions/${sessionId}/${fileName}`;
       storageUrl = await this.objectStorageService.uploadFile(
         session.filePath,
-        objectKey,
+        uploadKey,
       );
       this.logger.log(
         `File uploaded to Object Storage: ${session.filePath} -> ${storageUrl}`,
       );
+
+      // 업로드 성공 시에만 objectKey 설정
+      objectKey = uploadKey;
 
       // 업로드 성공 시 로컬 파일 삭제
       try {
@@ -226,13 +231,14 @@ export class AudioStreamService {
         error,
       );
       storageUrl = session.filePath; // 업로드 실패 시 로컬 경로 사용
+      // objectKey는 null로 유지 (업로드 실패)
     }
 
     // AudioAsset 생성
     const audioAsset = this.audioAssetRepository.create({
       userId,
       storageUrl, // Object Storage URL 또는 로컬 디스크 경로 (fallback)
-      objectKey,
+      objectKey, // 업로드 성공 시에만 설정됨, 실패 시 null
       durationMs: null, // MVP: duration 계산 생략
       byteSize: byteSize.toString(),
       codec: session.codec,
