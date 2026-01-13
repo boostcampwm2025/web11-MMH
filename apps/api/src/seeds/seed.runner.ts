@@ -22,23 +22,16 @@ async function runSeeds() {
     if (!dataSource.isInitialized) {
       await dataSource.initialize();
     }
-
-    console.log('✅ Database connection established\n');
-
     // QueryRunner 생성 (Transaction 사용)
     queryRunner = dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    // 환경에 맞는 Seed만 필터링
-    const currentEnv = process.env.NODE_ENV || 'development';
-    console.log(`📦 Running seeds for environment: ${currentEnv}\n`);
-
     const seedsToRun = seeds.filter((seed) => seed.shouldRun());
 
     // Seed 순차 실행
     for (const seed of seedsToRun) {
-      console.log(`🌱 Running ${seed.name}...`);
+      console.log(`Running ${seed.name}...`);
       try {
         await seed.run(queryRunner);
         console.log(`✅ ${seed.name} completed\n`);
@@ -60,7 +53,8 @@ async function runSeeds() {
       console.log('🔄 Transaction rolled back');
     }
 
-    process.exit(1);
+    // Set exit code to indicate failure
+    process.exitCode = 1;
   } finally {
     // QueryRunner 해제
     if (queryRunner) {
@@ -69,8 +63,9 @@ async function runSeeds() {
 
     // ApplicationContext 종료
     await app.close();
-    console.log('👋 Seed process finished');
-    process.exit(0);
+
+    // Exit with the appropriate code (1 for error, 0 for success)
+    process.exit(process.exitCode || 0);
   }
 }
 

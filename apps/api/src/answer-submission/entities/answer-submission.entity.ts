@@ -11,10 +11,10 @@ import {
   QuizMode,
   InputType,
   ProcessStatus,
-} from './answer-submission.constants';
-import { Question } from '../question/entities/question.entity';
-import { AudioAsset } from '../audio-stream/entities/audio-asset.entity';
-import { EvaluationStatus } from '../answer-evaluation/answer-evaluation.constants';
+} from '../answer-submission.constants';
+import { Question } from '../../question/entities/question.entity';
+import { AudioAsset } from '../../audio-stream/entities/audio-asset.entity';
+import { EvaluationStatus } from '../../answer-evaluation/answer-evaluation.constants';
 
 @Entity('answer_submissions')
 class AnswerSubmission {
@@ -61,7 +61,7 @@ class AnswerSubmission {
   @Column({ name: 'question_id', type: 'int' })
   questionId: number;
 
-  @Column({ name: 'audio_asset_id', type: 'int' })
+  @Column({ name: 'audio_asset_id', type: 'int', unique: true })
   audioAssetId: number;
 
   @ManyToOne(() => Question)

@@ -21,6 +21,12 @@ function useAudioStreamSession() {
   const historyRef = React.useRef<number[]>([]);
   const seqRef = React.useRef(0);
 
+  const accumRef = React.useRef({
+    sumSq: 0,
+    count: 0,
+    nextFlushAt: 0,
+  });
+
   const { socketRef } = useSocket();
 
   // AudioStreamer 초기화 (한 번만 실행)
@@ -43,38 +49,48 @@ function useAudioStreamSession() {
   React.useEffect(() => {
     if (!streamerRef.current) return;
 
+    // 초기화
+    accumRef.current.sumSq = 0;
+    accumRef.current.count = 0;
+    accumRef.current.nextFlushAt =
+      Date.now() + WAVEFORM_CONFIG.updateIntervalMs;
+
     streamerRef.current.setOnAudioChunk(({ wave, buffer }) => {
-      // Socket.io를 통해 오디오 청크 전송
+      // (1) 전송은 그대로 10ms 단위로
       if (socketRef.current && sessionId) {
         const bytes = Buffer.from(buffer);
         const seq = seqRef.current++;
-
-        socketRef.current.emit("audio.chunk", {
-          sessionId,
-          seq,
-          bytes,
-        });
+        socketRef.current.emit("audio.chunk", { sessionId, seq, bytes });
       }
 
       const now = Date.now();
-
-      // 일정 간격이 지나지 않았으면 스킵
-      if (now - lastUpdateTimeRef.current < WAVEFORM_CONFIG.updateIntervalMs) {
-        return;
-      }
-
       lastUpdateTimeRef.current = now;
 
-      // RMS(Root Mean Square) 값 계산
-      let sum = 0;
-      for (let i = 0; i < wave.length; i++) {
-        sum += wave[i] * wave[i];
-      }
-      const rms = Math.sqrt(sum / wave.length);
-      historyRef.current.push(rms);
+      // (2) 그래프용 누적: 제곱합 + 카운트
+      let sumSq = 0;
+      for (let i = 0; i < wave.length; i++) sumSq += wave[i] * wave[i];
 
-      if (historyRef.current.length > WAVEFORM_CONFIG.maxBars) {
-        historyRef.current.shift();
+      accumRef.current.sumSq += sumSq;
+      accumRef.current.count += wave.length;
+
+      // (3) 100ms마다 한 번만 history 업데이트
+      if (now >= accumRef.current.nextFlushAt) {
+        const meanSq = accumRef.current.count
+          ? accumRef.current.sumSq / accumRef.current.count
+          : 0;
+        const rms100 = Math.sqrt(meanSq);
+
+        historyRef.current.push(rms100);
+        if (historyRef.current.length > WAVEFORM_CONFIG.maxBars) {
+          historyRef.current.shift();
+        }
+
+        // 다음 버킷으로 리셋
+        accumRef.current.sumSq = 0;
+        accumRef.current.count = 0;
+
+        // 드리프트 줄이기: 현재 시간 기준으로 다음 flush 설정
+        accumRef.current.nextFlushAt = now + WAVEFORM_CONFIG.updateIntervalMs;
       }
     });
   }, [socketRef, sessionId]);

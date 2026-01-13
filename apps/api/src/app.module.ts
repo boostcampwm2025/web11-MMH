@@ -12,6 +12,7 @@ import { SttModule } from './stt/stt.module';
 import { ObjectStorageModule } from './object-storage/object-storage.module';
 import { CategoryModule } from './category/category.module';
 import { QuestionModule } from './question/question.module';
+import { AnswerSubmissionModule } from './answer-submission/answer-submission.module';
 
 @Module({
   imports: [
@@ -22,12 +23,14 @@ import { QuestionModule } from './question/question.module';
     TypeOrmModule.forRoot(typeOrmModuleOptions),
     UserModule,
     AnswerEvaluationModule,
+    AnswerSubmissionModule,
     AudioStreamModule,
     CategoryModule,
     QuestionModule,
     StreaksModule,
     SttModule,
     ObjectStorageModule,
+    AnswerSubmissionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -79,7 +79,5 @@ export class CategorySeed extends BaseSeed {
         ('NestJS', 2, ${beId}, NOW(), NOW())
       ON CONFLICT DO NOTHING;
     `);
-
-    console.log('Categories seeded successfully');
   }
 }
