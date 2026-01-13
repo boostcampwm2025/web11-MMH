@@ -23,6 +23,6 @@ export const EvaluationStatus = {
   COMPLETED: 'COMPLETED',
   PENDING: 'PENDING',
   FAILED: 'FAILED',
-};
+} as const;
 export type EvaluationStatus =
   (typeof EvaluationStatus)[keyof typeof EvaluationStatus];
