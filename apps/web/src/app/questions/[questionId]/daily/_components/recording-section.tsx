@@ -28,19 +28,10 @@ function RecordingSection({ questionId }: RecordingSectionProps) {
     retryRecording,
   } = useAudioStreamSession();
 
-  const [state, formAction, isPending] = React.useActionState<
+  const [_, formAction, isPending] = React.useActionState<
     SubmitAnswerState | null,
     FormData
   >(submitAnswerAction, null);
-
-  // Show success message
-  React.useEffect(() => {
-    if (state?.success) {
-      alert(state.message);
-    } else if (state?.error) {
-      alert(state.error);
-    }
-  }, [state]);
 
   return (
     <section className="flex flex-col">
