@@ -1,4 +1,7 @@
-import { GRAPH_COLOR_CONSTANT } from "../../_constants/graph-view-constant";
+import {
+  GRAPH_COLOR_CONSTANT,
+  GRAPH_NUMBER_CONSTANT,
+} from "../../_constants/graph-view-constant";
 import {
   GraphEdge,
   GraphNode,
@@ -25,7 +28,7 @@ function drawGraphView(
   });
 
   nodes.forEach((node) => {
-    const radius = 10;
+    const radius = GRAPH_NUMBER_CONSTANT.NODE_RADIUS;
     ctx.beginPath();
     ctx.arc(node.x, node.y, radius, 0, Math.PI * 2);
     ctx.fillStyle =
