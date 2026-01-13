@@ -93,7 +93,17 @@ describe('AnswerEvaluationService', () => {
           useValue: dataSource,
         },
       ],
-    }).compile();
+    })
+      .setLogger({
+        log: jest.fn(),
+        error: jest.fn(),
+        warn: jest.fn(),
+        debug: jest.fn(),
+        verbose: jest.fn(),
+        fatal: jest.fn(),
+        setLogLevels: jest.fn(),
+      })
+      .compile();
 
     service = module.get<AnswerEvaluationService>(AnswerEvaluationService);
     answerEvaluationRepository = module.get(
