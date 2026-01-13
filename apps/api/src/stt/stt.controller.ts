@@ -8,6 +8,7 @@ import {
 } from '@nestjs/swagger';
 import { SttResult } from './dtos/stt-result.dto';
 import { AnswerSubmissionService } from '../answer-submission/answer-submission.service';
+import { AnswerEvaluationService } from 'src/answer-evaluation/answer-evaluation.service';
 
 @ApiTags('stt')
 @Controller('stt')
@@ -16,6 +17,7 @@ export class SttController {
 
   constructor(
     private readonly answerSubmissionService: AnswerSubmissionService,
+    private readonly answerEvaluationService: AnswerEvaluationService,
   ) {}
 
   @Post('callback')
@@ -66,7 +68,7 @@ export class SttController {
       const isSuccess = data.result === 'SUCCEEDED';
       const sttText = data.text || '';
 
-      await this.answerSubmissionService.updateSttResult(
+      const submission = await this.answerSubmissionService.updateSttResult(
         Number(audioAssetId),
         sttText,
         isSuccess,
@@ -76,7 +78,9 @@ export class SttController {
         `Successfully updated answer submission for audioAssetId: ${audioAssetId}`,
       );
 
-      // TODO: 체점 요청
+      if (isSuccess) {
+        void this.answerEvaluationService.evaluate(submission.id);
+      }
 
       return { success: true };
     } catch (error) {

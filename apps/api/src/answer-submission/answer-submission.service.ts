@@ -86,7 +86,7 @@ export class AnswerSubmissionService {
     audioAssetId: number,
     sttText: string,
     isSuccess: boolean,
-  ): Promise<void> {
+  ): Promise<AnswerSubmission> {
     // Find submission by audioAssetId
     const submission = await this.answerSubmissionRepository.findOne({
       where: { audioAssetId },
@@ -104,7 +104,7 @@ export class AnswerSubmissionService {
       ? ProcessStatus.DONE
       : ProcessStatus.FAILED;
 
-    await this.answerSubmissionRepository.save(submission);
+    return await this.answerSubmissionRepository.save(submission);
   }
 
   async findById(id: number): Promise<AnswerSubmission> {
