@@ -25,10 +25,16 @@ function GraphView({ mockData }: { mockData: GraphData }) {
   React.useEffect(() => {
     if (!ctx || width === 0 || height === 0) return;
 
-    requestAnimationFrame(() => {
+    const render = () => {
       ctx.clearRect(0, 0, width, height);
       drawGraphView(ctx, initNodeMap, mockData.edges);
-    });
+    };
+
+    const animationId = requestAnimationFrame(render);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+    };
   }, [ctx, width, height, initNodeMap, mockData.edges]);
 
   return (

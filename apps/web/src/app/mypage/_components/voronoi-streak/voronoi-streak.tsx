@@ -109,7 +109,7 @@ function VoronoiStreak({ streakCount, imageSrc }: VoronoiStreakProps) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    requestAnimationFrame(() => {
+    const render = () => {
       ctx.clearRect(0, 0, width, height);
 
       cellData.forEach((cell) => {
@@ -127,7 +127,13 @@ function VoronoiStreak({ streakCount, imageSrc }: VoronoiStreakProps) {
         ctx.lineWidth = 0.5;
         ctx.stroke(cell.path);
       });
-    });
+    };
+
+    const animationId = requestAnimationFrame(render);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+    };
   }, [cellData, streakCount, width, height]);
   return <canvas className="w-full h-full" ref={canvasRef} />;
 }
