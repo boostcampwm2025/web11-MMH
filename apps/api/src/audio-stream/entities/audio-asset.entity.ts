@@ -16,8 +16,8 @@ export class AudioAsset {
   @Column({ name: 'storage_url', type: 'text' })
   storageUrl: string;
 
-  @Column({ name: 'object_key', type: 'text' })
-  objectKey: string;
+  @Column({ name: 'object_key', type: 'text', nullable: true })
+  objectKey: string | null;
 
   @Column({ name: 'duration_ms', type: 'int', nullable: true })
   durationMs: number | null;
