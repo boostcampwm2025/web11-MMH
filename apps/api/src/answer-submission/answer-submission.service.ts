@@ -16,6 +16,7 @@ import {
 } from './answer-submission.constants';
 import { AnswerSubmission } from './entities/answer-submission.entity';
 import { AnswerSubmissionResponseDto } from './dtos/answer-submission-response.dto';
+import { EvaluationStatus } from 'src/answer-evaluation/answer-evaluation.constants';
 
 @Injectable()
 export class AnswerSubmissionService {
@@ -71,7 +72,7 @@ export class AnswerSubmissionService {
       rawAnswer: '', // Will be filled by STT callback
       takenTime: audioAsset.durationMs ?? 0,
       sttStatus: ProcessStatus.PENDING,
-      evaluationStatus: ProcessStatus.PENDING,
+      evaluationStatus: EvaluationStatus.PENDING,
     });
 
     const savedSubmission =
