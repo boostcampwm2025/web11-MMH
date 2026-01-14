@@ -16,10 +16,10 @@ function HistoryList({ history, selectedId }: HistoryListProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
-        {history.map((item, idx) => (
+        {history.map((item) => (
           <HistoryItem
-            key={item.displayIndex}
-            index={history.length - idx}
+            key={item.submissionId}
+            index={item.displayIndex}
             item={item}
             isSelected={selectedId === item.submissionId}
             href={`?attempt=${item.submissionId}`}

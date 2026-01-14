@@ -142,7 +142,7 @@ export class AnswerSubmissionService {
         quizMode: QuizMode.DAILY,
       },
       order: {
-        submittedAt: 'DESC',
+        submittedAt: 'ASC',
       },
     });
 
