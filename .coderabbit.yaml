@@ -13,7 +13,3 @@ reviews:
   auto_review:
     enabled: true
     drafts: false
-
-tools:
-  github-checks:
-    enabled: true
