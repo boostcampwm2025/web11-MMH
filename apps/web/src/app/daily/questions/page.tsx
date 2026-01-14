@@ -10,7 +10,7 @@ export interface RootTree extends Category {
   children: CategoryWithQuestions[];
 }
 
-const API_URL = process.env.API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 async function getFullCategoryTree(): Promise<RootTree[]> {
   try {
