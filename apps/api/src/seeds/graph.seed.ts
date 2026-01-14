@@ -50,13 +50,6 @@ export class GraphSeed extends BaseSeed {
       // 기존 질문 활용
       questionIds = reactQuestions.map((q) => q.id);
       questionLabels = reactQuestions.map((q) => q.title);
-
-      // 부족한 질문은 기존 질문을 재사용하거나 새로 생성
-      // 시딩 목적이므로 기존 질문을 활용
-      while (questionIds.length < 3) {
-        questionIds.push(reactQuestions[0].id);
-        questionLabels.push(reactQuestions[0].title);
-      }
     } else {
       // 질문이 없으면 기존 질문 중 하나를 사용하거나 새로 생성
       const allQuestions = (await queryRunner.query(`
