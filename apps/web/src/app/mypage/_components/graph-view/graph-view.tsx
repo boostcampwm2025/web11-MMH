@@ -44,7 +44,13 @@ function GraphView({ mockData }: { mockData: GraphData }) {
       updatePositions(initNodeMap);
 
       ctx.clearRect(0, 0, width, height);
-      drawGraphView(ctx, initNodeMap, mockData.edges, offset, scale);
+      drawGraphView(
+        ctx,
+        initNodeMap,
+        mockData.edges,
+        offset.current,
+        scale.current,
+      );
 
       // 수렴하면 애니메이션 업데이트 종료하기
       const isStable = [...initNodeMap.values()].every(
