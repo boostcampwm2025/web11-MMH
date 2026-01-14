@@ -5,6 +5,7 @@ import {
   ApiParam,
   ApiResponse,
   ApiOkResponse,
+  ApiCookieAuth,
 } from '@nestjs/swagger';
 import { GraphService } from './graph.service';
 import { GraphResponseDto } from './dtos/graph-response.dto';
@@ -15,6 +16,7 @@ export class GraphController {
   constructor(private readonly graphService: GraphService) {}
 
   @Get('user/:userId')
+  @ApiCookieAuth('userId')
   @ApiOperation({
     summary: '유저별 그래프 데이터 조회',
     description:
