@@ -14,10 +14,13 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+// 1. 채점 완료 (성공) 케이스
 export const Success: Story = {
   args: {
+    attempt: 1,
+    status: "COMPLETED",
     data: {
-      id: 2,
+      submissionId: 2,
       questionId: 1,
       date: "2024-01-08",
       status: "COMPLETED",
@@ -30,7 +33,7 @@ export const Success: Story = {
         logicReason: "서론-본론-결론의 흐름이 매우 매끄럽습니다.",
         depthReason:
           "단순 정의를 넘어 내부 동작 원리까지 깊이 있게 다루었습니다.",
-        mentoringFeedback:
+        feedbackMessage:
           "완벽에 가까운 답변입니다! 특히 Diffing 알고리즘 예시가 좋았습니다.",
         scoreDetails: {
           accuracy: 35,
@@ -40,34 +43,41 @@ export const Success: Story = {
           application: 5,
         },
       },
-    } as ReportDetail,
+    } satisfies ReportDetail,
   },
 };
 
+// 2. 채점 진행 중 (Pending) 케이스
 export const Pending: Story = {
   args: {
+    attempt: 1,
+    status: "PENDING",
     data: {
-      id: 3,
+      submissionId: 3,
       questionId: 1,
       date: "2024-01-09",
       status: "PENDING",
       duration: "00:00",
-      answerContent: "React는 가상 DOM을 사용하여",
+      answerContent: "React는 가상 DOM을 사용하여...",
       totalScore: null,
-    } as ReportDetail,
+    } satisfies ReportDetail,
   },
 };
 
+// 3. 채점 실패 (Error) 케이스
 export const Error: Story = {
   args: {
+    attempt: 1,
+    status: "FAILED",
     data: {
-      id: 1,
+      submissionId: 1,
       questionId: 1,
       date: "2024-01-06",
       status: "FAILED",
       duration: "00:00",
-      answerContent: "React는 가상 DOM을 사용하여",
+      answerContent: "React는 가상 DOM을 사용하여...",
       totalScore: null,
-    } as ReportDetail,
+      reason: "STT 변환 서버 응답 지연으로 인해 채점에 실패했습니다.",
+    } satisfies ReportDetail,
   },
 };
