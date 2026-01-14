@@ -49,7 +49,7 @@ function CategorySection({ category, forceExpand }: CategoryProps) {
                   </h4>
                   <span className="px-2.5 py-1 rounded-md bg-yellow-50 text-yellow-600 text-xs font-medium flex items-center gap-1">
                     <span>⭐️</span>
-                    {q.avgImportance.toFixed(1)}
+                    {(q.avgImportance ?? 0).toFixed(1)}
                   </span>
                 </div>
                 <p className="text-sm text-gray-500 mt-1 leading-relaxed">

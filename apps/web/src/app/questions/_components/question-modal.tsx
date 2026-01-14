@@ -43,7 +43,7 @@ function QuestionModal({
             {/* 중요도 숫자 표기 */}
             <span className="px-2.5 py-1 rounded-md bg-yellow-50 text-yellow-600 text-xs font-medium flex items-center gap-1">
               <span>⭐️</span>
-              {question.avgImportance.toFixed(1)}
+              {(question.avgImportance ?? 0).toFixed(1)}
             </span>
           </div>
 
