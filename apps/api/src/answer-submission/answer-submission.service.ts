@@ -159,4 +159,16 @@ export class AnswerSubmissionService {
       duration: submission.takenTime,
     }));
   }
+
+  async getSubmissionById(id: number) {
+    const submission = await this.answerSubmissionRepository.findOne({
+      where: { id },
+    });
+
+    if (!submission) {
+      throw new NotFoundException(`ID가 ${id}인 제출 내역을 찾을 수 없습니다.`);
+    }
+
+    return submission;
+  }
 }
