@@ -56,7 +56,6 @@ function useCanvasInteraction(
 
       if (clickedNode) {
         setDraggedNodeId(clickedNode.id);
-        console.log(clickedNode.id, clickedNode.label);
 
         // 드래그시 해당 노드 고정 -> fx, fy 에 값이 들어가면 노드 움직이지 않게 하기
         clickedNode.fx = x;
