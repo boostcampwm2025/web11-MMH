@@ -1,5 +1,6 @@
 "use client";
 
+import { useCanvas2D } from "@/hooks/use-canvas-2d";
 import { Delaunay } from "d3-delaunay";
 import { randomLcg } from "d3-random";
 import * as React from "react";
@@ -13,8 +14,6 @@ import generateRandomPoint from "../../_lib/generate-random-point";
 import lloydRelaxation from "../../_lib/lloyd-relaxation";
 
 interface VoronoiStreakProps {
-  width: number;
-  height: number;
   streakCount: number;
   imageSrc: string;
 }
@@ -25,17 +24,13 @@ interface CellData {
   cluster: number;
 }
 
-function VoronoiStreak({
-  width,
-  height,
-  streakCount,
-  imageSrc,
-}: VoronoiStreakProps) {
+function VoronoiStreak({ streakCount, imageSrc }: VoronoiStreakProps) {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const { width, height } = useCanvas2D(canvasRef);
   const [cellData, setCellData] = React.useState<CellData[]>([]);
 
   React.useEffect(() => {
-    if (!imageSrc) return;
+    if (!imageSrc || width === 0 || height === 0) return;
 
     const image = new Image();
     image.src = imageSrc;
@@ -114,25 +109,33 @@ function VoronoiStreak({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.clearRect(0, 0, width, height);
+    const render = () => {
+      ctx.clearRect(0, 0, width, height);
 
-    cellData.forEach((cell) => {
-      ctx.beginPath();
+      cellData.forEach((cell) => {
+        ctx.beginPath();
 
-      if (cell.cluster < streakCount) {
-        ctx.fillStyle = cell.color;
-        ctx.strokeStyle = cell.color;
-      } else {
-        ctx.fillStyle = VORONOI_COLOR_CONSTANT.GRAY;
-        ctx.strokeStyle = VORONOI_COLOR_CONSTANT.WHITE;
-      }
+        if (cell.cluster < streakCount) {
+          ctx.fillStyle = cell.color;
+          ctx.strokeStyle = cell.color;
+        } else {
+          ctx.fillStyle = VORONOI_COLOR_CONSTANT.GRAY;
+          ctx.strokeStyle = VORONOI_COLOR_CONSTANT.WHITE;
+        }
 
-      ctx.fill(cell.path);
-      ctx.lineWidth = 0.5;
-      ctx.stroke(cell.path);
-    });
+        ctx.fill(cell.path);
+        ctx.lineWidth = 0.5;
+        ctx.stroke(cell.path);
+      });
+    };
+
+    const animationId = requestAnimationFrame(render);
+
+    return () => {
+      cancelAnimationFrame(animationId);
+    };
   }, [cellData, streakCount, width, height]);
-  return <canvas ref={canvasRef} width={width} height={height} />;
+  return <canvas className="w-full h-full" ref={canvasRef} />;
 }
 
 export default VoronoiStreak;

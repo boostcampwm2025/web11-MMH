@@ -9,14 +9,6 @@ const meta = {
   },
   tags: ["autodocs"],
   argTypes: {
-    width: {
-      control: { type: "number", min: 200, max: 1000, step: 50 },
-      description: "캔버스 너비",
-    },
-    height: {
-      control: { type: "number", min: 200, max: 800, step: 50 },
-      description: "캔버스 높이",
-    },
     imageSrc: {
       control: "text",
       description: "배경 이미지 URL",
@@ -27,11 +19,16 @@ const meta = {
     },
   },
   args: {
-    width: 600,
-    height: 400,
     imageSrc: "/starry-night.jpg",
     streakCount: 0,
   },
+  decorators: [
+    (Story) => (
+      <div className="w-150 h-100">
+        <Story />
+      </div>
+    ),
+  ],
 } satisfies Meta<typeof VoronoiStreak>;
 
 export default meta;
