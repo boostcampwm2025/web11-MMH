@@ -181,9 +181,9 @@ export class AnswerEvaluationService {
     }
   }
 
-  async getEvaluationById(id: number) {
+  async getEvaluationBySubmissionId(id: number) {
     const evaluation = await this.answerEvaluationRepository.findOne({
-      where: { id },
+      where: { submissionId: id },
     });
 
     if (!evaluation) {

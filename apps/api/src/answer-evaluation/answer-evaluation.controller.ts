@@ -24,8 +24,12 @@ export class AnswerEvaluationController {
     return result;
   }
 
-  @Get(':id')
-  async getEvaluationBySubmissionId(@Param('id', ParseIntPipe) id: number) {
-    return await this.answerEvaluationService.getEvaluationById(id);
+  @Get(':submissionId')
+  async getEvaluationBySubmissionId(
+    @Param('submissionId', ParseIntPipe) submissionId: number,
+  ) {
+    return await this.answerEvaluationService.getEvaluationBySubmissionId(
+      submissionId,
+    );
   }
 }

@@ -259,7 +259,7 @@ describe('AnswerEvaluationService', () => {
       const mockEvaluation = { id: 1 };
       answerEvaluationRepository.findOne.mockResolvedValue(mockEvaluation);
 
-      const result = await service.getEvaluationById(1);
+      const result = await service.getEvaluationBySubmissionId(1);
 
       expect(result).toEqual(mockEvaluation);
       expect(answerEvaluationRepository.findOne).toHaveBeenCalledWith({
@@ -270,7 +270,7 @@ describe('AnswerEvaluationService', () => {
     it('평가 결과가 없으면 NotFoundException을 던져야 한다', async () => {
       answerEvaluationRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.getEvaluationById(1)).rejects.toThrow(
+      await expect(service.getEvaluationBySubmissionId(1)).rejects.toThrow(
         NotFoundException,
       );
     });
