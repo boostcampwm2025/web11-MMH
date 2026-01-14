@@ -9,8 +9,8 @@ function useCanvasInteraction(
   initialScale: number = 1,
 ) {
   // offset: canvas 이동 offset
-  const [offset, setOffset] = React.useState(initialOffset);
-  const [scale, setScale] = React.useState(initialScale);
+  const offset = React.useRef(initialOffset);
+  const scale = React.useRef(initialScale);
 
   const [isDraggingCanvas, setIsDraggingCanvas] = React.useState(false);
   const [dragStartOffset, setDragStartOffset] = React.useState({ x: 0, y: 0 });
@@ -26,8 +26,8 @@ function useCanvasInteraction(
       // 1. screenX - rect.left => 화면좌표 - 캔버스 좌표
       // 2. - offset.x / -offset.y => 이동한 만큼 빼주기
       // 3. /scale => 줌 한만큼 나눠서 원래 좌표 위치 찾기
-      const x = (screenX - rect.left - offset.x) / scale;
-      const y = (screenY - rect.top - offset.y) / scale;
+      const x = (screenX - rect.left - offset.current.x) / scale.current;
+      const y = (screenY - rect.top - offset.current.y) / scale.current;
       return { x, y };
     },
     [canvasRef, offset, scale],
@@ -82,10 +82,9 @@ function useCanvasInteraction(
         const dx = e.clientX - dragStartOffset.x;
         const dy = e.clientY - dragStartOffset.y;
 
-        setOffset({
-          x: offset.x + dx,
-          y: offset.y + dy,
-        });
+        offset.current.x += dx;
+        offset.current.y += dy;
+
         setDragStartOffset({ x: e.clientX, y: e.clientY });
       }
     },
@@ -118,15 +117,22 @@ function useCanvasInteraction(
 
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
-      const delta = -e.deltaY * 0.001;
 
-      setScale((currentScale) => {
-        const newScale = currentScale * (1 + delta);
-        return Math.max(
-          GRAPH_NUMBER_CONSTANT.MIN_SCALE,
-          Math.min(GRAPH_NUMBER_CONSTANT.MAX_SCALE, newScale),
-        );
-      });
+      const { offsetX, offsetY, deltaY } = e;
+      const scaleAmount = -deltaY * 0.001;
+      const newScale = Math.max(
+        GRAPH_NUMBER_CONSTANT.MIN_SCALE,
+        Math.min(GRAPH_NUMBER_CONSTANT.MAX_SCALE, scale.current + scaleAmount),
+      );
+
+      // 마우스 위치에 따라 해당 마우스에서 스케일 조정
+      const mouseX = offsetX - offset.current.x;
+      const mouseY = offsetY - offset.current.y;
+
+      offset.current.x -= (mouseX / scale.current) * (newScale - scale.current);
+      offset.current.y -= (mouseY / scale.current) * (newScale - scale.current);
+
+      scale.current = newScale;
     };
 
     canvas.addEventListener("wheel", handleWheel, { passive: false });
