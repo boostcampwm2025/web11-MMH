@@ -1,4 +1,4 @@
-import { getQuestion } from "@/app/questions/[questionId]/daily/_lib/question-api";
+import { getQuestion } from "@/app/daily/questions/[questionId]/_lib/question-api";
 import { mapToCategoryDisplay } from "../mapper/mapper";
 
 async function getReportQuestion(questionId: string) {

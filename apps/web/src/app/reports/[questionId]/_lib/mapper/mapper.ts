@@ -1,4 +1,4 @@
-import { Question } from "@/app/questions/_types/types";
+import { Question } from "@/app/daily/questions/_types/types";
 import { EvaluationDTO } from "../../_types/evaluation-dto";
 import { ReportDetail, ReportHistoryItem } from "../../_types/report-detail";
 import { SubmissionDTO } from "../../_types/submission-dto";
