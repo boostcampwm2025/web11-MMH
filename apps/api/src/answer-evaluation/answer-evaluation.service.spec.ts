@@ -263,7 +263,7 @@ describe('AnswerEvaluationService', () => {
 
       expect(result).toEqual(mockEvaluation);
       expect(answerEvaluationRepository.findOne).toHaveBeenCalledWith({
-        where: { id: 1 },
+        where: { submissionId: 1 },
       });
     });
 
