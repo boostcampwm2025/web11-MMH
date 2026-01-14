@@ -2,8 +2,12 @@
 import { useCanvas2D } from "@/hooks/use-canvas-2d";
 import * as React from "react";
 import { GRAPH_NUMBER_CONSTANT } from "../../_constants/graph-view-constant";
+import applyCenterGravity from "../../_lib/graph-view/apply-center-gravity";
+import applyRepulsionForce from "../../_lib/graph-view/apply-repulsion-force";
+import applySpringForce from "../../_lib/graph-view/apply-spring-force";
 import drawGraphView from "../../_lib/graph-view/draw-graph-view";
 import generateInitialNodePosition from "../../_lib/graph-view/generate-initial-node-position";
+import updatePositions from "../../_lib/graph-view/update-positions";
 import useCanvasInteraction from "../../hooks/useCanvasInteraction";
 import { GraphData } from "../../types/graph-view";
 
@@ -25,16 +29,33 @@ function GraphView({ mockData }: { mockData: GraphData }) {
   const { offset, scale, handleMouseDown, handleMouseMove, handleMouseUp } =
     useCanvasInteraction(canvasRef, initNodeMap);
 
-  //초기 렌더링
   React.useEffect(() => {
     if (!ctx || width === 0 || height === 0) return;
 
-    const render = () => {
+    let animationId: number;
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    const simulate = () => {
+      // 물리엔진 동작시 새로운 map 자료구조 뱉어서 데이터 불변성 유지해야되는지 -> useState같은 상태로 관리하는게 아님 -> 데이터 내부 조작하도록 구현
+      applyRepulsionForce(initNodeMap);
+      applySpringForce(mockData.edges, initNodeMap);
+      applyCenterGravity(initNodeMap, centerX, centerY);
+      updatePositions(initNodeMap);
+
       ctx.clearRect(0, 0, width, height);
       drawGraphView(ctx, initNodeMap, mockData.edges, offset, scale);
+
+      // 수렴하면 애니메이션 업데이트 종료하기
+      const isStable = [...initNodeMap.values()].every(
+        (node) => node.vx === 0 && node.vy === 0,
+      );
+      if (!isStable) {
+        animationId = requestAnimationFrame(simulate);
+      }
     };
 
-    const animationId = requestAnimationFrame(render);
+    animationId = requestAnimationFrame(simulate);
 
     return () => {
       cancelAnimationFrame(animationId);
