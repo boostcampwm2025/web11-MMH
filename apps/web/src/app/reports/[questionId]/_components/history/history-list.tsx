@@ -1,10 +1,10 @@
-import { ReportDetail } from "../../_types/report-detail";
+import { ReportHistoryItem } from "../../_types/report-detail";
 import { Badge } from "@/components/badge/badge";
 import HistoryItem from "./history-item";
 
 interface HistoryListProps {
-  history: ReportDetail[];
-  selectedId: string;
+  history: ReportHistoryItem[];
+  selectedId: number;
 }
 
 function HistoryList({ history, selectedId }: HistoryListProps) {
@@ -18,11 +18,11 @@ function HistoryList({ history, selectedId }: HistoryListProps) {
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {history.map((item, idx) => (
           <HistoryItem
-            key={item.id}
+            key={item.displayIndex}
             index={history.length - idx}
             item={item}
-            isSelected={selectedId === item.id.toString()}
-            href={`?attempt=${item.id}`}
+            isSelected={selectedId === item.submissionId}
+            href={`?attempt=${item.submissionId}`}
           />
         ))}
       </div>

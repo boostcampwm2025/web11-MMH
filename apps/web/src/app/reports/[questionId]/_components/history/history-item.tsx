@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { Badge } from "@/components/badge/badge";
-import { ReportDetail } from "../../_types/report-detail";
+import { ReportHistoryItem } from "../../_types/report-detail";
 
 interface HistoryItemProps {
-  item: ReportDetail;
+  item: ReportHistoryItem;
   isSelected: boolean;
   href: string;
   index: number;

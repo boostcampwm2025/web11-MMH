@@ -1,10 +1,10 @@
 export type AnalysisStatus = "COMPLETED" | "PENDING" | "FAILED";
 
 export interface FeedbackResult {
+  feedbackMessage: string;
   accuracyReason: string;
   logicReason: string;
   depthReason: string;
-  mentoringFeedback: string;
   scoreDetails: {
     accuracy: number;
     logic: number;
@@ -15,12 +15,12 @@ export interface FeedbackResult {
 }
 
 export interface BaseReportDetail {
-  id: number;
+  submissionId: number;
   questionId: number;
   date: string;
-  status: AnalysisStatus;
   duration: string;
   answerContent: string;
+  status: AnalysisStatus;
 }
 
 export interface PendingReportDetail extends BaseReportDetail {
@@ -46,3 +46,8 @@ export type ReportDetail =
   | PendingReportDetail
   | FailedReportDetail
   | SuccessReportDetail;
+
+export interface ReportHistoryItem extends BaseReportDetail {
+  totalScore: number | null;
+  displayIndex: number;
+}

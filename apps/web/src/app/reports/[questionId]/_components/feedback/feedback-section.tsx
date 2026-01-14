@@ -15,7 +15,7 @@ function FeedbackSection({ data }: FeedbackSectionProps) {
       <section className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-8 transition-all duration-300 hover:shadow-md">
         <div className="mb-10">
           <div className="text-xs font-extrabold text-zinc-400 tracking-widest uppercase mb-1">
-            ATTEMPT #{data.id}
+            ATTEMPT
           </div>
           <h2 className="text-2xl font-extrabold text-zinc-900">분석 리포트</h2>
           <div className="text-xs text-zinc-400">
@@ -41,7 +41,7 @@ function FeedbackSection({ data }: FeedbackSectionProps) {
         <div className="flex justify-between items-center mb-10">
           <div>
             <div className="text-xs font-extrabold text-zinc-400 tracking-widest uppercase mb-1">
-              ATTEMPT #{data.id}
+              ATTEMPT
             </div>
             <h2 className="text-2xl font-extrabold text-zinc-900">
               분석이 중단되었습니다
@@ -87,7 +87,7 @@ function FeedbackSection({ data }: FeedbackSectionProps) {
       <div className="flex justify-between items-center mb-10">
         <div>
           <div className="text-xs font-extrabold text-zinc-400 tracking-widest uppercase mb-1">
-            ATTEMPT #{data.id}
+            ATTEMPT
           </div>
           <h2 className="text-2xl font-extrabold text-zinc-900">분석 리포트</h2>
           <div className="text-xs text-zinc-400">{data.date} 완료</div>
@@ -96,7 +96,7 @@ function FeedbackSection({ data }: FeedbackSectionProps) {
         <ScoreGauge score={data.totalScore} />
       </div>
 
-      <AiFeedback feedback={data.feedback.mentoringFeedback} />
+      <AiFeedback feedback={data.feedback.feedbackMessage} />
 
       <MetricsList feedback={data.feedback} isPending={false} />
     </section>
