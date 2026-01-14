@@ -32,10 +32,19 @@ function RecordingSection({ questionId }: RecordingSectionProps) {
     FormData
   >(submitAnswerAction, null);
 
+  const handleMaxTimeReached = React.useCallback(() => {
+    stopRecording();
+  }, [stopRecording]);
+
   return (
     <section className="flex flex-col">
       <div className="relative p-10 rounded-xl border border-zinc-200 shadow-sm flex flex-col items-center justify-center mb-6">
-        <RecordingTimer isRecording={isRecording} />
+        <RecordingTimer
+          maxRecordingTime={300}
+          isRecording={isRecording}
+          sessionId={sessionId}
+          onMaxTimeReached={handleMaxTimeReached}
+        />
         <Waveform historyRef={historyRef} />
       </div>
       <div className="flex items-center justify-center gap-4">
