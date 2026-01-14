@@ -1,4 +1,4 @@
-import { EvaluationDTO } from "../_types/evaluation-dto";
+import { EvaluationDTO } from "../../_types/evaluation-dto";
 
 async function fetchEvaluation(submissionId: number): Promise<EvaluationDTO> {
   try {

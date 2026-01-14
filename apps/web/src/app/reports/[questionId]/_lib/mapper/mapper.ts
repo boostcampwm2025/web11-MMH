@@ -1,6 +1,6 @@
-import { EvaluationDTO } from "../_types/evaluation-dto";
-import { ReportDetail, ReportHistoryItem } from "../_types/report-detail";
-import { SubmissionDTO } from "../_types/submission-dto";
+import { EvaluationDTO } from "../../_types/evaluation-dto";
+import { ReportDetail, ReportHistoryItem } from "../../_types/report-detail";
+import { SubmissionDTO } from "../../_types/submission-dto";
 
 function formatDateTimeKST(isoString: string): string {
   const d = new Date(isoString);

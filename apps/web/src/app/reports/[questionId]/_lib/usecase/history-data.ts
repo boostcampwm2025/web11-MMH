@@ -1,6 +1,6 @@
-import { fetchSubmissionsByQuestionId } from "./fetch-submissions";
-import { mapToReportHistoryItem } from "./mapper";
-import { ReportHistoryItem } from "../_types/report-detail";
+import { fetchSubmissionsByQuestionId } from "../fetch/fetch-submissions";
+import { mapToReportHistoryItem } from "../mapper/mapper";
+import { ReportHistoryItem } from "../../_types/report-detail";
 
 async function getReportHistory(
   questionId: number,

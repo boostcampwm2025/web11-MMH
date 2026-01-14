@@ -1,7 +1,7 @@
-import { SubmissionDTO } from "../_types/submission-dto";
-import { fetchEvaluation } from "./fetch-evaluation";
-import { mapToReportDetail } from "./mapper";
-import { fetchSubmissionsByQuestionId } from "./fetch-submissions";
+import { SubmissionDTO } from "../../_types/submission-dto";
+import { fetchEvaluation } from "../fetch/fetch-evaluation";
+import { mapToReportDetail } from "../mapper/mapper";
+import { fetchSubmissionsByQuestionId } from "../fetch/fetch-submissions";
 
 function findSubmissionOrThrow(
   submissions: SubmissionDTO[],

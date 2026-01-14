@@ -1,4 +1,4 @@
-import { SubmissionDTO } from "../_types/submission-dto";
+import { SubmissionDTO } from "../../_types/submission-dto";
 
 async function fetchSubmissionsByQuestionId(
   questionId: number,
