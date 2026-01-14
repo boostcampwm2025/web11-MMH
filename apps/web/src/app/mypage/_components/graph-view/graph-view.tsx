@@ -26,8 +26,14 @@ function GraphView({ mockData }: { mockData: GraphData }) {
     [mockData.nodes, width, height],
   );
 
-  const { offset, scale, handleMouseDown, handleMouseMove, handleMouseUp } =
-    useCanvasInteraction(canvasRef, initNodeMap);
+  const {
+    offset,
+    scale,
+    activeInteraction,
+    handleMouseDown,
+    handleMouseMove,
+    handleMouseUp,
+  } = useCanvasInteraction(canvasRef, initNodeMap);
 
   React.useEffect(() => {
     if (!ctx || width === 0 || height === 0) return;
@@ -56,7 +62,7 @@ function GraphView({ mockData }: { mockData: GraphData }) {
       const isStable = [...initNodeMap.values()].every(
         (node) => node.vx === 0 && node.vy === 0,
       );
-      if (!isStable) {
+      if (!isStable || activeInteraction) {
         animationId = requestAnimationFrame(simulate);
       }
     };
@@ -66,7 +72,16 @@ function GraphView({ mockData }: { mockData: GraphData }) {
     return () => {
       cancelAnimationFrame(animationId);
     };
-  }, [ctx, width, height, initNodeMap, mockData.edges, offset, scale]);
+  }, [
+    ctx,
+    width,
+    height,
+    initNodeMap,
+    mockData.edges,
+    offset,
+    scale,
+    activeInteraction,
+  ]);
 
   return (
     <canvas

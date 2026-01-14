@@ -11,6 +11,8 @@ function useCanvasInteraction(
   // offset: canvas 이동 offset
   const offset = React.useRef(initialOffset);
   const scale = React.useRef(initialScale);
+  // interaction 진행중인지 상태 확인
+  const activeInteraction = React.useRef(false);
 
   const [isDraggingCanvas, setIsDraggingCanvas] = React.useState(false);
   const [dragStartOffset, setDragStartOffset] = React.useState({ x: 0, y: 0 });
@@ -50,6 +52,7 @@ function useCanvasInteraction(
 
   const handleMouseDown = React.useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
+      activeInteraction.current = true;
       const { x, y } = convertCursorToCanvasCoords(e.clientX, e.clientY);
 
       const clickedNode = findNodeAtPosition(x, y);
@@ -109,6 +112,7 @@ function useCanvasInteraction(
 
     setDraggedNodeId(null);
     setIsDraggingCanvas(false);
+    activeInteraction.current = false;
   }, [draggedNodeId, nodeMap]);
 
   React.useEffect(() => {
@@ -117,6 +121,7 @@ function useCanvasInteraction(
 
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
+      activeInteraction.current = true;
 
       const { offsetX, offsetY, deltaY } = e;
       const scaleAmount = -deltaY * 0.001;
@@ -136,12 +141,16 @@ function useCanvasInteraction(
     };
 
     canvas.addEventListener("wheel", handleWheel, { passive: false });
-    return () => canvas.removeEventListener("wheel", handleWheel);
+    return () => {
+      activeInteraction.current = false;
+      canvas.removeEventListener("wheel", handleWheel);
+    };
   }, [canvasRef]);
 
   return {
     offset,
     scale,
+    activeInteraction,
     handleMouseDown,
     handleMouseMove,
     handleMouseUp,
