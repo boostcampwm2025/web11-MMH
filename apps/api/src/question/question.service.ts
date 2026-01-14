@@ -18,6 +18,9 @@ export class QuestionService {
   }
 
   async findOneById(questionId: number) {
-    return this.questionRepository.findOneBy({ id: questionId });
+    return this.questionRepository.findOne({
+      where: { id: questionId },
+      relations: ['category'],
+    });
   }
 }

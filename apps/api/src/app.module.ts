@@ -23,6 +23,7 @@ import { AnswerSubmissionModule } from './answer-submission/answer-submission.mo
     TypeOrmModule.forRoot(typeOrmModuleOptions),
     UserModule,
     AnswerEvaluationModule,
+    AnswerSubmissionModule,
     AudioStreamModule,
     CategoryModule,
     QuestionModule,
