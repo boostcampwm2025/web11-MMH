@@ -16,8 +16,8 @@ function ReportHeader({
   return (
     <section>
       <div className="flex gap-2 mb-3">
-        <Badge variant="default">{category}</Badge>
-        <Badge variant="secondary">{subcategory}</Badge>
+        {category && <Badge variant="default">{category}</Badge>}
+        {subcategory && <Badge variant="secondary">{subcategory}</Badge>}
       </div>
       <h2 className="text-2xl font-semibold leading-tight mb-4">{title}</h2>
       <p className="text-zinc-600 leading-relaxed text-[0.9375rem]">

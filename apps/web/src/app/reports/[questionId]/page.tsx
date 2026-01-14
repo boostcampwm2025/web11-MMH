@@ -3,10 +3,8 @@ import ReportHeader from "./_components/report-header";
 import FeedbackSection from "./_components/feedback/feedback-section";
 import HistorySection from "./_components/history/history-section";
 import NavButton from "./_components/nav-button";
-import { MOCK_QUESTION } from "./_constants/mock-data";
 import { List, RotateCcw, User } from "lucide-react";
-import { getReportHistory } from "./_lib/history-api";
-import { getReportEvaluation } from "./_lib/evaluation-api";
+import { getReportPageData } from "./_lib/usecase/page-data";
 
 interface ReportPageProps {
   params: Promise<{ questionId: string }>;
@@ -15,33 +13,38 @@ interface ReportPageProps {
 
 async function ReportPage({ params, searchParams }: ReportPageProps) {
   const { questionId } = await params;
-  const { attempt } = await searchParams;
+  const { attempt: submissionId } = await searchParams;
 
-  const submissionId = Number(attempt);
-  if (!submissionId) return notFound();
+  if (!submissionId) {
+    notFound();
+  }
 
-  const historyData = await getReportHistory(Number(questionId));
-  const reportData = await getReportEvaluation(
+  const { question, history, evaluation } = await getReportPageData(
     Number(questionId),
-    submissionId,
+    Number(submissionId),
   );
-  const selectedAttempt =
-    historyData.find((h) => h.submissionId === submissionId) ?? historyData[0];
+  const selectedAttempt = history.find(
+    (h) => h.submissionId === Number(submissionId),
+  );
 
-  if (!reportData) return null; // TODO: 에러 처리 필요
+  if (!question || !history || !selectedAttempt || !evaluation) return null; // TODO: 에러 처리 필요
 
   return (
     <main className="max-w-4xl mx-auto w-full px-6 pt-12 pb-24 flex flex-col gap-6">
       <ReportHeader
-        category={MOCK_QUESTION.category}
-        subcategory={MOCK_QUESTION.subCategory}
-        title={MOCK_QUESTION.title}
-        description={MOCK_QUESTION.description}
+        category={question.category}
+        subcategory={question.subCategory}
+        title={question.title}
+        description={question.content}
       />
 
-      <FeedbackSection data={reportData} />
+      <FeedbackSection
+        attempt={selectedAttempt.displayIndex}
+        status={selectedAttempt.status}
+        data={evaluation}
+      />
 
-      <HistorySection history={historyData} selectedAttempt={selectedAttempt} />
+      <HistorySection history={history} selectedAttempt={selectedAttempt} />
 
       <nav className="flex flex-col sm:flex-row gap-3 mt-4">
         <NavButton
@@ -52,7 +55,7 @@ async function ReportPage({ params, searchParams }: ReportPageProps) {
           문제 목록
         </NavButton>
         <NavButton
-          href={`/questions/${MOCK_QUESTION.id}/daily`}
+          href={`/questions/${question.id}/daily`}
           icon={<RotateCcw className="mr-1.5" />}
           variant="default"
         >

@@ -1,4 +1,4 @@
-import { ReportDetail } from "../../_types/report-detail";
+import { AnalysisStatus, ReportDetail } from "../../_types/report-detail";
 import ScoreGauge from "./score-gauge";
 import AiFeedback from "./ai-feedback";
 import MetricsList from "./metrics-list";
@@ -6,16 +6,18 @@ import { Button } from "@/components/button/button";
 import { AlertCircle } from "lucide-react";
 
 interface FeedbackSectionProps {
+  attempt: number;
+  status: AnalysisStatus;
   data: ReportDetail;
 }
 
-function FeedbackSection({ data }: FeedbackSectionProps) {
-  if (data.status === "PENDING") {
+function FeedbackSection({ attempt, status, data }: FeedbackSectionProps) {
+  if (status === "PENDING") {
     return (
       <section className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-8 transition-all duration-300 hover:shadow-md">
         <div className="mb-10">
           <div className="text-xs font-extrabold text-zinc-400 tracking-widest uppercase mb-1">
-            ATTEMPT
+            ATTEMPT #{attempt}
           </div>
           <h2 className="text-2xl font-extrabold text-zinc-900">분석 리포트</h2>
           <div className="text-xs text-zinc-400">
@@ -35,13 +37,13 @@ function FeedbackSection({ data }: FeedbackSectionProps) {
     );
   }
 
-  if (data.status === "FAILED") {
+  if (status === "FAILED") {
     return (
       <section className="bg-white rounded-2xl border border-zinc-200 shadow-sm p-8 transition-all duration-300 hover:shadow-md">
         <div className="flex justify-between items-center mb-10">
           <div>
             <div className="text-xs font-extrabold text-zinc-400 tracking-widest uppercase mb-1">
-              ATTEMPT
+              ATTEMPT #{attempt}
             </div>
             <h2 className="text-2xl font-extrabold text-zinc-900">
               분석이 중단되었습니다
@@ -87,16 +89,16 @@ function FeedbackSection({ data }: FeedbackSectionProps) {
       <div className="flex justify-between items-center mb-10">
         <div>
           <div className="text-xs font-extrabold text-zinc-400 tracking-widest uppercase mb-1">
-            ATTEMPT
+            ATTEMPT #{attempt}
           </div>
           <h2 className="text-2xl font-extrabold text-zinc-900">분석 리포트</h2>
           <div className="text-xs text-zinc-400">{data.date} 완료</div>
         </div>
 
-        <ScoreGauge score={data.totalScore} />
+        <ScoreGauge score={data.totalScore ?? 0} />
       </div>
 
-      <AiFeedback feedback={data.feedback.feedbackMessage} />
+      {data.feedback && <AiFeedback feedback={data.feedback.feedbackMessage} />}
 
       <MetricsList feedback={data.feedback} isPending={false} />
     </section>
