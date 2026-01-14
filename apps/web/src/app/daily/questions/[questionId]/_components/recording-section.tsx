@@ -5,12 +5,11 @@ import Waveform from "@/components/waveform/waveform";
 import { Button } from "@/components/button/button";
 import { CheckCircle2, Mic, RotateCcw, Square } from "lucide-react";
 import useAudioStreamSession from "../_hooks/use-audio-stream-session";
-import { cn } from "@/lib/cn";
-import WaveformFrame from "@/components/waveform/waveform-frame";
 import {
   submitAnswerAction,
   type SubmitAnswerState,
 } from "../_lib/submit-answer-action";
+import RecordingTimer from "./recording-timer";
 
 interface RecordingSectionProps {
   questionId: number;
@@ -35,14 +34,10 @@ function RecordingSection({ questionId }: RecordingSectionProps) {
 
   return (
     <section className="flex flex-col">
-      <WaveformFrame
-        className={cn(
-          "transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] overflow-hidden",
-          isRecording ? "h-40 mb-6" : "h-0 opacity-0",
-        )}
-      >
+      <div className="relative p-10 rounded-xl border border-zinc-200 shadow-sm flex flex-col items-center justify-center mb-6">
+        <RecordingTimer isRecording={isRecording} />
         <Waveform historyRef={historyRef} />
-      </WaveformFrame>
+      </div>
       <div className="flex items-center justify-center gap-4">
         {(() => {
           if (isLoading) {

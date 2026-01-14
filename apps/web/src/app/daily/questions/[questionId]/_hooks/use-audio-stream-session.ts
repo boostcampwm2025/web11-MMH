@@ -18,7 +18,9 @@ function useAudioStreamSession() {
 
   const streamerRef = React.useRef<AudioStreamerHandle | null>(null);
   const lastUpdateTimeRef = React.useRef<number>(0);
-  const historyRef = React.useRef<number[]>([]);
+  const historyRef = React.useRef<number[]>(
+    Array.from({ length: 250 }, () => 0),
+  );
   const seqRef = React.useRef(0);
 
   const accumRef = React.useRef({
