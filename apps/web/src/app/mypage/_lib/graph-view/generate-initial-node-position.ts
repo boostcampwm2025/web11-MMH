@@ -12,6 +12,10 @@ function generateInitialNodePosition(
     label: node.label,
     x: Math.random() * (canvasWidth - radius * 2) + radius,
     y: Math.random() * (canvasHeight - radius * 2) + radius,
+    vx: 0,
+    vy: 0,
+    fx: null,
+    fy: null,
   }));
   return new Map(initialNodes.map((node) => [node.id, node]));
 }
