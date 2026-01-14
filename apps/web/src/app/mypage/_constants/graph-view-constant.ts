@@ -1,5 +1,7 @@
 export const GRAPH_NUMBER_CONSTANT = {
   NODE_RADIUS: 5,
+  MIN_SCALE: 0.5,
+  MAX_SCALE: 1.5,
 } as const;
 
 export const GRAPH_COLOR_CONSTANT = {

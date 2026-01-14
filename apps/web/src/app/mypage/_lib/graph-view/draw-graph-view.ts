@@ -13,7 +13,13 @@ function drawGraphView(
   ctx: CanvasRenderingContext2D,
   nodes: Map<number, GraphNode & NodePosition>,
   edges: GraphEdge[],
+  offset: { x: number; y: number } = { x: 0, y: 0 },
+  scale: number = 1,
 ) {
+  ctx.save();
+  ctx.translate(offset.x, offset.y);
+  ctx.scale(scale, scale);
+
   edges.forEach((edge) => {
     const source = nodes.get(edge.sourceId);
     const target = nodes.get(edge.targetId);
@@ -42,6 +48,8 @@ function drawGraphView(
     ctx.textAlign = "center";
     ctx.fillText(node.label, node.x, node.y + radius + 14);
   });
+
+  ctx.restore();
 }
 
 export default drawGraphView;

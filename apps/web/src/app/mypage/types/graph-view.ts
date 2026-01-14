@@ -23,4 +23,8 @@ export interface GraphData {
 export interface NodePosition {
   x: number;
   y: number;
+  dx: number;
+  dy: number;
+  fx: number | null;
+  fy: number | null;
 }

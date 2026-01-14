@@ -4,6 +4,7 @@ import * as React from "react";
 import { GRAPH_NUMBER_CONSTANT } from "../../_constants/graph-view-constant";
 import drawGraphView from "../../_lib/graph-view/draw-graph-view";
 import generateInitialNodePosition from "../../_lib/graph-view/generate-initial-node-position";
+import useCanvasInteraction from "../../hooks/useCanvasInteraction";
 import { GraphData } from "../../types/graph-view";
 
 function GraphView({ mockData }: { mockData: GraphData }) {
@@ -21,13 +22,16 @@ function GraphView({ mockData }: { mockData: GraphData }) {
     [mockData.nodes, width, height],
   );
 
+  const { offset, scale, handleMouseDown, handleMouseMove, handleMouseUp } =
+    useCanvasInteraction(canvasRef, initNodeMap);
+
   //초기 렌더링
   React.useEffect(() => {
     if (!ctx || width === 0 || height === 0) return;
 
     const render = () => {
       ctx.clearRect(0, 0, width, height);
-      drawGraphView(ctx, initNodeMap, mockData.edges);
+      drawGraphView(ctx, initNodeMap, mockData.edges, offset, scale);
     };
 
     const animationId = requestAnimationFrame(render);
@@ -35,12 +39,16 @@ function GraphView({ mockData }: { mockData: GraphData }) {
     return () => {
       cancelAnimationFrame(animationId);
     };
-  }, [ctx, width, height, initNodeMap, mockData.edges]);
+  }, [ctx, width, height, initNodeMap, mockData.edges, offset, scale]);
 
   return (
     <canvas
       className="w-full h-full rounded-md border border-gray-300"
       ref={canvasRef}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
     ></canvas>
   );
 }
