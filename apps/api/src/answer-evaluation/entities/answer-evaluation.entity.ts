@@ -21,32 +21,37 @@ export class AnswerEvaluation {
   @Column({ name: 'submission_id', type: 'int' })
   submissionId: number;
 
-  @Column({ name: 'feedback_message', type: 'text' })
-  feedbackMessage: string;
+  @Column({ name: 'feedback_message', type: 'text', nullable: true })
+  feedbackMessage: string | null;
 
-  @Column({ name: 'detail_analysis', type: 'jsonb' })
+  @Column({ name: 'detail_analysis', type: 'jsonb', nullable: true })
   detailAnalysis: {
     accuracy: string;
     logic: string;
     depth: string;
-  };
+  } | null;
 
-  @Column({ name: 'score_details', type: 'jsonb' })
+  @Column({ name: 'score_details', type: 'jsonb', nullable: true })
   scoreDetails: {
     accuracy: number;
     logic: number;
     depth: number;
     completeness: number;
     application: number;
-  };
+  } | null;
 
-  @Column({ name: 'accuracy_eval', type: 'enum', enum: AccuracyEval })
+  @Column({
+    name: 'accuracy_eval',
+    type: 'enum',
+    enum: AccuracyEval,
+    nullable: true,
+  })
   accuracyEval: AccuracyEval;
 
-  @Column({ name: 'logic_eval', type: 'enum', enum: LogicEval })
+  @Column({ name: 'logic_eval', type: 'enum', enum: LogicEval, nullable: true })
   logicEval: LogicEval;
 
-  @Column({ name: 'depth_eval', type: 'enum', enum: DepthEval })
+  @Column({ name: 'depth_eval', type: 'enum', enum: DepthEval, nullable: true })
   depthEval: DepthEval;
 
   @Column({ name: 'has_application', type: 'boolean', default: false })
