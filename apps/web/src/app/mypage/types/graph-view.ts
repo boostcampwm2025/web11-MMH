@@ -28,3 +28,5 @@ export interface NodePosition {
   fx: number | null;
   fy: number | null;
 }
+
+export type NodeMap = Map<number, GraphNode & NodePosition>;

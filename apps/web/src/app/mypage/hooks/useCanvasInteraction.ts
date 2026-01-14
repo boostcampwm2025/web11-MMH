@@ -1,10 +1,10 @@
 import * as React from "react";
 import { GRAPH_NUMBER_CONSTANT } from "../_constants/graph-view-constant";
-import { GraphNode, NodePosition } from "../types/graph-view";
+import { NodeMap } from "../types/graph-view";
 
 function useCanvasInteraction(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
-  nodeMap: Map<number, GraphNode & NodePosition>,
+  nodeMap: NodeMap,
   initialOffset: { x: number; y: number } = { x: 0, y: 0 },
   initialScale: number = 1,
 ) {
