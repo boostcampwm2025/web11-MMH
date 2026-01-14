@@ -1,20 +1,32 @@
+import { notFound } from "next/navigation";
 import ReportHeader from "./_components/report-header";
 import FeedbackSection from "./_components/feedback/feedback-section";
 import HistorySection from "./_components/history/history-section";
-import { MOCK_QUESTION, MOCK_REPORTS } from "./_constants/mock-data";
-import { List, RotateCcw, User } from "lucide-react";
 import NavButton from "./_components/nav-button";
+import { MOCK_QUESTION } from "./_constants/mock-data";
+import { List, RotateCcw, User } from "lucide-react";
+import { getReportHistory } from "./_lib/history-api";
+import { getReportEvaluation } from "./_lib/evaluation-api";
 
 interface ReportPageProps {
   params: Promise<{ questionId: string }>;
   searchParams: Promise<{ attempt?: string }>;
 }
 
-async function ReportPage({ searchParams }: ReportPageProps) {
+async function ReportPage({ params, searchParams }: ReportPageProps) {
+  const { questionId } = await params;
   const { attempt } = await searchParams;
 
-  const targetId = attempt || MOCK_REPORTS[0].id.toString();
-  const reportData = MOCK_REPORTS.find((r) => r.id.toString() === targetId);
+  const submissionId = Number(attempt);
+  if (!submissionId) return notFound();
+
+  const historyData = await getReportHistory(Number(questionId));
+  const reportData = await getReportEvaluation(
+    Number(questionId),
+    submissionId,
+  );
+  const selectedAttempt =
+    historyData.find((h) => h.submissionId === submissionId) ?? historyData[0];
 
   if (!reportData) return null; // TODO: 에러 처리 필요
 
@@ -29,7 +41,7 @@ async function ReportPage({ searchParams }: ReportPageProps) {
 
       <FeedbackSection data={reportData} />
 
-      <HistorySection history={MOCK_REPORTS} selectedId={targetId} />
+      <HistorySection history={historyData} selectedAttempt={selectedAttempt} />
 
       <nav className="flex flex-col sm:flex-row gap-3 mt-4">
         <NavButton
