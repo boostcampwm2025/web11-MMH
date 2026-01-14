@@ -1,4 +1,4 @@
-import type { Question } from "@/app/questions/_types/types";
+import { Question } from "@/app/daily/questions/_types/types";
 
 export async function getQuestion(
   questionId: string,
