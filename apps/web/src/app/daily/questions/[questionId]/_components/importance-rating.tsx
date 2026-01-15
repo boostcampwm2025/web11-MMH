@@ -7,13 +7,49 @@ import { cn } from "@/lib/cn";
 
 interface ImportanceRatingProps {
   open?: boolean;
+  questionId: number;
+  onSuccess?: () => void;
 }
 
-function ImportanceRating({}: ImportanceRatingProps) {
-  const [score, setScore] = React.useState(0);
-  const [isSubmitting] = React.useState(false);
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+function ImportanceRating({
+  open,
+  questionId,
+  onSuccess,
+}: ImportanceRatingProps) {
+  const [score, setScore] = React.useState(0);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   if (!open) return null;
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`${API_URL}/answer-submissions/importance`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          questionId: questionId,
+          selfImportanceRating: score,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("중요도 업데이트에 실패했습니다.");
+      }
+
+      // 성공 시 처리
+      if (onSuccess) onSuccess();
+      alert("평가가 기록되었습니다.");
+    } catch (error) {
+      console.error(error);
+      alert("오류가 발생했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in duration-200">
@@ -32,6 +68,7 @@ function ImportanceRating({}: ImportanceRatingProps) {
         </div>
 
         <Button
+          onClick={handleSubmit}
           disabled={isSubmitting || score === 0}
           size="lg"
           className={cn(
