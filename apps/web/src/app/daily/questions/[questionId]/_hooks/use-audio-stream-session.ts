@@ -154,7 +154,10 @@ function useAudioStreamSession() {
   // 다시 시도 핸들러
   const retryRecording = React.useCallback(() => {
     setSessionId(null);
-    historyRef.current = [];
+    historyRef.current = Array.from(
+      { length: WAVEFORM_CONFIG.maxBars },
+      () => 0,
+    );
     startRecording();
   }, [startRecording]);
 
