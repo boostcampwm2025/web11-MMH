@@ -85,6 +85,7 @@ jobs:
           NCLOUD_OBJECT_STORAGE_SECRET_KEY: ${{ secrets.NCLOUD_OBJECT_STORAGE_SECRET_KEY }}
           NCLOUD_OBJECT_STORAGE_BUCKET: ${{ secrets.NCLOUD_OBJECT_STORAGE_BUCKET }}
           STT_CALLBACK_URL: ${{ secrets.STT_CALLBACK_URL }}
+          API_URL: http://localhost:8000
 
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -123,9 +124,9 @@ jobs:
             # Create apps/web/.env
             cat > apps/web/.env << EOF
             NODE_ENV=production
-            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
-            NEXT_PUBLIC_SOCKET_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
-            API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+            NEXT_PUBLIC_API_URL=${API_URL}
+            NEXT_PUBLIC_SOCKET_URL=${API_URL}
+            API_URL=${API_URL}
             EOF
 
             # Export for docker-compose
