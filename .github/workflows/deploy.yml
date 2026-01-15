@@ -70,6 +70,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "infra/docker-compose.prod.yaml,nginx.conf"
           target: "~/malmanhae"
+          strip_components: 0
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
