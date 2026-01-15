@@ -18,7 +18,9 @@ function useAudioStreamSession() {
 
   const streamerRef = React.useRef<AudioStreamerHandle | null>(null);
   const lastUpdateTimeRef = React.useRef<number>(0);
-  const historyRef = React.useRef<number[]>([]);
+  const historyRef = React.useRef<number[]>(
+    Array.from({ length: 250 }, () => 0),
+  );
   const seqRef = React.useRef(0);
 
   const accumRef = React.useRef({
@@ -152,7 +154,10 @@ function useAudioStreamSession() {
   // 다시 시도 핸들러
   const retryRecording = React.useCallback(() => {
     setSessionId(null);
-    historyRef.current = [];
+    historyRef.current = Array.from(
+      { length: WAVEFORM_CONFIG.maxBars },
+      () => 0,
+    );
     startRecording();
   }, [startRecording]);
 
