@@ -132,7 +132,7 @@ function mapToCategoryDisplay(question: Question) {
     return { category: "미분류", subCategory: "" };
   }
 
-  if (cat.children?.length === 0) {
+  if (!cat.children || cat.children.length === 0) {
     return {
       category: cat.name,
       subCategory: "",
@@ -141,7 +141,7 @@ function mapToCategoryDisplay(question: Question) {
 
   return {
     category: cat.name ?? "상위 카테고리",
-    subCategory: cat.children && cat.children[0].name,
+    subCategory: cat.children[0].name ?? "",
   };
 }
 
