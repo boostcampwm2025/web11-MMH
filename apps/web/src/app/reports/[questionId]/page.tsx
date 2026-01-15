@@ -40,8 +40,9 @@ async function ReportPage({ params, searchParams }: ReportPageProps) {
       />
 
       <ReportRefresh
-        enabled={selectedAttempt.status === "PENDING"}
-        submissionId={submissionId}
+        pendingSubmissionIds={history
+          .filter((h) => h.status === "PENDING")
+          .map((h) => h.submissionId)}
       />
 
       <FeedbackSection

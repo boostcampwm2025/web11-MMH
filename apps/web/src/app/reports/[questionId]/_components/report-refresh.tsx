@@ -4,28 +4,27 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 interface ReportRefreshProps {
-  enabled: boolean;
-  submissionId: string;
+  pendingSubmissionIds: number[];
 }
 
-function ReportRefresh({ enabled, submissionId }: ReportRefreshProps) {
+function ReportRefresh({ pendingSubmissionIds }: ReportRefreshProps) {
   const router = useRouter();
 
   useEffect(() => {
-    if (!enabled) return;
+    if (pendingSubmissionIds.length === 0) return;
 
     async function checkStatusAndRefresh() {
       try {
-        const res = await fetch(`/api/reports/${submissionId}`, {
-          cache: "no-store",
-        });
+        const results = await Promise.all(
+          pendingSubmissionIds.map((id) =>
+            fetch(`/api/reports/${id}`, { cache: "no-store" }).then((res) =>
+              res.json(),
+            ),
+          ),
+        );
 
-        if (!res.ok) return;
-
-        const result = await res.json();
-
-        if (result.status !== "PROCESSING") {
-          clearInterval(intervalId);
+        // 하나라도 PROCESSING이 아니게 되면 (완료 또는 실패) 새로고침 실행
+        if (results.some((result) => result.status !== "PROCESSING")) {
           router.refresh();
         }
       } catch (error) {
@@ -39,7 +38,7 @@ function ReportRefresh({ enabled, submissionId }: ReportRefreshProps) {
     checkStatusAndRefresh();
 
     return () => clearInterval(intervalId);
-  }, [enabled, submissionId, router]);
+  }, [JSON.stringify(pendingSubmissionIds), router]);
 
   return null;
 }
