@@ -46,13 +46,13 @@ export class AnswerEvaluation {
     enum: AccuracyEval,
     nullable: true,
   })
-  accuracyEval: AccuracyEval;
+  accuracyEval: AccuracyEval | null;
 
   @Column({ name: 'logic_eval', type: 'enum', enum: LogicEval, nullable: true })
-  logicEval: LogicEval;
+  logicEval: LogicEval | null;
 
   @Column({ name: 'depth_eval', type: 'enum', enum: DepthEval, nullable: true })
-  depthEval: DepthEval;
+  depthEval: DepthEval | null;
 
   @Column({ name: 'has_application', type: 'boolean', default: false })
   hasApplication: boolean;

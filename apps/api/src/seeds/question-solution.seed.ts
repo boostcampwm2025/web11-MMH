@@ -35,6 +35,14 @@ export class QuestionSolutionSeed extends BaseSeed {
     const dbId = getQuestionId('데이터베이스 정규화');
     const osId = getQuestionId('프로세스와 스레드의 차이');
 
+    const requiredIds = [httpId, restApiId, reactId, dbId, osId];
+    if (requiredIds.some((id) => id === undefined)) {
+      console.log(
+        'Required questions not found, skipping QuestionSolutionSeed...',
+      );
+      return;
+    }
+
     await queryRunner.query(`
       INSERT INTO question_solutions (
         question_id,

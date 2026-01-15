@@ -43,6 +43,13 @@ export class AnswerSubmissionSeed extends BaseSeed {
     const restApiId = getQuestionId('REST API란 무엇인가');
     const reactId = getQuestionId('React의 Virtual DOM');
 
+    if (!httpId || !restApiId || !reactId) {
+      console.log(
+        'Required questions not found, skipping AnswerSubmissionSeed...',
+      );
+      return;
+    }
+
     // AudioAsset 조회 (없으면 null 처리)
     const audioAssets = (await queryRunner.query(`
       SELECT id FROM audio_assets ORDER BY id ASC LIMIT 1;

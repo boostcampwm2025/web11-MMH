@@ -68,9 +68,9 @@ class AnswerSubmission {
   @JoinColumn({ name: 'question_id' })
   question: Question;
 
-  @OneToOne(() => AudioAsset)
+  @OneToOne(() => AudioAsset, { nullable: true })
   @JoinColumn({ name: 'audio_asset_id' })
-  audioAsset: AudioAsset;
+  audioAsset: AudioAsset | null;
 }
 
 export { AnswerSubmission };
