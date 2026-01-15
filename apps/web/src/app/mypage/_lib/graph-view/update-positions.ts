@@ -1,7 +1,7 @@
 import { PHISICS_CONSTANT } from "../../_constants/graph-view-constant";
-import { NodeMap } from "../../types/graph-view";
+import { NodeMapType } from "../../types/graph-view";
 
-function updatePositions(nodes: NodeMap) {
+function updatePositions(nodes: NodeMapType) {
   for (const node of nodes.values()) {
     if (node.fx !== null) {
       node.x = node.fx;

@@ -2,11 +2,11 @@ import {
   GRAPH_COLOR_CONSTANT,
   GRAPH_NUMBER_CONSTANT,
 } from "../../_constants/graph-view-constant";
-import { GraphEdge, NodeMap, NodeType } from "../../types/graph-view";
+import { GraphEdge, NodeMapType, NodeType } from "../../types/graph-view";
 
 function drawGraphView(
   ctx: CanvasRenderingContext2D,
-  nodes: NodeMap,
+  nodes: NodeMapType,
   edges: GraphEdge[],
   offset: { x: number; y: number } = { x: 0, y: 0 },
   scale: number = 1,

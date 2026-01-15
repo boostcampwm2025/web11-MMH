@@ -1,8 +1,8 @@
 import { PHISICS_CONSTANT } from "../../_constants/graph-view-constant";
-import { NodeMap } from "../../types/graph-view";
+import { NodeMapType } from "../../types/graph-view";
 
 // 미는 힘 => F = strength / distance^2
-function applyRepulsionForce(nodes: NodeMap) {
+function applyRepulsionForce(nodes: NodeMapType) {
   const nodeArr = [...nodes.values()];
   for (let i = 0; i < nodeArr.length; i++) {
     for (let j = i + 1; j < nodeArr.length; j++) {
