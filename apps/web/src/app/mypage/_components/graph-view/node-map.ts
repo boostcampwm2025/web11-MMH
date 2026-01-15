@@ -48,8 +48,8 @@ class NodeMap {
     const nodes = [...this._nodeMap.values()];
     return nodes.every(
       (node) =>
-        node.vx <= GRAPH_NUMBER_CONSTANT.VELOCITY_THRESHOLD &&
-        node.vy <= GRAPH_NUMBER_CONSTANT.VELOCITY_THRESHOLD,
+        Math.abs(node.vx) <= GRAPH_NUMBER_CONSTANT.VELOCITY_THRESHOLD &&
+        Math.abs(node.vy) <= GRAPH_NUMBER_CONSTANT.VELOCITY_THRESHOLD,
     );
   }
 
