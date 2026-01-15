@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import * as React from "react";
 import { useRouter } from "next/navigation";
 
 interface ReportRefreshProps {
@@ -9,17 +9,21 @@ interface ReportRefreshProps {
 
 function ReportRefresh({ pendingSubmissionIds }: ReportRefreshProps) {
   const router = useRouter();
+  const dependencyKey = JSON.stringify(pendingSubmissionIds);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (pendingSubmissionIds.length === 0) return;
 
     async function checkStatusAndRefresh() {
       try {
         const results = await Promise.all(
           pendingSubmissionIds.map((id) =>
-            fetch(`/api/reports/${id}`, { cache: "no-store" }).then((res) =>
-              res.json(),
-            ),
+            fetch(`/api/reports/${id}`, { cache: "no-store" }).then((res) => {
+              if (!res.ok) {
+                throw new Error(`Failed to fetch status for ${id}`);
+              }
+              return res.json();
+            }),
           ),
         );
 
@@ -38,7 +42,9 @@ function ReportRefresh({ pendingSubmissionIds }: ReportRefreshProps) {
     checkStatusAndRefresh();
 
     return () => clearInterval(intervalId);
-  }, [JSON.stringify(pendingSubmissionIds), router]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dependencyKey, router]);
 
   return null;
 }
