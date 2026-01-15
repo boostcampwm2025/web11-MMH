@@ -14,7 +14,7 @@ interface UseSocketReturn {
 }
 
 function useSocket({
-  url = process.env.NEXT_PUBLIC_API_URL || "",
+  url = process.env.NEXT_PUBLIC_SOCKET_URL || "",
   autoConnect = false,
 }: UseSocketOptions = {}): UseSocketReturn {
   const socketRef = React.useRef<Socket>(

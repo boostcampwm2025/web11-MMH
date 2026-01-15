@@ -46,7 +46,7 @@ jobs:
           file: ./apps/web/Dockerfile
           push: true
           build-args: |
-            NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+            NEXT_PUBLIC_SOCKET_URL=http://malmanhae.duckdns.org
           tags: |
             ${{ env.WEB_IMAGE }}:latest
             ${{ env.WEB_IMAGE }}:${{ github.sha }}
@@ -117,7 +117,7 @@ jobs:
             NCLOUD_OBJECT_STORAGE_ACCESS_KEY=${NCLOUD_OBJECT_STORAGE_ACCESS_KEY}
             NCLOUD_OBJECT_STORAGE_SECRET_KEY=${NCLOUD_OBJECT_STORAGE_SECRET_KEY}
             NCLOUD_OBJECT_STORAGE_BUCKET=${NCLOUD_OBJECT_STORAGE_BUCKET}
-            STT_CALLBACK_URL=${STT_CALLBACK_URL}
+            STT_CALLBACK_URL=http://malmanhae.duckdns.org/nest
             EOF
 
             # Create apps/web/.env
