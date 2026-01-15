@@ -14,7 +14,11 @@ function useGraphInteraction(
   initialOffset: { x: number; y: number } = { x: 0, y: 0 },
   initialScale: number = 1,
 ) {
-  const { getNodeValues, setNodeFixedCoords, clearNodeFixedCoords } = callbacks;
+  // 콜백들을 ref로 관리하여 인라인 콜백이 변경되어도 핸들러들이 재생성되지 않도록 함
+  const callbacksRef = React.useRef(callbacks);
+  React.useEffect(() => {
+    callbacksRef.current = callbacks;
+  });
 
   // offset: canvas가 얼마나 움직였는지 확인하는 변수
   // ex) 초기 0,0 -> 캔버스내에서 움직임으로 오른쪽 100px, 아래로 10px 움직이면 x: 100, y: 10
@@ -59,7 +63,7 @@ function useGraphInteraction(
   const findNodeAtPosition = React.useCallback(
     (graphX: number, graphY: number) => {
       // 모든 노드를 순회하며 클릭된 위치에 노드가 있는지 확인
-      for (const node of getNodeValues()) {
+      for (const node of callbacksRef.current.getNodeValues()) {
         const dx = graphX - node.x;
         const dy = graphY - node.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -69,7 +73,7 @@ function useGraphInteraction(
         }
       }
     },
-    [getNodeValues],
+    [],
   );
 
   // 클릭 이벤트
@@ -85,13 +89,13 @@ function useGraphInteraction(
       if (clickedNode) {
         setDraggedNodeId(clickedNode.id);
         // 드래그시 해당 노드 고정 -> fx, fy 에 값이 들어가면 노드 움직이지 않게 하기
-        setNodeFixedCoords(clickedNode.id, x, y);
+        callbacksRef.current.setNodeFixedCoords(clickedNode.id, x, y);
       } else {
         setIsDraggingCanvas(true);
         setDragStartOffset({ x: e.clientX, y: e.clientY });
       }
     },
-    [convertCursorToCanvasCoords, findNodeAtPosition, setNodeFixedCoords],
+    [convertCursorToCanvasCoords, findNodeAtPosition],
   );
 
   // 드래그 이벤트 (마우스 움직임)
@@ -102,7 +106,7 @@ function useGraphInteraction(
       const { x, y } = convertCursorToCanvasCoords(e.clientX, e.clientY);
 
       if (draggedNodeId !== null) {
-        setNodeFixedCoords(draggedNodeId, x, y);
+        callbacksRef.current.setNodeFixedCoords(draggedNodeId, x, y);
       } else if (isDraggingCanvas) {
         const dx = e.clientX - dragStartOffset.x;
         const dy = e.clientY - dragStartOffset.y;
@@ -119,7 +123,6 @@ function useGraphInteraction(
       draggedNodeId,
       isDraggingCanvas,
       offset,
-      setNodeFixedCoords,
     ],
   );
 
@@ -128,13 +131,13 @@ function useGraphInteraction(
   // 기대동작 2. 모든 드래그 상태 초기화
   const handleMouseUp = React.useCallback(() => {
     if (draggedNodeId !== null) {
-      clearNodeFixedCoords(draggedNodeId);
+      callbacksRef.current.clearNodeFixedCoords(draggedNodeId);
     }
 
     setDraggedNodeId(null);
     setIsDraggingCanvas(false);
     setActiveInteraction(false);
-  }, [draggedNodeId, clearNodeFixedCoords]);
+  }, [draggedNodeId]);
 
   // 휠 이벤트 리스너 등록 (줌 인/아웃 기능)
   // 기대동작: 마우스 휠을 움직이면 마우스 위치를 기준으로 줌 인/아웃 처리
