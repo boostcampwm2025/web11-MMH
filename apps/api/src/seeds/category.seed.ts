@@ -23,12 +23,12 @@ export class CategorySeed extends BaseSeed {
 
     // 대분류 생성 (Depth 1)
     await queryRunner.query(`
-      INSERT INTO categories (name, depth, "parentId", "createdAt", "updatedAt")
+      INSERT INTO categories (name, depth, parent_id)
       VALUES
-        ('Computer Science', 1, NULL, NOW(), NOW()),
-        ('Web', 1, NULL, NOW(), NOW()),
-        ('Frontend', 1, NULL, NOW(), NOW()),
-        ('Backend', 1, NULL, NOW(), NOW())
+        ('Computer Science', 1, NULL),
+        ('Web', 1, NULL),
+        ('Frontend', 1, NULL),
+        ('Backend', 1, NULL)
       ON CONFLICT DO NOTHING
       RETURNING id, name;
     `);
@@ -45,38 +45,38 @@ export class CategorySeed extends BaseSeed {
 
     // 중분류 생성 (Depth 2)
     await queryRunner.query(`
-      INSERT INTO categories (name, depth, "parentId", "createdAt", "updatedAt")
+      INSERT INTO categories (name, depth, parent_id)
       VALUES
         -- Computer Science 하위
-        ('Network', 2, ${csId}, NOW(), NOW()),
-        ('Computer Architecture', 2, ${csId}, NOW(), NOW()),
-        ('Data Structure', 2, ${csId}, NOW(), NOW()),
-        ('Operating System', 2, ${csId}, NOW(), NOW()),
-        ('Database', 2, ${csId}, NOW(), NOW()),
-        ('Software Engineering', 2, ${csId}, NOW(), NOW()),
-        ('Algorithm', 2, ${csId}, NOW(), NOW()),
+        ('Network', 2, ${csId}),
+        ('Computer Architecture', 2, ${csId}),
+        ('Data Structure', 2, ${csId}),
+        ('Operating System', 2, ${csId}),
+        ('Database', 2, ${csId}),
+        ('Software Engineering', 2, ${csId}),
+        ('Algorithm', 2, ${csId}),
 
         -- Web 하위
-        ('Browser Rendering', 2, ${webId}, NOW(), NOW()),
-        ('Security', 2, ${webId}, NOW(), NOW()),
-        ('Rest API', 2, ${webId}, NOW(), NOW()),
-        ('Web Server & WAS', 2, ${webId}, NOW(), NOW()),
-        ('HTTP(S)', 2, ${webId}, NOW(), NOW()),
-        ('Infra', 2, ${webId}, NOW(), NOW()),
-        ('Caching', 2, ${webId}, NOW(), NOW()),
+        ('Browser Rendering', 2, ${webId}),
+        ('Security', 2, ${webId}),
+        ('Rest API', 2, ${webId}),
+        ('Web Server & WAS', 2, ${webId}),
+        ('HTTP(S)', 2, ${webId}),
+        ('Infra', 2, ${webId}),
+        ('Caching', 2, ${webId}),
 
         -- Frontend 하위
-        ('Build Tools', 2, ${feId}, NOW(), NOW()),
-        ('React', 2, ${feId}, NOW(), NOW()),
-        ('JavaScript', 2, ${feId}, NOW(), NOW()),
-        ('TypeScript', 2, ${feId}, NOW(), NOW()),
-        ('CSS', 2, ${feId}, NOW(), NOW()),
+        ('Build Tools', 2, ${feId}),
+        ('React', 2, ${feId}),
+        ('JavaScript', 2, ${feId}),
+        ('TypeScript', 2, ${feId}),
+        ('CSS', 2, ${feId}),
 
         -- Backend 하위
-        ('Node.js', 2, ${beId}, NOW(), NOW()),
-        ('Spring', 2, ${beId}, NOW(), NOW()),
-        ('Django', 2, ${beId}, NOW(), NOW()),
-        ('NestJS', 2, ${beId}, NOW(), NOW())
+        ('Node.js', 2, ${beId}),
+        ('Spring', 2, ${beId}),
+        ('Django', 2, ${beId}),
+        ('NestJS', 2, ${beId})
       ON CONFLICT DO NOTHING;
     `);
   }
