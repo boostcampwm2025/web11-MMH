@@ -61,16 +61,16 @@ class AnswerSubmission {
   @Column({ name: 'question_id', type: 'int' })
   questionId: number;
 
-  @Column({ name: 'audio_asset_id', type: 'int', unique: true })
-  audioAssetId: number;
+  @Column({ name: 'audio_asset_id', type: 'int', unique: true, nullable: true })
+  audioAssetId: number | null;
 
   @ManyToOne(() => Question)
   @JoinColumn({ name: 'question_id' })
   question: Question;
 
-  @OneToOne(() => AudioAsset)
+  @OneToOne(() => AudioAsset, { nullable: true })
   @JoinColumn({ name: 'audio_asset_id' })
-  audioAsset: AudioAsset;
+  audioAsset: AudioAsset | null;
 }
 
 export { AnswerSubmission };

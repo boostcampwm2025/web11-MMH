@@ -13,7 +13,7 @@ export class AnswerSubmissionResponseDto {
   submittedAt: Date;
 
   @ApiProperty({ description: '오디오 파일 ID', example: 123 })
-  audioAssetId: number;
+  audioAssetId: number | null;
 
   @ApiProperty({
     description: '채점 상태',
