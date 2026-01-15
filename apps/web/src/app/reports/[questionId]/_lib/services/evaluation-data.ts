@@ -1,24 +1,13 @@
-import { SubmissionDTO } from "../../_types/submission-dto";
 import { fetchEvaluation } from "../fetch/fetch-evaluation";
 import { mapToReportDetail } from "../mapper/mapper";
-import { fetchSubmissionsByQuestionId } from "../fetch/fetch-submissions";
+import { fetchSubmissionById } from "../fetch/fetch-submission";
 
-function findSubmissionOrThrow(
-  submissions: SubmissionDTO[],
-  submissionId: number,
-): SubmissionDTO {
-  const submission = submissions.find((s) => s.id === submissionId);
+async function getReportEvaluation(submissionId: number) {
+  const submission = await fetchSubmissionById(submissionId);
 
   if (!submission) {
-    throw new Error(`답안 제출 기록을 찾을 수 없습니다. (id=${submissionId})`);
+    return null;
   }
-
-  return submission;
-}
-
-async function getReportEvaluation(questionId: number, submissionId: number) {
-  const submissions = await fetchSubmissionsByQuestionId(questionId);
-  const submission = findSubmissionOrThrow(submissions, submissionId);
 
   if (submission.evaluationStatus !== "COMPLETED") {
     return mapToReportDetail(submission);

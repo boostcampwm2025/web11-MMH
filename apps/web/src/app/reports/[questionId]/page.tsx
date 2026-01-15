@@ -28,7 +28,9 @@ async function ReportPage({ params, searchParams }: ReportPageProps) {
     (h) => h.submissionId === Number(submissionId),
   );
 
-  if (!question || !history || !selectedAttempt || !evaluation) return null; // TODO: 에러 처리 필요
+  if (!question || !history || !selectedAttempt || !evaluation) {
+    notFound();
+  }
 
   return (
     <main className="max-w-4xl mx-auto w-full px-6 pt-12 pb-24 flex flex-col gap-6">

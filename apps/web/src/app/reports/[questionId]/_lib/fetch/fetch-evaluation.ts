@@ -1,6 +1,8 @@
 import { EvaluationDTO } from "../../_types/evaluation-dto";
 
-async function fetchEvaluation(submissionId: number): Promise<EvaluationDTO> {
+async function fetchEvaluation(
+  submissionId: number,
+): Promise<EvaluationDTO | null> {
   try {
     const res = await fetch(
       `${process.env.API_URL}/answer-evaluation/${submissionId}`,
@@ -8,7 +10,12 @@ async function fetchEvaluation(submissionId: number): Promise<EvaluationDTO> {
     );
 
     if (!res.ok) {
-      throw new Error(`GET /answer-evaluation/${submissionId} 패치 실패`);
+      if (res.status === 404) {
+        return null; // mapToReportDetail이 null을 처리함
+      }
+      throw new Error(
+        `GET /answer-evaluation/${submissionId} 실패 (${res.status})`,
+      );
     }
 
     return await res.json();
