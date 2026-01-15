@@ -2,6 +2,7 @@ import { BarChart3 } from "lucide-react";
 import GraphView from "./_components/graph-view/graph-view";
 import UserStatsCard from "./_components/user-stats-card/user-stats-card";
 import VoronoiStreak from "./_components/voronoi-streak/voronoi-streak";
+import { mockGraphData } from "./_constants/graph-mock";
 
 async function MyPage() {
   //실제 api 연동시 여기에 데이터 패칭 로직
@@ -12,8 +13,8 @@ async function MyPage() {
     totalScore: 500,
   };
   const consecutiveDayCount = 0;
-  // const mockData = mockGraphData;
-  const mockData = { nodes: [], edges: [] };
+  const mockData = mockGraphData;
+  // const mockData = { nodes: [], edges: [] };
   const streakCount = 0;
   const imageSrc = "/starry-night.jpg";
   return (
