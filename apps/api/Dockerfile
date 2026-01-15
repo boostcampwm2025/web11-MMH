@@ -11,6 +11,10 @@ RUN turbo prune --scope=api --docker
 
 # Task2. 의존성 설치 및 빌드
 FROM node:20-alpine AS builder
+
+ENV CI=true
+ENV HUSKY=0
+
 WORKDIR /app
 COPY --from=pruner /app/out/json/ .
 COPY --from=pruner /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
@@ -18,10 +22,9 @@ RUN npm install -g pnpm && pnpm install --frozen-lockfile
 
 COPY --from=pruner /app/out/full/ .
 COPY turbo.json turbo.json
+
 RUN pnpm turbo run build --filter=api
 
-ENV CI=true
-ENV HUSKY=0
 RUN pnpm prune --prod
 
 # Task3. 이미지 실행
