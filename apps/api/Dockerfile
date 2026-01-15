@@ -20,7 +20,7 @@ COPY --from=pruner /app/out/full/ .
 COPY turbo.json turbo.json
 RUN pnpm turbo run build --filter=api
 
-RUN pnpm prune --prod
+RUN CI=true pnpm prune --prod
 # Task3. 이미지 실행
 FROM node:20-alpine AS runner
 WORKDIR /app
