@@ -1,18 +1,18 @@
-import { ReportDetail } from "../../_types/report-detail";
+import { ReportHistoryItem } from "../../_types/report-detail";
 import HistoryList from "./history-list";
 
 interface HistorySectionProps {
-  history: ReportDetail[];
-  selectedId: string;
+  history: ReportHistoryItem[];
+  selectedAttempt: ReportHistoryItem;
 }
 
-function HistorySection({ history, selectedId }: HistorySectionProps) {
-  const selectedAttempt =
-    history.find((h) => h.id.toString() === selectedId) || history[0];
-
+function HistorySection({ history, selectedAttempt }: HistorySectionProps) {
   return (
     <section className="flex flex-col md:flex-row gap-6 h-100 mt-8">
-      <HistoryList history={history} selectedId={selectedId} />
+      <HistoryList
+        history={history}
+        selectedId={selectedAttempt.submissionId}
+      />
 
       <div className="flex-1 flex flex-col bg-white rounded-2xl border border-zinc-200 overflow-hidden shadow-sm min-h-0">
         <div className="p-5 border-b border-zinc-100 flex justify-between items-center bg-zinc-50/50 shrink-0">
@@ -41,8 +41,11 @@ function HistorySection({ history, selectedId }: HistorySectionProps) {
         </div>
 
         <div className="flex-1 p-8 overflow-y-auto custom-scrollbar">
-          <div key={selectedAttempt.id} className="prose prose-zinc max-w-none">
-            <p className="leading-relaxed text-zinc-700 whitespace-pre-wrap text-[0.9375rem]]">
+          <div
+            key={selectedAttempt.submissionId}
+            className="prose prose-zinc max-w-none"
+          >
+            <p className="leading-relaxed text-zinc-700 whitespace-pre-wrap text-[0.9375rem]">
               {selectedAttempt.answerContent}
             </p>
           </div>

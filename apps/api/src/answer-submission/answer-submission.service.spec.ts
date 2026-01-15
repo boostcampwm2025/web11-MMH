@@ -341,7 +341,7 @@ describe('AnswerSubmissionService', () => {
           quizMode: QuizMode.DAILY,
         },
         order: {
-          submittedAt: 'DESC',
+          submittedAt: 'ASC',
         },
       });
 

@@ -7,6 +7,7 @@ import {
   Query,
   ParseIntPipe,
   UnauthorizedException,
+  Param,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -18,6 +19,7 @@ import {
   ApiQuery,
   ApiOkResponse,
   ApiUnauthorizedResponse,
+  ApiParam,
 } from '@nestjs/swagger';
 import type { Request } from 'express';
 import { AnswerSubmissionService } from './answer-submission.service';
@@ -94,5 +96,30 @@ export class AnswerSubmissionController {
       );
 
     return result;
+  }
+
+  @Get(':id')
+  @ApiOperation({
+    summary: '제출 답안 상세 조회',
+    description:
+      '제출 ID(submissionId)를 통해 사용자가 작성한 답안 내용을 조회합니다.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: '조회할 제출 ID',
+    example: 123,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '조회 성공',
+    type: AnswerSubmissionResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: '해당 ID의 제출 내역을 찾을 수 없습니다.',
+  })
+  async getSubmissionById(@Param('id', ParseIntPipe) id: number) {
+    const userId = 1; // TODO: 실제 유저 아이디 필요
+    return await this.answerSubmissionService.getSubmissionById(id, userId);
   }
 }
