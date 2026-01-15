@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/button/button";
-import ImportanceEvaluation from "./importance-evaluation";
+import ImportanceRating from "./importance-rating";
 
 export default function SubmitAction() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,7 +14,7 @@ export default function SubmitAction() {
         다음
       </Button>
 
-      {isModalOpen && <ImportanceEvaluation open={isModalOpen} />}
+      {isModalOpen && <ImportanceRating open={isModalOpen} />}
     </>
   );
 }

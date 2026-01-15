@@ -5,11 +5,11 @@ import { Button } from "@/components/button/button";
 import { StarRating } from "@/components/star/star-rating";
 import { cn } from "@/lib/cn";
 
-interface ImportanceEvaluationProps {
+interface ImportanceRatingProps {
   open?: boolean;
 }
 
-function ImportanceEvaluation({}: ImportanceEvaluationProps) {
+function ImportanceRating({}: ImportanceRatingProps) {
   const [score, setScore] = React.useState(0);
   const [isSubmitting] = React.useState(false);
 
@@ -48,4 +48,4 @@ function ImportanceEvaluation({}: ImportanceEvaluationProps) {
   );
 }
 
-export default ImportanceEvaluation;
+export default ImportanceRating;
