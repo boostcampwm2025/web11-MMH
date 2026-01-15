@@ -1,26 +1,35 @@
 import * as React from "react";
-import { GRAPH_NUMBER_CONSTANT } from "../_constants/graph-view-constant";
-import { NodeMap } from "../types/graph-view";
+import { GRAPH_NUMBER_CONSTANT } from "../../_constants/graph-view-constant";
+import { NodeMap } from "../../types/graph-view";
 
-function useCanvasInteraction(
+function useGraphInteraction(
   canvasRef: React.RefObject<HTMLCanvasElement | null>,
   nodeMap: NodeMap,
   initialOffset: { x: number; y: number } = { x: 0, y: 0 },
   initialScale: number = 1,
 ) {
-  // offset: canvas 이동 offset
+  // offset: canvas가 얼마나 움직였는지 확인하는 변수
+  // ex) 초기 0,0 -> 캔버스내에서 움직임으로 오른쪽 100px, 아래로 10px 움직이면 x: 100, y: 10
   const offset = React.useRef(initialOffset);
+
+  // scale: 캔버스에서 휠움직임을 통해 줌을 할 때 줌 단계
   const scale = React.useRef(initialScale);
-  // interaction 진행중인지 상태 확인
+
+  // interaction 진행중인지 상태 확인 (드래그, 휠 등)
   const [activeInteraction, setActiveInteraction] = React.useState(false);
+  // wheelTimeoutRef: 휠 이벤트 종료를 감지하기 위한 debounce 타이머
   const wheelTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
 
+  // isDraggingCanvas: 캔버스를 드래그중인지 여부
   const [isDraggingCanvas, setIsDraggingCanvas] = React.useState(false);
+  // dragStartOffset: 드래그 시작시 마우스 위치 (프레임간 이동량 계산용)
   const [dragStartOffset, setDragStartOffset] = React.useState({ x: 0, y: 0 });
+  // draggedNodeId: 현재 드래그중인 노드의 ID (null이면 노드 드래그 중이 아님)
   const [draggedNodeId, setDraggedNodeId] = React.useState<number | null>(null);
 
+  // 스크린의 마우스 좌표 -> 캔버스 내의 좌표로 변환 함수
   const convertCursorToCanvasCoords = React.useCallback(
     (screenX: number, screenY: number): { x: number; y: number } => {
       const canvas = canvasRef.current;
@@ -38,6 +47,7 @@ function useCanvasInteraction(
     [canvasRef, offset, scale],
   );
 
+  // 캔버스 내의 좌표에서 해당하는 노드가 있는지 확인하고, 있으면 해당 node 리턴
   const findNodeAtPosition = React.useCallback(
     (graphX: number, graphY: number) => {
       const nodeArr = [...nodeMap.values()];
@@ -53,6 +63,9 @@ function useCanvasInteraction(
     [nodeMap],
   );
 
+  // 클릭 이벤트
+  // 기대동작 1. 노드 클릭 x -> dragStartOffset에 현재 마우스 좌표 값 저장 & 드래그 상태 저장
+  // 기대동작 2. 노드 클릭 o -> 해당 노드 고정
   const handleMouseDown = React.useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       setActiveInteraction(true);
@@ -74,6 +87,9 @@ function useCanvasInteraction(
     [convertCursorToCanvasCoords, findNodeAtPosition],
   );
 
+  // 드래그 이벤트 (마우스 움직임)
+  // 기대동작 1. 노드 드래그중 -> 해당 노드를 마우스 위치로 이동
+  // 기대동작 2. 캔버스 드래그중 -> 마우스 이동량만큼 캔버스 offset 업데이트
   const handleMouseMove = React.useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       const { x, y } = convertCursorToCanvasCoords(e.clientX, e.clientY);
@@ -104,6 +120,9 @@ function useCanvasInteraction(
     ],
   );
 
+  // 마우스 클릭 해제 이벤트
+  // 기대동작 1. 노드 드래그중이었다면 -> 노드 고정 해제 (fx, fy를 null로 설정)
+  // 기대동작 2. 모든 드래그 상태 초기화
   const handleMouseUp = React.useCallback(() => {
     if (draggedNodeId) {
       const node = nodeMap.get(draggedNodeId);
@@ -118,6 +137,8 @@ function useCanvasInteraction(
     setActiveInteraction(false);
   }, [draggedNodeId, nodeMap]);
 
+  // 휠 이벤트 리스너 등록 (줌 인/아웃 기능)
+  // 기대동작: 마우스 휠을 움직이면 마우스 위치를 기준으로 줌 인/아웃 처리
   React.useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -170,4 +191,4 @@ function useCanvasInteraction(
   };
 }
 
-export default useCanvasInteraction;
+export default useGraphInteraction;
