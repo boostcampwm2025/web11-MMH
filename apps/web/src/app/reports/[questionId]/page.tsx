@@ -57,14 +57,14 @@ async function ReportPage({ params, searchParams }: ReportPageProps) {
 
       <nav className="flex flex-col sm:flex-row gap-3 mt-4">
         <NavButton
-          href="/questions"
+          href="/daily/questions"
           icon={<List className="mr-1.5" />}
           variant="outline"
         >
           문제 목록
         </NavButton>
         <NavButton
-          href={`/questions/${question.id}/daily`}
+          href={`/daily/questions/${question.id}`}
           icon={<RotateCcw className="mr-1.5" />}
           variant="default"
         >
