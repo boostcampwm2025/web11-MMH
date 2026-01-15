@@ -22,7 +22,7 @@ RUN pnpm turbo run build --filter=api
 
 ENV CI=true
 ENV HUSKY=0
-pnpm prune --prod
+RUN pnpm prune --prod
 
 # Task3. 이미지 실행
 FROM node:20-alpine AS runner
