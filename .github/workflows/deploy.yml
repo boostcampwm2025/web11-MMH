@@ -76,6 +76,16 @@ jobs:
         env:
           DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          NCLOUD_CLOVA_SPEECH_INVOKE_URL: ${{ secrets.NCLOUD_CLOVA_SPEECH_INVOKE_URL }}
+          NCLOUD_CLOVA_SPEECH_SECRET_KEY: ${{ secrets.NCLOUD_CLOVA_SPEECH_SECRET_KEY }}
+          NCLOUD_OBJECT_STORAGE_ENDPOINT: ${{ secrets.NCLOUD_OBJECT_STORAGE_ENDPOINT }}
+          NCLOUD_OBJECT_STORAGE_REGION: ${{ secrets.NCLOUD_OBJECT_STORAGE_REGION }}
+          NCLOUD_OBJECT_STORAGE_ACCESS_KEY: ${{ secrets.NCLOUD_OBJECT_STORAGE_ACCESS_KEY }}
+          NCLOUD_OBJECT_STORAGE_SECRET_KEY: ${{ secrets.NCLOUD_OBJECT_STORAGE_SECRET_KEY }}
+          NCLOUD_OBJECT_STORAGE_BUCKET: ${{ secrets.NCLOUD_OBJECT_STORAGE_BUCKET }}
+          STT_CALLBACK_URL: ${{ secrets.STT_CALLBACK_URL }}
+
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
@@ -97,12 +107,25 @@ jobs:
             POSTGRES_PASSWORD=${DB_PASSWORD}
             NODE_ENV=production
             PORT=8000
+            GEMINI_API_KEY=${GEMINI_API_KEY}
+            GEMINI_GRADING_MODEL=gemini-3-flash-preview
+            GEMINI_DEFAULT_MODEL=gemini-2.5-pro
+            NCLOUD_CLOVA_SPEECH_INVOKE_URL=${NCLOUD_CLOVA_SPEECH_INVOKE_URL}
+            NCLOUD_CLOVA_SPEECH_SECRET_KEY=${NCLOUD_CLOVA_SPEECH_SECRET_KEY}
+            NCLOUD_OBJECT_STORAGE_ENDPOINT=${NCLOUD_OBJECT_STORAGE_ENDPOINT}
+            NCLOUD_OBJECT_STORAGE_REGION=${NCLOUD_OBJECT_STORAGE_REGION}
+            NCLOUD_OBJECT_STORAGE_ACCESS_KEY=${NCLOUD_OBJECT_STORAGE_ACCESS_KEY}
+            NCLOUD_OBJECT_STORAGE_SECRET_KEY=${NCLOUD_OBJECT_STORAGE_SECRET_KEY}
+            NCLOUD_OBJECT_STORAGE_BUCKET=${NCLOUD_OBJECT_STORAGE_BUCKET}
+            STT_CALLBACK_URL=${STT_CALLBACK_URL}
             EOF
 
             # Create apps/web/.env
             cat > apps/web/.env << EOF
             NODE_ENV=production
             NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+            NEXT_PUBLIC_SOCKET_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
+            API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}
             EOF
 
             # Export for docker-compose
