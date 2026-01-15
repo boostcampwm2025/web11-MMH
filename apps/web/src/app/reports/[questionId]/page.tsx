@@ -4,7 +4,7 @@ import FeedbackSection from "./_components/feedback/feedback-section";
 import HistorySection from "./_components/history/history-section";
 import NavButton from "./_components/nav-button";
 import { List, RotateCcw, User } from "lucide-react";
-import { getReportPageData } from "./_lib/usecase/page-data";
+import { getReportPageData } from "./_lib/services/page-data";
 import ReportRefresh from "./_components/report-refresh";
 
 interface ReportPageProps {

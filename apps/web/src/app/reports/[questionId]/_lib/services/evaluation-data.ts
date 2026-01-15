@@ -19,7 +19,16 @@ function findSubmissionOrThrow(
 async function getReportEvaluation(questionId: number, submissionId: number) {
   const submissions = await fetchSubmissionsByQuestionId(questionId);
   const submission = findSubmissionOrThrow(submissions, submissionId);
+
+  if (submission.evaluationStatus !== "COMPLETED") {
+    return mapToReportDetail(submission);
+  }
+
   const evaluation = await fetchEvaluation(submissionId);
+
+  if (!evaluation) {
+    return mapToReportDetail(submission);
+  }
 
   return mapToReportDetail(submission, evaluation);
 }
