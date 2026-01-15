@@ -10,7 +10,8 @@ import { EvaluationStatus } from '../answer-evaluation/answer-evaluation.constan
 interface SubmissionRow {
   id: number;
   evaluation_status: EvaluationStatus;
-  question_id: number;
+  question_title: string; // 질문 제목을 통해 피드백을 구분하기 위해 추가
+  score: number; // 점수에 따라 피드백 퀄리티를 다르게 하기 위해 추가
 }
 
 export class AnswerEvaluationSeed extends BaseSeed {
@@ -28,63 +29,103 @@ export class AnswerEvaluationSeed extends BaseSeed {
       return;
     }
 
-    // 2. 모든 Submission 조회 (COMPLETED 뿐만 아니라 PENDING도 포함)
+    // 2. Submission과 Question 정보를 조인하여 조회
+    // (평가가 완료된 COMPLETED 상태인 것만 가져옵니다)
     const submissions = (await queryRunner.query(`
-      SELECT id, evaluation_status
-      FROM answer_submissions
-      ORDER BY id ASC;
+      SELECT 
+        s.id, 
+        s.evaluation_status, 
+        s.score,
+        q.title as question_title
+      FROM answer_submissions s
+      JOIN questions q ON s.question_id = q.id
+      WHERE s.evaluation_status = '${EvaluationStatus.COMPLETED}'
+      ORDER BY s.id ASC;
     `)) as SubmissionRow[];
 
     if (submissions.length === 0) {
-      console.log('No submissions found, skipping AnswerEvaluationSeed...');
+      console.log(
+        'No COMPLETED submissions found, skipping AnswerEvaluationSeed...',
+      );
       return;
     }
 
-    // 3. 각 Submission 상태에 맞춰 VALUES 구문 생성
-    const values = submissions.map((sub) => {
-      // (1) 채점 완료된 경우 (예: HTTP 질문) - 상세 데이터 삽입
-      if (sub.evaluation_status === EvaluationStatus.COMPLETED) {
-        return `(
-          ${sub.id},
-          'HTTP와 HTTPS의 개념을 정확히 구분하고 보안 이유를 잘 설명했습니다.',
-          '{
-            "accuracy": "프로토콜 차이와 암호화 목적을 정확히 이해하고 있습니다.",
-            "logic": "설명 흐름이 자연스럽고 논리적입니다.",
-            "depth": "TLS 동작 원리에 대한 설명이 비교적 충분합니다."
-          }',
-          '{
-            "accuracy": 20,
-            "logic": 20,
-            "depth": 10,
-            "completeness": 5,
-            "application": 0
-          }',
-          '${AccuracyEval.PERFECT}',
-          '${LogicEval.CLEAR}',
-          '${DepthEval.BASIC}',
-          true,
-          true
-        )`;
+    // 3. 질문 및 점수에 따른 동적 피드백 생성기
+    const generateEvaluation = (sub: SubmissionRow) => {
+      const isHighScore = sub.score >= 80;
+
+      // 공통 변수
+      let feedback = '';
+      let accuracyDetail = '';
+      let logicDetail = '';
+      let depthDetail = '';
+
+      const accuracyEval = isHighScore
+        ? AccuracyEval.PERFECT
+        : AccuracyEval.MINOR_ERROR;
+      const logicEval = isHighScore ? LogicEval.CLEAR : LogicEval.WEAK;
+      const depthEval = isHighScore ? DepthEval.DEEP : DepthEval.BASIC;
+
+      // 질문별 분기 처리
+      if (sub.question_title.includes('HTTP')) {
+        feedback = isHighScore
+          ? 'HTTP와 HTTPS의 보안 차이점과 포트 번호까지 정확하게 언급하셨습니다.'
+          : '기본적인 암호화 유무는 설명하셨으나, 기술적 근거가 부족합니다.';
+        accuracyDetail = isHighScore
+          ? 'TLS/SSL의 역할을 명확히 이해하고 있습니다.'
+          : 'HTTPS가 보안에 강하다는 점은 맞지만 기술적 근거가 부족합니다.';
+        logicDetail = '보안 프로토콜의 필요성을 논리적으로 설명함';
+        depthDetail = '포트 번호 및 인증서 구조 언급';
+      } else if (sub.question_title.includes('REST')) {
+        feedback = isHighScore
+          ? 'REST의 4가지 원칙과 HATEOAS까지 훌륭하게 설명했습니다.'
+          : 'HTTP 메서드와 자원의 개념은 알고 계시지만, Stateless 특징에 대한 언급이 없습니다.';
+        accuracyDetail = '자원 식별 및 API 엔드포인트 설계 개념 정확';
+        logicDetail = isHighScore
+          ? '아키텍처 스타일의 장단점을 논리적으로 전개했습니다.'
+          : '정의만 나열되어 있고 흐름이 다소 끊깁니다.';
+      } else if (sub.question_title.includes('React')) {
+        feedback = isHighScore
+          ? 'Reconciliation 과정과 Diff 알고리즘의 시간 복잡도 최적화 원리를 잘 짚어주셨습니다.'
+          : '가상 돔의 개념은 맞지만, 실제로 왜 빠른지에 대한 설명이 아쉽습니다.';
+        depthDetail = isHighScore
+          ? 'Fiber 아키텍처와 Batching 업데이트 개념 포함'
+          : '단순한 DOM 조작 오버헤드만 언급';
       }
 
-      // (2) 채점 대기중(PENDING) 또는 실패(FAILED)인 경우
-      // Row는 존재해야 하지만, 결과값은 아직 없으므로 NULL 처리
-      else {
-        return `(
-          ${sub.id},
-          NULL, -- feedback_message
-          NULL, -- detail_analysis
-          NULL, -- score_details
-          NULL, -- accuracy_eval
-          NULL, -- logic_eval
-          NULL, -- depth_eval
-          false, -- has_application (기본값 false 가정)
-          false  -- is_complete_sentence (기본값 false 가정)
-        )`;
-      }
-    });
+      // JSON 필드 생성 (엔티티 필드와 1:1 매칭)
+      const detailAnalysis = JSON.stringify({
+        accuracy: accuracyDetail || '핵심 개념을 잘 파악하고 있습니다.',
+        logic: logicDetail || '서론-본론-결론의 구조가 명확합니다.',
+        depth: depthDetail || '실무적인 적용 사례까지 언급하면 더 좋겠습니다.',
+      }).replace(/'/g, "''");
 
-    // 4. 데이터 삽입 실행
+      // 점수 상세 가중치 배분 (합계가 sub.score가 되도록 구성)
+      const scoreDetails = JSON.stringify({
+        accuracy: Math.floor(sub.score * 0.35),
+        logic: Math.floor(sub.score * 0.3),
+        depth: Math.floor(sub.score * 0.25),
+        completeness: Math.floor(sub.score * 0.05),
+        application: sub.score - Math.floor(sub.score * 0.95), // 나머지
+      }).replace(/'/g, "''");
+
+      return `(
+        ${sub.id},
+        '${feedback.replace(/'/g, "''")}',
+        '${detailAnalysis}',
+        '${scoreDetails}',
+        '${accuracyEval}',
+        '${logicEval}',
+        '${depthEval}',
+        ${isHighScore ? 'true' : 'false'},
+        ${isHighScore ? 'true' : 'false'}
+      )`;
+    };
+
+    // 4. VALUES 구문 생성
+    const values = submissions.map(generateEvaluation).join(',\n');
+
+    // 5. 데이터 삽입 실행
     await queryRunner.query(`
       INSERT INTO answer_evaluations (
         submission_id,
@@ -98,9 +139,11 @@ export class AnswerEvaluationSeed extends BaseSeed {
         is_complete_sentence
       )
       VALUES 
-        ${values.join(',\n')}
+      ${values};
     `);
 
-    console.log(`Seeded ${values.length} answer_evaluations.`);
+    console.log(
+      `✅ Seeded ${submissions.length} answer_evaluations successfully.`,
+    );
   }
 }
