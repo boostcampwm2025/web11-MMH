@@ -16,6 +16,18 @@ async function Header() {
         </Link>
 
         <div className="flex items-center gap-4">
+          <Link
+            href="/daily/questions"
+            className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          >
+            문제 목록
+          </Link>
+          <Link
+            href="/mypage"
+            className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-700 transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          >
+            마이페이지
+          </Link>
           {user ? (
             <>
               <span className="text-sm text-zinc-700 dark:text-zinc-300">

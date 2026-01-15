@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Button } from "@/components/button/button";
 import { Toggle } from "@/components/toggle/toggle";
+import Link from "next/link";
 
 export interface QuestionData {
   id: number;
@@ -82,11 +83,12 @@ function QuestionModal({
               닫기
             </Button>
             <Button
+              asChild
               variant="default"
               size="lg"
               className="flex-1 rounded-xl text-sm font-semibold shadow-lg shadow-gray-200"
             >
-              시작하기
+              <Link href={`/daily/questions/${question.id}`}>시작하기</Link>
             </Button>
           </div>
         </div>
