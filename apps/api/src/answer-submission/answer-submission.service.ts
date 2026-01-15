@@ -160,7 +160,7 @@ export class AnswerSubmissionService {
     }));
   }
 
-  async getSubmissionById(id: number) {
+  async getSubmissionById(id: number, userId: number) {
     const submission = await this.answerSubmissionRepository.findOne({
       where: { id },
     });
@@ -169,6 +169,21 @@ export class AnswerSubmissionService {
       throw new NotFoundException(`ID가 ${id}인 제출 내역을 찾을 수 없습니다.`);
     }
 
-    return submission;
+    if (submission.userId !== userId) {
+      throw new NotFoundException(`ID가 ${id}인 제출 내역을 찾을 수 없습니다.`);
+    }
+
+    return {
+      id: submission.id,
+      questionId: submission.questionId,
+      submittedAt: submission.submittedAt,
+      audioAssetId: submission.audioAssetId,
+      evaluationStatus: submission.evaluationStatus,
+      sttStatus: submission.sttStatus,
+      inputType: submission.inputType,
+      answerContent: submission.rawAnswer,
+      totalScore: submission.score,
+      duration: submission.takenTime,
+    };
   }
 }

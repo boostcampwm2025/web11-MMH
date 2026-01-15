@@ -62,6 +62,7 @@ export const Default: Story = {
     item: MOCK_COMPLETED_ITEM,
     isSelected: false,
     href: "?attempt=1",
+    index: 1,
   },
 };
 
@@ -71,6 +72,7 @@ export const Selected: Story = {
     item: MOCK_COMPLETED_ITEM,
     isSelected: true,
     href: "?attempt=1",
+    index: 1,
   },
 };
 
@@ -80,6 +82,7 @@ export const Pending: Story = {
     item: MOCK_PENDING_ITEM,
     isSelected: false,
     href: "?attempt=2",
+    index: 1,
   },
 };
 
@@ -89,5 +92,6 @@ export const Failed: Story = {
     item: MOCK_FAILED_ITEM,
     isSelected: false,
     href: "?attempt=3",
+    index: 1,
   },
 };

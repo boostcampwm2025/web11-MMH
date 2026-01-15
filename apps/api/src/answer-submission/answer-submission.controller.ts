@@ -119,6 +119,7 @@ export class AnswerSubmissionController {
     description: '해당 ID의 제출 내역을 찾을 수 없습니다.',
   })
   async getSubmissionById(@Param('id', ParseIntPipe) id: number) {
-    return await this.answerSubmissionService.getSubmissionById(id);
+    const userId = 1; // TODO: 실제 유저 아이디 필요
+    return await this.answerSubmissionService.getSubmissionById(id, userId);
   }
 }

@@ -45,7 +45,7 @@ function HistorySection({ history, selectedAttempt }: HistorySectionProps) {
             key={selectedAttempt.submissionId}
             className="prose prose-zinc max-w-none"
           >
-            <p className="leading-relaxed text-zinc-700 whitespace-pre-wrap text-[0.9375rem]]">
+            <p className="leading-relaxed text-zinc-700 whitespace-pre-wrap text-[0.9375rem]">
               {selectedAttempt.answerContent}
             </p>
           </div>

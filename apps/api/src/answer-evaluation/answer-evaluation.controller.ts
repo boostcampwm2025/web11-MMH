@@ -62,11 +62,11 @@ export class AnswerEvaluationController {
   @ApiOperation({
     summary: '평가 상세 조회',
     description:
-      '평가 ID(evaluationId)를 통해 AI의 상세 분석 결과와 점수를 조회합니다.',
+      '제출 ID(submissionId)를 통해 AI의 상세 분석 결과와 점수를 조회합니다.',
   })
   @ApiParam({
     name: 'submissionId',
-    description: '평가 ID (Submission ID)',
+    description: '제출 ID (submission ID)',
     example: 15,
   })
   @ApiResponse({

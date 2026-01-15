@@ -6,15 +6,21 @@ import { SubmissionDTO } from "../../_types/submission-dto";
 function formatDateTimeKST(isoString: string): string {
   const d = new Date(isoString);
 
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
+  const kstFormatter = new Intl.DateTimeFormat("ko-KR", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
 
-  const hh = String(d.getHours()).padStart(2, "0");
-  const mi = String(d.getMinutes()).padStart(2, "0");
-  const ss = String(d.getSeconds()).padStart(2, "0");
+  const parts = kstFormatter.formatToParts(d);
+  const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
 
-  return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+  return `${get("year")}-${get("month")}-${get("day")} ${get("hour")}:${get("minute")}:${get("second")}`;
 }
 
 function formatDuration(seconds: number): string {

@@ -65,7 +65,7 @@ export const Pending: Story = {
 };
 
 // 3. 채점 실패 (Error) 케이스
-export const Error: Story = {
+export const Failed: Story = {
   args: {
     attempt: 1,
     status: "FAILED",

@@ -11,7 +11,7 @@ async function fetchEvaluation(submissionId: number): Promise<EvaluationDTO> {
       throw new Error(`GET /answer-evaluation/${submissionId} 패치 실패`);
     }
 
-    return res.json();
+    return await res.json();
   } catch (error) {
     console.error(error);
     throw error;
