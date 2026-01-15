@@ -23,10 +23,6 @@ function updatePositions(nodes: NodeMapType) {
 
     node.x += node.vx;
     node.y += node.vy;
-
-    //너무 작은 상태에서 계속 움직이면 CPU 부담 -> 어느정도 수렴하면 움직이지 않도록
-    if (Math.abs(node.vx) < 0.01) node.vx = 0;
-    if (Math.abs(node.vy) < 0.01) node.vy = 0;
   }
 }
 

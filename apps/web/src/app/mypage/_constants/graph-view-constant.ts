@@ -3,6 +3,7 @@ export const GRAPH_NUMBER_CONSTANT = {
   MIN_SCALE: 0.5,
   MAX_SCALE: 1.5,
   EDGE_DISTANCE: 100,
+  VELOCITY_THRESHOLD: 0.05, // 기존 0.01에서 수렴 속도 빠르게 조정하기 위해 0.05 높임
 } as const;
 
 export const GRAPH_COLOR_CONSTANT = {

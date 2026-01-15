@@ -46,7 +46,11 @@ class NodeMap {
 
   checkStable(): boolean {
     const nodes = [...this._nodeMap.values()];
-    return nodes.every((node) => node.vx === 0 && node.vy === 0);
+    return nodes.every(
+      (node) =>
+        node.vx <= GRAPH_NUMBER_CONSTANT.VELOCITY_THRESHOLD &&
+        node.vy <= GRAPH_NUMBER_CONSTANT.VELOCITY_THRESHOLD,
+    );
   }
 
   setNodeFixedCoords(nodeId: number, x: number, y: number) {
