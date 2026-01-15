@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
+import { checkReportProcessingStatus } from "../_lib/services/status-check";
 
 interface ReportRefreshProps {
   pendingSubmissionIds: number[];
@@ -17,14 +18,7 @@ function ReportRefresh({ pendingSubmissionIds }: ReportRefreshProps) {
     async function checkStatusAndRefresh() {
       try {
         const results = await Promise.all(
-          pendingSubmissionIds.map((id) =>
-            fetch(`/api/reports/${id}`, { cache: "no-store" }).then((res) => {
-              if (!res.ok) {
-                throw new Error(`Failed to fetch status for ${id}`);
-              }
-              return res.json();
-            }),
-          ),
+          pendingSubmissionIds.map((id) => checkReportProcessingStatus(id)),
         );
 
         // 하나라도 PROCESSING이 아니게 되면 (완료 또는 실패) 새로고침 실행
