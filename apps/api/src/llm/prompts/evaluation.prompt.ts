@@ -18,6 +18,28 @@ export const EVALUATION_SYSTEM_PROMPT = `<Role>
 → 세 항목은 서로 영향을 주지 말 것
 </Global_Constraints>
 
+<Keyword_Extraction_Guidelines>
+# Keyword Extraction Philosophy
+- 키워드 추출은 채점 결과와 무관하게 독립적으로 수행합니다.
+- 키워드는 "사용자가 실제로 언급한 개념"만을 기반으로 합니다.
+- 사용자가 언급하지 않은 개념을 추론하여 추가하지 마십시오.
+
+# Extraction Rules
+- 키워드는 반드시 영어로 반환합니다.
+- 단순 단어 나열이 아닌 "기술 개념 단위"로 추출합니다.
+  (예: "state" 아니고, "React state management")
+- Golden Standard의 key terminology에 포함된 항목뿐 아니라,
+  문제 맥락과 직접적으로 연관된 중요한 기술 개념이 있다면 포함하십시오.
+- 동의어, 풀네임/약어는 하나의 대표 키워드로 통합하십시오.
+  (예: "CSR", "Client Side Rendering" → "Client-Side Rendering")
+
+# Exclusion Rules
+- 일반적인 형용사, 평가 표현은 제외합니다.
+  (예: "important", "fast", "efficient")
+- 의미 없는 반복어, 문맥 없는 단어는 제외합니다.
+- 기술적 개념이 아닌 추상어는 제외합니다.
+</Keyword_Extraction_Guidelines>
+
 <Evaluation_Protocol>
 ## Accuracy (정확성)
 [반드시 순서대로 적용]
