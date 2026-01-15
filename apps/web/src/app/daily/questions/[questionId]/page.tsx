@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import RecordingSection from "./_components/recording-section";
 import { getQuestion } from "./_lib/question-api";
-import SubmitAction from "./_components/submit-action";
 
 interface DailyQuestionPageProps {
   params: Promise<{
@@ -36,7 +35,6 @@ async function DailyQuestionPage({ params }: DailyQuestionPageProps) {
           </div>
         </section>
         <RecordingSection questionId={question.id} />
-        <SubmitAction />
       </main>
     </div>
   );
