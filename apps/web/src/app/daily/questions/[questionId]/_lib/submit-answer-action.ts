@@ -1,7 +1,5 @@
 "use server";
 
-import { redirect } from "next/navigation";
-
 export interface SubmitAnswerState {
   success: boolean;
   message: string;
@@ -26,8 +24,6 @@ export async function submitAnswerAction(
 
   const apiUrl = process.env.API_URL;
 
-  let submissionId: number | null = null;
-
   try {
     const response = await fetch(`${apiUrl}/answer-submissions`, {
       method: "POST",
@@ -51,7 +47,13 @@ export async function submitAnswerAction(
     }
 
     const data = await response.json();
-    submissionId = data.id;
+    const submissionId = data.id;
+
+    return {
+      success: true,
+      submissionId: submissionId,
+      message: "제출 성공",
+    };
   } catch (error) {
     console.error("Error submitting answer:", error);
     return {
@@ -60,6 +62,4 @@ export async function submitAnswerAction(
       error: "답변 제출 중 오류가 발생했습니다.",
     };
   }
-
-  redirect(`/reports/${questionId}?attempt=${submissionId}`);
 }

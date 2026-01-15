@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import Waveform from "@/components/waveform/waveform";
 import { Button } from "@/components/button/button";
 import { CheckCircle2, Mic, RotateCcw, Square } from "lucide-react";
@@ -10,6 +11,7 @@ import {
   type SubmitAnswerState,
 } from "../_lib/submit-answer-action";
 import RecordingTimer from "./recording-timer";
+import ImportanceRating from "./importance-rating";
 
 interface RecordingSectionProps {
   questionId: number;
@@ -27,10 +29,34 @@ function RecordingSection({ questionId }: RecordingSectionProps) {
     retryRecording,
   } = useAudioStreamSession();
 
-  const [_, formAction, isPending] = React.useActionState<
+  const router = useRouter();
+
+  const [state, formAction, isPending] = React.useActionState<
     SubmitAnswerState | null,
     FormData
   >(submitAnswerAction, null);
+
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    if (state?.success) {
+      setIsModalOpen(true);
+    }
+  }, [state]);
+
+  const handleSubmitClick = async (
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    event.preventDefault();
+
+    const formData = new FormData();
+    formData.append("audioAssetId", assetId.toString());
+    formData.append("questionId", questionId.toString());
+
+    await React.startTransition(() => {
+      formAction(formData);
+    });
+  };
 
   const handleMaxTimeReached = React.useCallback(() => {
     stopRecording();
@@ -88,11 +114,13 @@ function RecordingSection({ questionId }: RecordingSectionProps) {
                     <RotateCcw className="w-4 h-4" /> 다시 시도
                   </Button>
                   <Button
-                    type="submit"
+                    type="button"
+                    onClick={handleSubmitClick}
                     disabled={isPending}
                     className="pl-6 pr-6"
                   >
-                    답변 제출 <CheckCircle2 className="w-4 h-4" />
+                    {isPending ? "제출 중..." : "답변 제출"}{" "}
+                    <CheckCircle2 className="w-4 h-4" />
                   </Button>
                 </div>
               </form>
@@ -102,6 +130,16 @@ function RecordingSection({ questionId }: RecordingSectionProps) {
           return null;
         })()}
       </div>
+      <ImportanceRating
+        open={isModalOpen}
+        questionId={questionId}
+        onSuccess={() => {
+          setIsModalOpen(false);
+          if (state?.submissionId) {
+            router.push(`/reports/${questionId}?attempt=${state.submissionId}`);
+          }
+        }}
+      />
     </section>
   );
 }
