@@ -77,13 +77,40 @@ function mapToReportHistoryItem(
   submission: SubmissionDTO,
   displayIndex: number,
 ): ReportHistoryItem {
+  const unifiedStatus: "PENDING" | "COMPLETED" | "FAILED" = (() => {
+    // 하나라도 실패하면 최종 상태는 FAILED
+    if (
+      submission.sttStatus === "FAILED" ||
+      submission.evaluationStatus === "FAILED"
+    ) {
+      return "FAILED";
+    }
+    // 하나라도 진행 중이면 최종 상태는 PENDING
+    if (
+      submission.sttStatus === "PENDING" ||
+      submission.evaluationStatus === "PENDING"
+    ) {
+      return "PENDING";
+    }
+
+    // 둘 다 완료된 경우에만 COMPLETED
+    if (
+      submission.sttStatus === "DONE" &&
+      submission.evaluationStatus === "COMPLETED"
+    ) {
+      return "COMPLETED";
+    }
+
+    return "PENDING";
+  })();
+
   return {
     submissionId: submission.id,
     questionId: submission.questionId,
     date: formatDateTimeKST(submission.submittedAt),
     duration: formatDuration(submission.duration),
     answerContent: submission.answerContent,
-    status: submission.evaluationStatus,
+    status: unifiedStatus,
     totalScore:
       submission.evaluationStatus === "COMPLETED"
         ? submission.totalScore
