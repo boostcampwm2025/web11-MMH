@@ -13,6 +13,13 @@ async function checkReportProcessingStatus(
 ): Promise<ProcessingStatus> {
   const submission = await fetchSubmissionById(submissionId);
 
+  if (!submission) {
+    return {
+      status: "FAILED",
+      message: "존재하지 않는 제출 내역입니다.",
+    };
+  }
+
   if (submission.sttStatus === "PENDING") {
     return {
       status: "PROCESSING",
