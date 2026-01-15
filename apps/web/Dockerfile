@@ -25,7 +25,9 @@ RUN pnpm turbo run build --filter=web
 FROM node:20-alpine AS runner
 WORKDIR /app
 
+ARG NEXT_PUBLIC_API_URL
 ENV NODE_ENV=production
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
