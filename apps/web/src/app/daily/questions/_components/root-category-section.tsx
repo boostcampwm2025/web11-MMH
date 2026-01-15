@@ -3,6 +3,7 @@
 import * as React from "react";
 import CategorySection from "./category-section";
 import { RootTree } from "../page";
+import { Button } from "@/components/button/button";
 
 interface RootCategorySectionProps {
   root: RootTree;
@@ -32,7 +33,7 @@ function RootCategorySection({ root }: RootCategorySectionProps) {
           {isOpen && <span className="text-gray-400 text-sm">접기</span>}
         </div>
 
-        <button
+        <Button
           onClick={handleToggleAll}
           className={`text-xs px-4 py-2 rounded-md font-medium transition-all ${
             isChildrenForceExpanded
@@ -41,7 +42,7 @@ function RootCategorySection({ root }: RootCategorySectionProps) {
           }`}
         >
           {isChildrenForceExpanded ? "전체 접기" : "전체 펼치기"}
-        </button>
+        </Button>
       </div>
 
       {isOpen && (

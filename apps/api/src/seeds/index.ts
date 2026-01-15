@@ -1,6 +1,10 @@
 import { Seed } from './seed.interface';
 import { CategorySeed } from './category.seed';
 import { QuestionSeed } from './question.seed';
+import { QuestionSolutionSeed } from './question-solution.seed';
+import { AnswerSubmissionSeed } from './answer-submission.seed';
+import { AnswerEvaluationSeed } from './answer-evaluation.seed';
+import { GraphSeed } from './graph.seed';
 
 /**
  * 모든 Seed 목록
@@ -9,4 +13,8 @@ import { QuestionSeed } from './question.seed';
 export const seeds: Seed[] = [
   new CategorySeed(), // 먼저 Category
   new QuestionSeed(), // Category에 의존하는 Question
+  new QuestionSolutionSeed(),
+  new AnswerSubmissionSeed(),
+  new AnswerEvaluationSeed(),
+  new GraphSeed(), // Question에 의존하는 Graph
 ];

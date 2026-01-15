@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { CategoryWithQuestions } from "../page";
+import QuestionModal, { QuestionData } from "./question-modal";
 
 interface CategoryProps {
   category: CategoryWithQuestions;
@@ -10,6 +11,8 @@ interface CategoryProps {
 
 function CategorySection({ category, forceExpand }: CategoryProps) {
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
+  const [selectedQuestion, setSelectedQuestion] =
+    React.useState<QuestionData | null>(null);
 
   React.useEffect(() => {
     setIsOpen(forceExpand);
@@ -28,7 +31,7 @@ function CategorySection({ category, forceExpand }: CategoryProps) {
       </button>
 
       {isOpen && (
-        <div className="p-4 border-t bg-white space-y-4">
+        <div className="p-4 border-t bg-white space-y-4 hover:bg-gray-100">
           {category.questions.length === 0 ? (
             <div className="py-4 text-center text-gray-400 text-xs">
               등록된 질문이 없습니다.
@@ -37,11 +40,18 @@ function CategorySection({ category, forceExpand }: CategoryProps) {
             category.questions.map((q) => (
               <div
                 key={q.id}
+                onClick={() => setSelectedQuestion(q)}
                 className="group border-b border-gray-50 last:border-0 pb-3"
               >
-                <h4 className="font-bold text-gray-800 group-hover:text-blue-600 transition-colors cursor-pointer">
-                  {q.title}
-                </h4>
+                <div className="flex gap-3.5">
+                  <h4 className="font-bold text-gray-800 transition-colors cursor-pointer">
+                    {q.title}
+                  </h4>
+                  <span className="px-2.5 py-1 rounded-md bg-yellow-50 text-yellow-600 text-xs font-medium flex items-center gap-1">
+                    <span>⭐️</span>
+                    {(q.avgImportance ?? 0).toFixed(1)}
+                  </span>
+                </div>
                 <p className="text-sm text-gray-500 mt-1 leading-relaxed">
                   {q.content}
                 </p>
@@ -50,6 +60,11 @@ function CategorySection({ category, forceExpand }: CategoryProps) {
           )}
         </div>
       )}
+      <QuestionModal
+        question={selectedQuestion}
+        categoryName={category.name}
+        onClose={() => setSelectedQuestion(null)}
+      />
     </div>
   );
 }

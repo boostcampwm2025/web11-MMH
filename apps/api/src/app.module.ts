@@ -13,6 +13,7 @@ import { ObjectStorageModule } from './object-storage/object-storage.module';
 import { CategoryModule } from './category/category.module';
 import { QuestionModule } from './question/question.module';
 import { AnswerSubmissionModule } from './answer-submission/answer-submission.module';
+import { GraphModule } from './graph/graph.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AnswerSubmissionModule } from './answer-submission/answer-submission.mo
     AudioStreamModule,
     CategoryModule,
     QuestionModule,
+    GraphModule,
     StreaksModule,
     SttModule,
     ObjectStorageModule,
