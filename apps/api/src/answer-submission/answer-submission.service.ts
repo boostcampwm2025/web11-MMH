@@ -10,6 +10,8 @@ import { AudioAsset } from '../audio-stream/entities/audio-asset.entity';
 import { Question } from '../question/entities/question.entity';
 import { SttService } from '../stt/stt.service';
 import { SubmitAnswerDto } from './dtos/submit-answer.dto';
+import { UpdateImportanceDto } from './dtos/update-importance-rating.dto';
+
 import {
   QuizMode,
   InputType,
@@ -185,5 +187,28 @@ export class AnswerSubmissionService {
       totalScore: submission.score,
       duration: submission.takenTime,
     };
+  }
+
+  async updateImportance(
+    userId: number,
+    updateDto: UpdateImportanceDto,
+  ): Promise<AnswerSubmission> {
+    const { questionId, selfImportanceRating } = updateDto;
+
+    // 해당 유저가 특정 문제에 대해 제출한 가장 최신 기록 조회
+    const latestSubmission = await this.answerSubmissionRepository.findOne({
+      where: { userId, questionId },
+      order: { submittedAt: 'DESC' }, // 가장 최근에 제출한 것
+    });
+
+    if (!latestSubmission) {
+      throw new NotFoundException(
+        `유저 ID ${userId}의 질문 ${questionId}에 대한 제출 기록을 찾을 수 없습니다.`,
+      );
+    }
+
+    latestSubmission.selfImportanceRating = selfImportanceRating;
+
+    return await this.answerSubmissionRepository.save(latestSubmission);
   }
 }
