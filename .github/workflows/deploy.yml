@@ -132,8 +132,9 @@ jobs:
             # Pull latest images
             docker compose -f infra/docker-compose.prod.yaml pull
 
-            # Restart services
-            docker compose -f infra/docker-compose.prod.yaml up -d --remove-orphans
+            # 기존 컨테이너 정리 후 재시작 (iptables 꼬임 방지)
+            docker compose -f infra/docker-compose.prod.yaml down --remove-orphans
+            docker compose -f infra/docker-compose.prod.yaml up -d
 
             # Clean up old images
             docker image prune -f
