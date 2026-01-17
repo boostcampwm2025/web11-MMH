@@ -37,7 +37,14 @@ export class SttService {
       ],
     };
 
-    this.logger.log('STT requested with parms: ' + JSON.stringify(params));
+    const sanitizedParams = {
+      language: params.language,
+      completion: params.completion,
+      boostings: params.boostings,
+    };
+    this.logger.log(
+      `STT requested with params: ${JSON.stringify(sanitizedParams)}`,
+    );
 
     return fetch(requestUrl, {
       method: 'POST',
