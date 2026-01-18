@@ -39,3 +39,5 @@ yarn-error.log*
 
 # DB data
 pgdata/
+
+.secrets
